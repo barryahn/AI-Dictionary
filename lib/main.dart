@@ -30,38 +30,66 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            const SizedBox(height: 50), // 상단 여백
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text(
+                  '영어',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 10),
+                const Icon(Icons.arrow_forward_ios),
+                const SizedBox(width: 10),
+                const Text(
+                  '한국어',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
+            const SizedBox(height: 30),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: const TextField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.search),
+                  hintText: 'Search',
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            // 본문 내용이 추가될 공간 (현재는 비어있음)
+            const Expanded(child: SizedBox.shrink()),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '', // 라벨을 비워 둡니다.
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
+        ],
+        selectedItemColor: Colors.black, // 선택된 아이템 색상
+        unselectedItemColor: Colors.grey, // 선택되지 않은 아이템 색상
+        showSelectedLabels: false, // 선택된 라벨 숨기기
+        showUnselectedLabels: false, // 선택되지 않은 라벨 숨기기
+        type: BottomNavigationBarType.fixed,
+      ),
     );
   }
 }
