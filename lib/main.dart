@@ -34,10 +34,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 50), // 상단 여백
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -70,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             // 본문 내용이 추가될 공간 (현재는 비어있음)
-            const Expanded(child: SizedBox.shrink()),
           ],
         ),
       ),
