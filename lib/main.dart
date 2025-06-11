@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
+// 앱의 진입점
 void main() {
   runApp(const MyApp());
 }
 
+// 앱의 기본 설정을 정의하는 StatelessWidget
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
       ),
       home: const MyHomePage(title: 'AI Dictionary'),
     );
   }
 }
 
+// 메인 화면을 정의하는 StatefulWidget
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -30,6 +33,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // 언어 선택을 위한 상태 변수들
+  String selectedFromLanguage = '영어';
+  String selectedToLanguage = '한국어';
+  final List<String> languages = ['영어', '한국어', '중국어', '스페인어', '프랑스어'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,23 +46,106 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // 언어 선택 영역
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text(
-                  '영어',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                // 출발 언어 선택 드롭다운
+                SizedBox(
+                  width: 160,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        'Select Item',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).hintColor,
+                        ),
+                      ),
+                      items: languages
+                          .where((item) => item != selectedToLanguage)
+                          .map(
+                            (String item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      value: selectedFromLanguage,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedFromLanguage = newValue!;
+                        });
+                      },
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        height: 40,
+                        width: 140,
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(height: 40),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 10),
-                const Icon(Icons.arrow_forward_ios),
-                const SizedBox(width: 10),
-                const Text(
-                  '한국어',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                const SizedBox(width: 20),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      final temp = selectedFromLanguage;
+                      selectedFromLanguage = selectedToLanguage;
+                      selectedToLanguage = temp;
+                    });
+                  },
+                  child: const Icon(Icons.arrow_forward_ios),
+                ),
+                const SizedBox(width: 20),
+                // 도착 언어 선택 드롭다운
+                SizedBox(
+                  width: 160,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        'Select Item',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).hintColor,
+                        ),
+                      ),
+                      items: languages
+                          .where((item) => item != selectedFromLanguage)
+                          .map(
+                            (String item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      value: selectedToLanguage,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedToLanguage = newValue!;
+                        });
+                      },
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        height: 40,
+                        width: 140,
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(height: 40),
+                    ),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 30),
+            // 검색창 영역
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[200],
@@ -73,6 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      // 하단 네비게이션 바
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
