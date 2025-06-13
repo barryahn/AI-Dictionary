@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('AI Dictionary')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -144,23 +145,34 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             // 검색창 영역
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: const TextField(
-                decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  hintText: 'Search',
-                  border: InputBorder.none,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: const IgnorePointer(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.search),
+                      hintText: 'Search',
+                      border: InputBorder.none,
+                    ),
+                  ),
                 ),
               ),
             ),
             // 본문 내용이 추가될 공간 (현재는 비어있음)
+            const SizedBox(height: 80),
           ],
         ),
       ),
@@ -180,6 +192,61 @@ class _MyHomePageState extends State<MyHomePage> {
         showSelectedLabels: false, // 선택된 라벨 숨기기
         showUnselectedLabels: false, // 선택되지 않은 라벨 숨기기
         type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+}
+
+// 파일 마지막에 검색 전용 화면 추가
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_focusNode);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _controller,
+              focusNode: _focusNode,
+              style: const TextStyle(fontSize: 28, color: Colors.black54),
+              decoration: const InputDecoration(
+                hintText: '무엇이든 물어보세요',
+                border: InputBorder.none,
+              ),
+            ),
+            const Divider(thickness: 1),
+            // 검색 결과 등 추가 영역
+          ],
+        ),
       ),
     );
   }
