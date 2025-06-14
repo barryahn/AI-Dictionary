@@ -132,6 +132,29 @@ class SearchResultScreen extends StatelessWidget {
           ),
         ],
       ),
+      // 하단 플로팅 검색창
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              decoration: const InputDecoration(
+                hintText: '추가 검색하기',
+                border: InputBorder.none,
+                icon: Icon(Icons.search),
+              ),
+              onTap: () {
+                // 아무 동작 필요 없음: 키보드가 올라오면 자동으로 위로 이동
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
