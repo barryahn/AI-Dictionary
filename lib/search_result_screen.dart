@@ -1,19 +1,139 @@
 import 'package:flutter/material.dart';
 
-// 검색 결과 화면 위젯
-class SearchResultScreen extends StatelessWidget {
+// 검색 결과 화면 위젯 (Stateful로 변경)
+class SearchResultScreen extends StatefulWidget {
   final String query;
-  // 생성자에서 검색어를 받음
   const SearchResultScreen({super.key, required this.query});
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController(
-      text: query,
+  State<SearchResultScreen> createState() => _SearchResultScreenState();
+}
+
+class _SearchResultScreenState extends State<SearchResultScreen> {
+  final List<String> _searchQueries = [];
+  final List<Widget> _searchResults = [];
+  final TextEditingController _floatingController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // 첫 검색어로 결과 추가
+    _addSearchResult(widget.query);
+  }
+
+  void _addSearchResult(String query) {
+    setState(() {
+      _searchQueries.add(query);
+      _searchResults.add(_buildResultSection(query));
+    });
+    // 결과 추가 후 스크롤 맨 아래로 이동
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  Widget _buildResultSection(String query) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        // 검색 입력창(읽기 전용)
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: TextEditingController(text: query),
+                style: const TextStyle(fontSize: 28, color: Colors.black),
+                decoration: const InputDecoration(border: InputBorder.none),
+                readOnly: true,
+              ),
+            ),
+          ],
+        ),
+        const Divider(thickness: 1),
+        // 검색어(큰 글씨)
+        Text(
+          query,
+          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        // 품사 정보
+        const Text(
+          '부사구',
+          style: TextStyle(fontSize: 18, color: Colors.black54),
+        ),
+        // 사전적 의미
+        const SizedBox(height: 16),
+        const Text(
+          '사전적 의미',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text('(특히 의문문에서) 혹시라도', style: TextStyle(fontSize: 16)),
+        // 활용 예시
+        const SizedBox(height: 16),
+        const Text(
+          '활용 예시',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+        ),
+        const SizedBox(height: 4),
+        // 예문 리스트
+        _ExampleRow(
+          en: 'Do you, by any chance, have a pen I could borrow?',
+          ko: '혹시 빌릴 수 있는 펜 있어요?',
+        ),
+        _ExampleRow(
+          en: 'Are you, by any chance, free this weekend?',
+          ko: '혹시 이번 주말에 시간 괜찮아요?',
+        ),
+        _ExampleRow(
+          en: 'By any chance, did you see my phone?',
+          ko: '혹시 내 핸드폰 봤어?',
+        ),
+        _ExampleRow(
+          en: 'Would you, by any chance, know where the station is?',
+          ko: '혹시 역이 어디 있는지 아세요?',
+        ),
+        _ExampleRow(
+          en: 'He didn\'t, by any chance, mention my name, did he?',
+          ko: '걔가 혹시라도 내 이름 언급하지는 않았지?',
+        ),
+        // 비슷한 표현
+        const SizedBox(height: 16),
+        const Text(
+          '비슷한 표현',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'possibly 어쩌면, 아마도 (좀 더 일반적이고 중립적)\nperhaps 아마도, 어쩌면 (약간 문어체 느낌도 있음)\nWould you mind...? 정중한 요청 표현 (by any chance와 함께 자주 씀)',
+          style: TextStyle(fontSize: 16),
+        ),
+      ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // 상단 앱바 (공유 버튼 포함)
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -26,111 +146,10 @@ class SearchResultScreen extends StatelessWidget {
         ),
         actions: [IconButton(icon: const Icon(Icons.share), onPressed: () {})],
       ),
-      // 본문 영역
       body: ListView(
+        controller: _scrollController,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        children: [
-          // 검색 입력창 (수정 및 검색 가능)
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  style: const TextStyle(fontSize: 28, color: Colors.black),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  final newQuery = _controller.text.trim();
-                  if (newQuery.isNotEmpty && newQuery != query) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            SearchResultScreen(query: newQuery),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-          const Divider(thickness: 1),
-          // 검색어(큰 글씨)
-          const SizedBox(height: 8),
-          Text(
-            query,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          // 품사 정보
-          const Text(
-            '부사구',
-            style: TextStyle(fontSize: 18, color: Colors.black54),
-          ),
-          // 사전적 의미
-          const SizedBox(height: 16),
-          const Text(
-            '사전적 의미',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text('(특히 의문문에서) 혹시라도', style: TextStyle(fontSize: 16)),
-          // 활용 예시
-          const SizedBox(height: 16),
-          const Text(
-            '활용 예시',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
-          ),
-          const SizedBox(height: 4),
-          // 예문 리스트
-          _ExampleRow(
-            en: 'Do you, by any chance, have a pen I could borrow?',
-            ko: '혹시 빌릴 수 있는 펜 있어요?',
-          ),
-          _ExampleRow(
-            en: 'Are you, by any chance, free this weekend?',
-            ko: '혹시 이번 주말에 시간 괜찮아요?',
-          ),
-          _ExampleRow(
-            en: 'By any chance, did you see my phone?',
-            ko: '혹시 내 핸드폰 봤어?',
-          ),
-          _ExampleRow(
-            en: 'Would you, by any chance, know where the station is?',
-            ko: '혹시 역이 어디 있는지 아세요?',
-          ),
-          _ExampleRow(
-            en: 'He didn\'t, by any chance, mention my name, did he?',
-            ko: '걔가 혹시라도 내 이름 언급하지는 않았지?',
-          ),
-          // 비슷한 표현
-          const SizedBox(height: 16),
-          const Text(
-            '비슷한 표현',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'possibly 어쩌면, 아마도 (좀 더 일반적이고 중립적)\nperhaps 아마도, 어쩌면 (약간 문어체 느낌도 있음)\nWould you mind...? 정중한 요청 표현 (by any chance와 함께 자주 씀)',
-            style: TextStyle(fontSize: 16),
-          ),
-        ],
+        children: _searchResults,
       ),
       // 하단 플로팅 검색창
       bottomNavigationBar: SafeArea(
@@ -142,15 +161,29 @@ class SearchResultScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(30),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: '추가 검색하기',
-                border: InputBorder.none,
-                icon: Icon(Icons.search),
-              ),
-              onTap: () {
-                // 아무 동작 필요 없음: 키보드가 올라오면 자동으로 위로 이동
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _floatingController,
+                    decoration: const InputDecoration(
+                      hintText: '추가 검색하기',
+                      border: InputBorder.none,
+                      icon: Icon(Icons.search),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.chevron_right),
+                  onPressed: () {
+                    final newQuery = _floatingController.text.trim();
+                    if (newQuery.isNotEmpty) {
+                      _addSearchResult(newQuery);
+                      _floatingController.clear();
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ),
