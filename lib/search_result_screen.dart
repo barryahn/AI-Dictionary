@@ -8,6 +8,9 @@ class SearchResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _controller = TextEditingController(
+      text: query,
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       // 상단 앱바 (공유 버튼 포함)
@@ -27,12 +30,33 @@ class SearchResultScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         children: [
-          // 검색 입력창 (읽기 전용)
+          // 검색 입력창 (수정 및 검색 가능)
           const SizedBox(height: 8),
-          TextField(
-            controller: TextEditingController(text: query),
-            style: const TextStyle(fontSize: 28, color: Colors.black),
-            decoration: const InputDecoration(border: InputBorder.none),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  final newQuery = _controller.text.trim();
+                  if (newQuery.isNotEmpty && newQuery != query) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            SearchResultScreen(query: newQuery),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
           ),
           const Divider(thickness: 1),
           // 검색어(큰 글씨)
