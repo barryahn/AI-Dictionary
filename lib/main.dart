@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'search_result_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // 앱의 진입점
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

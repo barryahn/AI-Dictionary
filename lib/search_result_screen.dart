@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // 검색 결과 화면 위젯 (Stateful로 변경)
 class SearchResultScreen extends StatefulWidget {
@@ -211,5 +214,39 @@ class _ExampleRow extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+Future<String> getAIResponse(String word) async {
+  final apiKey = dotenv.env['OPENAI_API_KEY'];
+  final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $apiKey',
+    },
+    body: jsonEncode({
+      "model": "gpt-3.5-turbo",
+      "messages": [
+        {"role": "system", "content": "You are an English teacher."},
+        {
+          "role": "user",
+          "content":
+              "Give me a simple explanation and example sentences for the word '$word'.",
+        },
+      ],
+      "temperature": 0.7,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    final decoded = jsonDecode(response.body);
+    final content = decoded['choices'][0]['message']['content'];
+    return content.trim();
+  } else {
+    print('Failed: ${response.body}');
+    return 'Sorry, I couldn\'t get a response.';
   }
 }
