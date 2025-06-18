@@ -15,6 +15,7 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
   final List<String> _searchQueries = [];
   final List<Widget> _searchResults = [];
+  final List<bool> _isLoading = []; // 각 검색 결과의 로딩 상태
   final TextEditingController _floatingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -28,108 +29,216 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   void _addSearchResult(String query) {
     setState(() {
       _searchQueries.add(query);
-      _searchResults.add(_buildResultSection(query));
+      _isLoading.add(true); // 로딩 상태로 시작
+      _searchResults.add(_buildLoadingSection(query));
     });
-    // 결과 추가 후 스크롤 맨 아래로 이동
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
+
+    // AI API 호출하여 실제 결과 가져오기
+    _fetchSearchResult(query, _searchQueries.length - 1);
   }
 
-  Widget _buildResultSection(String query) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 8),
-        // 검색 입력창(읽기 전용)
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: TextEditingController(text: query),
-                style: const TextStyle(fontSize: 28, color: Colors.black),
-                decoration: const InputDecoration(border: InputBorder.none),
-                readOnly: true,
+  Future<void> _fetchSearchResult(String query, int index) async {
+    try {
+      // 실제 API 호출 부분을 주석 처리하고 더미 데이터 사용
+      // final result = await getAIResponse(query);
+
+      // 더미 데이터 생성
+      final result = _generateDummyData(query);
+
+      setState(() {
+        _isLoading[index] = false;
+        _searchResults[index] = _buildResultSection(query, result);
+      });
+
+      // 새로운 검색 결과 카드가 화면을 꽉 채우도록 스크롤
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          // 이전 카드들의 높이를 계산 (각 카드는 화면 높이만큼)
+          final screenHeight = MediaQuery.of(context).size.height;
+          final scrollPosition = index * screenHeight;
+
+          _scrollController.animateTo(
+            scrollPosition,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading[index] = false;
+        _searchResults[index] = _buildErrorSection(query);
+      });
+    }
+  }
+
+  Widget _buildLoadingSection(String query) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        return Container(
+          height: screenHeight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: const TextStyle(fontSize: 28, color: Colors.black),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        const Divider(thickness: 1),
-        // 검색어(큰 글씨)
-        Text(
-          query,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        // 품사 정보
-        const Text(
-          '부사구',
-          style: TextStyle(fontSize: 18, color: Colors.black54),
-        ),
-        // 사전적 의미
-        const SizedBox(height: 16),
-        const Text(
-          '사전적 의미',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
+              const Divider(thickness: 1),
+              // 검색어(큰 글씨)
+              Text(
+                query,
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // 로딩 인디케이터
+              const Center(
+                child: Column(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 8),
+                    Text(
+                      '검색 중...',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(), // 남은 공간을 채움
+              const Divider(thickness: 2, color: Colors.blue),
+            ],
           ),
-        ),
-        const SizedBox(height: 4),
-        const Text('(특히 의문문에서) 혹시라도', style: TextStyle(fontSize: 16)),
-        // 활용 예시
-        const SizedBox(height: 16),
-        const Text(
-          '활용 예시',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorSection(String query) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        return Container(
+          height: screenHeight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: const TextStyle(fontSize: 28, color: Colors.black),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(thickness: 1),
+              // 검색어(큰 글씨)
+              Text(
+                query,
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // 에러 메시지
+              const Center(
+                child: Text(
+                  '검색 결과를 가져오는데 실패했습니다.',
+                  style: TextStyle(fontSize: 16, color: Colors.red),
+                ),
+              ),
+              const Spacer(), // 남은 공간을 채움
+              const Divider(thickness: 2, color: Colors.blue),
+            ],
           ),
-        ),
-        const SizedBox(height: 4),
-        // 예문 리스트
-        _ExampleRow(
-          en: 'Do you, by any chance, have a pen I could borrow?',
-          ko: '혹시 빌릴 수 있는 펜 있어요?',
-        ),
-        _ExampleRow(
-          en: 'Are you, by any chance, free this weekend?',
-          ko: '혹시 이번 주말에 시간 괜찮아요?',
-        ),
-        _ExampleRow(
-          en: 'By any chance, did you see my phone?',
-          ko: '혹시 내 핸드폰 봤어?',
-        ),
-        _ExampleRow(
-          en: 'Would you, by any chance, know where the station is?',
-          ko: '혹시 역이 어디 있는지 아세요?',
-        ),
-        _ExampleRow(
-          en: 'He didn\'t, by any chance, mention my name, did he?',
-          ko: '걔가 혹시라도 내 이름 언급하지는 않았지?',
-        ),
-        // 비슷한 표현
-        const SizedBox(height: 16),
-        const Text(
-          '비슷한 표현',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
+        );
+      },
+    );
+  }
+
+  Widget _buildResultSection(String query, String aiResponse) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        return Container(
+          height: screenHeight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: const TextStyle(fontSize: 28, color: Colors.black),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(thickness: 1),
+              // 검색어(큰 글씨)
+              Text(
+                query,
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              // 품사 정보 (AI 응답에서 추출하거나 기본값)
+              const Text(
+                '단어',
+                style: TextStyle(fontSize: 18, color: Colors.black54),
+              ),
+              // AI 응답 내용
+              const SizedBox(height: 16),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(
+                    aiResponse,
+                    style: const TextStyle(fontSize: 16, height: 1.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Divider(thickness: 2, color: Colors.blue),
+            ],
           ),
-        ),
-        const SizedBox(height: 4),
-        const Text(
-          'possibly 어쩌면, 아마도 (좀 더 일반적이고 중립적)\nperhaps 아마도, 어쩌면 (약간 문어체 느낌도 있음)\nWould you mind...? 정중한 요청 표현 (by any chance와 함께 자주 씀)',
-          style: TextStyle(fontSize: 16),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -174,6 +283,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       border: InputBorder.none,
                       icon: Icon(Icons.search),
                     ),
+                    onSubmitted: (value) {
+                      final newQuery = value.trim();
+                      if (newQuery.isNotEmpty) {
+                        _addSearchResult(newQuery);
+                        _floatingController.clear();
+                      }
+                    },
                   ),
                 ),
                 IconButton(
@@ -192,6 +308,77 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         ),
       ),
     );
+  }
+
+  // 더미 데이터 생성 함수
+  String _generateDummyData(String query) {
+    final dummyResponses = {
+      'hello': '''"Hello"는 인사말로 사용되는 영어 단어입니다.
+
+**의미:**
+- 안녕하세요, 안녕
+- 친근한 인사말
+
+**예문:**
+1. Hello, how are you today?
+   안녕하세요, 오늘 어떠세요?
+
+2. Hello there! Nice to meet you.
+   안녕하세요! 만나서 반갑습니다.
+
+3. She said hello to everyone in the room.
+   그녀는 방 안의 모든 사람에게 인사를 했다.''',
+
+      'world': '''"World"는 세상, 세계를 의미하는 영어 단어입니다.
+
+**의미:**
+- 세상, 세계
+- 지구, 천하
+
+**예문:**
+1. The world is changing rapidly.
+   세상이 빠르게 변하고 있다.
+
+2. She traveled around the world.
+   그녀는 세계를 여행했다.
+
+3. It's a beautiful world we live in.
+   우리가 사는 세상은 아름답다.''',
+
+      'flutter': '''"Flutter"는 여러 의미를 가진 영어 단어입니다.
+
+**의미:**
+- 펄럭이다, 날개를 치다
+- 떨다, 흔들리다
+- Flutter (구글의 모바일 앱 개발 프레임워크)
+
+**예문:**
+1. The butterfly fluttered its wings.
+   나비가 날개를 펄럭였다.
+
+2. Her heart fluttered with excitement.
+   그녀의 마음이 흥분으로 떨렸다.
+
+3. Flutter is a popular framework for mobile development.
+   Flutter는 모바일 개발에 인기 있는 프레임워크이다.''',
+    };
+
+    // 쿼리에 해당하는 더미 데이터가 있으면 반환, 없으면 기본 응답
+    return dummyResponses[query.toLowerCase()] ??
+        '''"$query"에 대한 검색 결과입니다.
+
+**의미:**
+- 이 단어의 기본적인 의미와 용법
+
+**예문:**
+1. Example sentence 1
+   예문 번역 1
+
+2. Example sentence 2
+   예문 번역 2
+
+3. Example sentence 3
+   예문 번역 3''';
   }
 }
 
