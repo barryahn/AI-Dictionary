@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -17,7 +18,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   final List<Widget> _searchResults = [];
   final List<bool> _isLoading = []; // 각 검색 결과의 로딩 상태
   final TextEditingController _floatingController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  //final ScrollController _scrollController = ScrollController();
+  final AutoScrollController _scrollController = AutoScrollController();
 
   @override
   void initState() {
@@ -50,19 +52,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         _searchResults[index] = _buildResultSection(query, result);
       });
 
-      // 새로운 검색 결과 카드가 화면을 꽉 채우도록 스크롤
+      // 새로 생성된 카드로 스크롤
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          // 이전 카드들의 높이를 계산 (각 카드는 화면 높이만큼)
-          final screenHeight = MediaQuery.of(context).size.height;
-          final scrollPosition = index * screenHeight;
-
-          _scrollController.animateTo(
-            scrollPosition,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeOut,
-          );
-        }
+        _scrollController.scrollToIndex(
+          index,
+          duration: const Duration(milliseconds: 500),
+          preferPosition: AutoScrollPosition.begin,
+        );
       });
     } catch (e) {
       setState(() {
@@ -73,172 +69,141 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildLoadingSection(String query) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final screenHeight = MediaQuery.of(context).size.height;
-
-        return Container(
-          height: screenHeight,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final index = _searchResults.length - 1;
+    return AutoScrollTag(
+      key: Key(index.toString()),
+      controller: _scrollController,
+      index: index,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          // 검색 입력창(읽기 전용)
+          Row(
             children: [
-              const SizedBox(height: 8),
-              // 검색 입력창(읽기 전용)
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: TextEditingController(text: query),
-                      style: const TextStyle(fontSize: 28, color: Colors.black),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                      readOnly: true,
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(thickness: 1),
-              // 검색어(큰 글씨)
-              Text(
-                query,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: TextField(
+                  controller: TextEditingController(text: query),
+                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  readOnly: true,
                 ),
               ),
-              const SizedBox(height: 16),
-              // 로딩 인디케이터
-              const Center(
-                child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8),
-                    Text(
-                      '검색 중...',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(), // 남은 공간을 채움
-              const Divider(thickness: 2, color: Colors.blue),
             ],
           ),
-        );
-      },
+          const Divider(thickness: 1),
+          // 검색어(큰 글씨)
+          Text(
+            query,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          // 로딩 인디케이터
+          const Center(
+            child: Column(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 8),
+                Text(
+                  '검색 중...',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(thickness: 2, color: Colors.blue),
+        ],
+      ),
     );
   }
 
   Widget _buildErrorSection(String query) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final screenHeight = MediaQuery.of(context).size.height;
-
-        return Container(
-          height: screenHeight,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final index = _searchResults.length - 1;
+    return AutoScrollTag(
+      key: Key(index.toString()),
+      controller: _scrollController,
+      index: index,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          // 검색 입력창(읽기 전용)
+          Row(
             children: [
-              const SizedBox(height: 8),
-              // 검색 입력창(읽기 전용)
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: TextEditingController(text: query),
-                      style: const TextStyle(fontSize: 28, color: Colors.black),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                      readOnly: true,
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(thickness: 1),
-              // 검색어(큰 글씨)
-              Text(
-                query,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: TextField(
+                  controller: TextEditingController(text: query),
+                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  readOnly: true,
                 ),
               ),
-              const SizedBox(height: 16),
-              // 에러 메시지
-              const Center(
-                child: Text(
-                  '검색 결과를 가져오는데 실패했습니다.',
-                  style: TextStyle(fontSize: 16, color: Colors.red),
-                ),
-              ),
-              const Spacer(), // 남은 공간을 채움
-              const Divider(thickness: 2, color: Colors.blue),
             ],
           ),
-        );
-      },
+          const Divider(thickness: 1),
+          // 검색어(큰 글씨)
+          Text(
+            query,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          // 에러 메시지
+          const Center(
+            child: Text(
+              '검색 결과를 가져오는데 실패했습니다.',
+              style: TextStyle(fontSize: 16, color: Colors.red),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(thickness: 2, color: Colors.blue),
+        ],
+      ),
     );
   }
 
   Widget _buildResultSection(String query, String aiResponse) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final screenHeight = MediaQuery.of(context).size.height;
-
-        return Container(
-          height: screenHeight,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final index = _searchResults.length - 1;
+    return AutoScrollTag(
+      key: Key(index.toString()),
+      controller: _scrollController,
+      index: index,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          // 검색 입력창(읽기 전용)
+          Row(
             children: [
-              const SizedBox(height: 8),
-              // 검색 입력창(읽기 전용)
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: TextEditingController(text: query),
-                      style: const TextStyle(fontSize: 28, color: Colors.black),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                      readOnly: true,
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(thickness: 1),
-              // 검색어(큰 글씨)
-              Text(
-                query,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              // 품사 정보 (AI 응답에서 추출하거나 기본값)
-              const Text(
-                '단어',
-                style: TextStyle(fontSize: 18, color: Colors.black54),
-              ),
-              // AI 응답 내용
-              const SizedBox(height: 16),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Text(
-                    aiResponse,
-                    style: const TextStyle(fontSize: 16, height: 1.5),
-                  ),
+                child: TextField(
+                  controller: TextEditingController(text: query),
+                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  readOnly: true,
                 ),
               ),
-              const SizedBox(height: 4),
-              const Divider(thickness: 2, color: Colors.blue),
             ],
           ),
-        );
-      },
+          const Divider(thickness: 1),
+          // 검색어(큰 글씨)
+          Text(
+            query,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          // 품사 정보 (AI 응답에서 추출하거나 기본값)
+          const Text(
+            '단어',
+            style: TextStyle(fontSize: 18, color: Colors.black54),
+          ),
+          // AI 응답 내용
+          const SizedBox(height: 16),
+          Text(aiResponse, style: const TextStyle(fontSize: 16, height: 1.5)),
+          const SizedBox(height: 4),
+          const Divider(thickness: 2, color: Colors.blue),
+        ],
+      ),
     );
   }
 
