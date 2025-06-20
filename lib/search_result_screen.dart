@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'services/search_history_service.dart';
 
 // 검색 결과 화면 위젯 (Stateful로 변경)
 class SearchResultScreen extends StatefulWidget {
@@ -18,8 +19,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   final List<Widget> _searchResults = [];
   final List<bool> _isLoading = []; // 각 검색 결과의 로딩 상태
   final TextEditingController _floatingController = TextEditingController();
-  //final ScrollController _scrollController = ScrollController();
   final AutoScrollController _scrollController = AutoScrollController();
+
+  // 검색 기록 서비스
+  final SearchHistoryService _searchHistoryService = SearchHistoryService();
+  bool _isSessionStarted = false;
 
   @override
   void initState() {
@@ -35,8 +39,31 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       _searchResults.add(_buildLoadingSection(query));
     });
 
-    // AI API 호출하여 실제 결과 가져오기
+    // 첫 번째 검색어인 경우 세션 시작
+    if (!_isSessionStarted) {
+      _startSearchSession(query);
+      _isSessionStarted = true;
+    }
+
+    // AI API 호출하여 실제 결과 가져오기 (로딩 시에는 저장하지 않음)
     _fetchSearchResult(query, _searchQueries.length - 1);
+  }
+
+  void _startSearchSession(String firstQuery) {
+    final sessionName = _searchHistoryService.generateSessionName(firstQuery);
+    _searchHistoryService.startNewSession(sessionName);
+  }
+
+  Future<void> _saveSearchCard(
+    String query,
+    String result,
+    bool isLoading,
+  ) async {
+    try {
+      await _searchHistoryService.addSearchCard(query, result, isLoading);
+    } catch (e) {
+      print('검색 카드 저장 실패: $e');
+    }
   }
 
   Future<void> _fetchSearchResult(String query, int index) async {
@@ -52,6 +79,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         _searchResults[index] = _buildResultSection(query, result);
       });
 
+      // 결과가 완성된 후에만 데이터베이스에 저장
+      await _saveSearchCard(query, result, false);
+
       // 새로 생성된 카드로 스크롤
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollController.scrollToIndex(
@@ -65,7 +95,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         _isLoading[index] = false;
         _searchResults[index] = _buildErrorSection(query);
       });
+
+      // 에러 발생 시에는 데이터베이스에 저장하지 않음
     }
+  }
+
+  @override
+  void dispose() {
+    // 화면이 종료될 때 세션 완료
+    _searchHistoryService.completeCurrentSession();
+    super.dispose();
   }
 
   Widget _buildLoadingSection(String query) {
@@ -221,7 +260,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
         ),
-        actions: [IconButton(icon: const Icon(Icons.share), onPressed: () {})],
+        actions: [IconButton(icon: const Icon(Icons.copy), onPressed: () {})],
       ),
       body: ListView(
         controller: _scrollController,

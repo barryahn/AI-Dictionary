@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'search_result_screen.dart';
+import 'search_history_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // 앱의 진입점
@@ -40,6 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
   String selectedFromLanguage = '영어';
   String selectedToLanguage = '한국어';
   final List<String> languages = ['영어', '한국어', '중국어', '스페인어', '프랑스어'];
+
+  // 현재 선택된 탭 인덱스
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -181,13 +185,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // 하단 네비게이션 바
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          // 기록 탭 클릭 시 검색 기록 화면으로 이동
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchHistoryScreen()),
+            );
+            // 탭 인덱스를 다시 0으로 되돌림
+            setState(() {
+              _selectedIndex = 0;
+            });
+          }
+        },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '', // 라벨을 비워 둡니다.
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
         selectedItemColor: Colors.black, // 선택된 아이템 색상
