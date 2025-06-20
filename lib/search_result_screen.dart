@@ -41,7 +41,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
     // 첫 번째 검색어인 경우 세션 시작
     if (!_isSessionStarted) {
-      _startSearchSession(query);
+      //_startSearchSession(query);
       _isSessionStarted = true;
     }
 
@@ -49,10 +49,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     _fetchSearchResult(query, _searchQueries.length - 1);
   }
 
-  void _startSearchSession(String firstQuery) {
-    final sessionName = _searchHistoryService.generateSessionName(firstQuery);
-    _searchHistoryService.startNewSession(sessionName);
-  }
+  // void _startSearchSession(String firstQuery) {
+  //   final sessionName = _searchHistoryService.generateSessionName(firstQuery);
+  //   _searchHistoryService.startNewSession(sessionName);
+  // }
 
   Future<void> _saveSearchCard(
     String query,
