@@ -32,6 +32,23 @@ class SearchHistoryService {
     await _databaseHelper.addSearchCard(_currentSessionId!, card);
   }
 
+  // 기존 세션에 검색 카드 추가
+  Future<void> addSearchCardToExistingSession(
+    int sessionId,
+    String query,
+    String result,
+    bool isLoading,
+  ) async {
+    final card = SearchCard(
+      query: query,
+      result: result,
+      isLoading: isLoading,
+      createdAt: DateTime.now(),
+    );
+
+    await _databaseHelper.addSearchCard(sessionId, card);
+  }
+
   // 검색 카드 업데이트 (로딩 상태에서 결과 상태로)
   Future<void> updateSearchCard(String query, String result) async {
     // 현재 세션의 카드들을 가져와서 업데이트

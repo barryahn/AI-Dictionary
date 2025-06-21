@@ -4,11 +4,13 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'services/search_history_service.dart';
+import 'database/database_helper.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
   final String? initialQuery;
-  const SearchResultScreen({super.key, this.initialQuery});
+  final SearchSession? searchSession;
+  const SearchResultScreen({super.key, this.initialQuery, this.searchSession});
 
   @override
   State<SearchResultScreen> createState() => _SearchResultScreenState();
@@ -25,11 +27,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _isSessionStarted = false;
   bool _isSearching = false;
   bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
+  int? _currentSessionId; // 현재 세션 ID를 저장
 
   @override
   void initState() {
     super.initState();
-    if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
+    if (widget.searchSession != null) {
+      _populateWithSessionData(widget.searchSession!);
+    } else if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
       _searchController.text = widget.initialQuery!;
       _startSearch();
     } else {
@@ -37,6 +42,43 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         FocusScope.of(context).requestFocus(_focusNode);
       });
     }
+  }
+
+  void _populateWithSessionData(SearchSession session) {
+    setState(() {
+      _isSearching = true;
+      _isSessionStarted = true;
+      _isFetching = false;
+      _currentSessionId = session.id; // 현재 세션 ID 저장
+
+      final initialIndex = _searchQueries.length;
+      for (var i = 0; i < session.cards.length; i++) {
+        final card = session.cards[i];
+        final currentIndex = initialIndex + i;
+
+        _searchQueries.add(card.query);
+        _isLoading.add(card.isLoading);
+        if (card.isLoading) {
+          _searchResults.add(_buildLoadingSection(card.query, currentIndex));
+        } else if (card.result.isEmpty && !card.isLoading) {
+          _searchResults.add(_buildErrorSection(card.query, currentIndex));
+        } else {
+          _searchResults.add(
+            _buildResultSection(card.query, card.result, currentIndex),
+          );
+        }
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _searchResults.isNotEmpty) {
+        _scrollController.scrollToIndex(
+          _searchResults.length - 1,
+          duration: const Duration(milliseconds: 300),
+          preferPosition: AutoScrollPosition.begin,
+        );
+      }
+    });
   }
 
   void _startSearch() {
@@ -56,9 +98,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       // 마지막 로딩 상태를 에러나 다른 상태로 바꿀 수 있습니다.
       // 여기서는 간단히 로딩을 멈추고 추가 검색이 가능하도록 합니다.
       if (_isLoading.isNotEmpty && _isLoading.last) {
-        _isLoading[_isLoading.length - 1] = false;
-        _searchResults[_searchResults.length - 1] = _buildErrorSection(
+        final index = _isLoading.length - 1;
+        _isLoading[index] = false;
+        _searchResults[index] = _buildErrorSection(
           _searchQueries.last,
+          index,
           message: "검색이 중단되었습니다.",
         );
       }
@@ -67,24 +111,20 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   void _addSearchResult(String query) {
     setState(() {
+      final index = _searchQueries.length;
       _searchQueries.add(query);
       _isLoading.add(true);
-      _searchResults.add(_buildLoadingSection(query));
+      _searchResults.add(_buildLoadingSection(query, index));
       _isFetching = true; // 검색 시작
     });
 
     if (!_isSessionStarted) {
-      //_startSearchSession(query);
+      // 새로운 세션 시작
       _isSessionStarted = true;
     }
 
     _fetchSearchResult(query, _searchQueries.length - 1);
   }
-
-  // void _startSearchSession(String firstQuery) {
-  //   final sessionName = _searchHistoryService.generateSessionName(firstQuery);
-  //   _searchHistoryService.startNewSession(sessionName);
-  // }
 
   Future<void> _saveSearchCard(
     String query,
@@ -92,7 +132,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     bool isLoading,
   ) async {
     try {
-      await _searchHistoryService.addSearchCard(query, result, isLoading);
+      if (_currentSessionId != null) {
+        // 기존 세션에 카드 추가
+        await _searchHistoryService.addSearchCardToExistingSession(
+          _currentSessionId!,
+          query,
+          result,
+          isLoading,
+        );
+      } else {
+        // 새로운 세션에 카드 추가
+        await _searchHistoryService.addSearchCard(query, result, isLoading);
+      }
     } catch (e) {
       print('검색 카드 저장 실패: $e');
     }
@@ -105,7 +156,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
       setState(() {
         _isLoading[index] = false;
-        _searchResults[index] = _buildResultSection(query, result);
+        _searchResults[index] = _buildResultSection(query, result, index);
         if (index == _searchQueries.length - 1) {
           _isFetching = false; // 마지막 검색 완료
         }
@@ -124,7 +175,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       if (!mounted) return;
       setState(() {
         _isLoading[index] = false;
-        _searchResults[index] = _buildErrorSection(query);
+        _searchResults[index] = _buildErrorSection(query, index);
         if (index == _searchQueries.length - 1) {
           _isFetching = false; // 에러 발생 시에도 검색 상태 종료
         }
@@ -296,8 +347,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildLoadingSection(String query) {
-    final index = _searchResults.length - 1;
+  Widget _buildLoadingSection(String query, int index) {
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
@@ -347,10 +397,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildErrorSection(
-    String query, {
+    String query,
+    int index, {
     String message = '검색 결과를 가져오는데 실패했습니다.',
   }) {
-    final index = _searchResults.length - 1;
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
@@ -380,10 +430,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ),
           const SizedBox(height: 16),
           // 에러 메시지
-          const Center(
+          Center(
             child: Text(
-              '검색 결과를 가져오는데 실패했습니다.',
-              style: TextStyle(fontSize: 16, color: Colors.red),
+              message,
+              style: const TextStyle(fontSize: 16, color: Colors.red),
             ),
           ),
           const SizedBox(height: 16),
@@ -393,8 +443,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildResultSection(String query, String aiResponse) {
-    final index = _searchResults.length - 1;
+  Widget _buildResultSection(String query, String aiResponse, int index) {
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
