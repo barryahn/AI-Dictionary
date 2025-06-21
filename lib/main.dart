@@ -127,7 +127,7 @@ class _HomeTabState extends State<_HomeTab> {
                         ),
                       ),
                       items: languages
-                          .where((item) => item != selectedToLanguage)
+                          // .where((item) => item != selectedToLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
                           .map(
                             (String item) => DropdownMenuItem<String>(
                               value: item,
@@ -140,8 +140,13 @@ class _HomeTabState extends State<_HomeTab> {
                           .toList(),
                       value: selectedFromLanguage,
                       onChanged: (String? newValue) {
+                        if (newValue == null) return;
                         setState(() {
-                          selectedFromLanguage = newValue!;
+                          if (newValue == selectedToLanguage) {
+                            // 같은 언어를 선택하면 서로 위치를 바꿈
+                            selectedToLanguage = selectedFromLanguage;
+                          }
+                          selectedFromLanguage = newValue;
                         });
                       },
                       buttonStyleData: const ButtonStyleData(
@@ -179,7 +184,7 @@ class _HomeTabState extends State<_HomeTab> {
                         ),
                       ),
                       items: languages
-                          .where((item) => item != selectedFromLanguage)
+                          // .where((item) => item != selectedFromLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
                           .map(
                             (String item) => DropdownMenuItem<String>(
                               value: item,
@@ -192,8 +197,13 @@ class _HomeTabState extends State<_HomeTab> {
                           .toList(),
                       value: selectedToLanguage,
                       onChanged: (String? newValue) {
+                        if (newValue == null) return;
                         setState(() {
-                          selectedToLanguage = newValue!;
+                          if (newValue == selectedFromLanguage) {
+                            // 같은 언어를 선택하면 서로 위치를 바꿈
+                            selectedFromLanguage = selectedToLanguage;
+                          }
+                          selectedToLanguage = newValue;
                         });
                       },
                       buttonStyleData: const ButtonStyleData(
