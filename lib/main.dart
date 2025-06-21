@@ -208,12 +208,14 @@ class _HomeTabState extends State<_HomeTab> {
               ],
             ),
             const SizedBox(height: 20),
-            // 검색창 영역
+            // 검색창 영역 수정
             GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SearchScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const SearchResultScreen(),
+                  ),
                 );
               },
               child: Container(
@@ -233,95 +235,7 @@ class _HomeTabState extends State<_HomeTab> {
                 ),
               ),
             ),
-            // 본문 내용이 추가될 공간 (현재는 비어있음)
             const SizedBox(height: 80),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// 파일 마지막에 검색 전용 화면 추가
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
-
-  @override
-  State<SearchScreen> createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(_focusNode);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _controller,
-              focusNode: _focusNode,
-              style: const TextStyle(fontSize: 28, color: Colors.black54),
-              decoration: const InputDecoration(
-                hintText: '무엇이든 물어보세요',
-                border: InputBorder.none,
-              ),
-            ),
-            const Divider(thickness: 1),
-            // 검색 결과 등 추가 영역
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: [
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.search),
-                label: const Text('검색'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          SearchResultScreen(query: _controller.text),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

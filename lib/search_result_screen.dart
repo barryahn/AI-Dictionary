@@ -5,54 +5,86 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'services/search_history_service.dart';
 
-// 검색 결과 화면 위젯 (Stateful로 변경)
+// 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
-  final String query;
-  const SearchResultScreen({super.key, required this.query});
+  final String? initialQuery;
+  const SearchResultScreen({super.key, this.initialQuery});
 
   @override
   State<SearchResultScreen> createState() => _SearchResultScreenState();
 }
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final List<String> _searchQueries = [];
   final List<Widget> _searchResults = [];
-  final List<bool> _isLoading = []; // 각 검색 결과의 로딩 상태
-  final TextEditingController _floatingController = TextEditingController();
+  final List<bool> _isLoading = [];
   final AutoScrollController _scrollController = AutoScrollController();
-
-  // 검색 기록 서비스
   final SearchHistoryService _searchHistoryService = SearchHistoryService();
   bool _isSessionStarted = false;
+  bool _isSearching = false;
+  bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
 
   @override
   void initState() {
     super.initState();
-    // 첫 검색어로 결과 추가
-    _addSearchResult(widget.query);
+    if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
+      _searchController.text = widget.initialQuery!;
+      _startSearch();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(_focusNode);
+      });
+    }
+  }
+
+  void _startSearch() {
+    final query = _searchController.text.trim();
+    if (query.isNotEmpty) {
+      setState(() {
+        _isSearching = true;
+      });
+      _addSearchResult(query);
+      _focusNode.unfocus();
+    }
+  }
+
+  void _stopFetching() {
+    setState(() {
+      _isFetching = false;
+      // 마지막 로딩 상태를 에러나 다른 상태로 바꿀 수 있습니다.
+      // 여기서는 간단히 로딩을 멈추고 추가 검색이 가능하도록 합니다.
+      if (_isLoading.isNotEmpty && _isLoading.last) {
+        _isLoading[_isLoading.length - 1] = false;
+        _searchResults[_searchResults.length - 1] = _buildErrorSection(
+          _searchQueries.last,
+          message: "검색이 중단되었습니다.",
+        );
+      }
+    });
   }
 
   void _addSearchResult(String query) {
     setState(() {
       _searchQueries.add(query);
-      _isLoading.add(true); // 로딩 상태로 시작
+      _isLoading.add(true);
       _searchResults.add(_buildLoadingSection(query));
+      _isFetching = true; // 검색 시작
     });
 
-    // 첫 번째 검색어인 경우 세션 시작
     if (!_isSessionStarted) {
-      //_startSearchSession(query);
+      _startSearchSession(query);
       _isSessionStarted = true;
     }
 
-    // AI API 호출하여 실제 결과 가져오기 (로딩 시에는 저장하지 않음)
     _fetchSearchResult(query, _searchQueries.length - 1);
   }
 
-  // void _startSearchSession(String firstQuery) {
-  //   final sessionName = _searchHistoryService.generateSessionName(firstQuery);
-  //   _searchHistoryService.startNewSession(sessionName);
-  // }
+  void _startSearchSession(String firstQuery) {
+    final sessionName = _searchHistoryService.generateSessionName(firstQuery);
+    _searchHistoryService.startNewSession(sessionName);
+  }
 
   Future<void> _saveSearchCard(
     String query,
@@ -68,43 +100,198 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Future<void> _fetchSearchResult(String query, int index) async {
     try {
-      // 실제 API 호출 부분을 주석 처리하고 더미 데이터 사용
-      // final result = await getAIResponse(query);
-
-      // 더미 데이터 생성
-      final result = _generateDummyData(query);
+      final result = await _generateDummyData(query);
+      if (!mounted || !_isFetching) return; // 중단되었는지 확인
 
       setState(() {
         _isLoading[index] = false;
         _searchResults[index] = _buildResultSection(query, result);
+        if (index == _searchQueries.length - 1) {
+          _isFetching = false; // 마지막 검색 완료
+        }
       });
-
-      // 결과가 완성된 후에만 데이터베이스에 저장
       await _saveSearchCard(query, result, false);
-
-      // 새로 생성된 카드로 스크롤
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollController.scrollToIndex(
-          index,
-          duration: const Duration(milliseconds: 500),
-          preferPosition: AutoScrollPosition.begin,
-        );
+        if (mounted) {
+          _scrollController.scrollToIndex(
+            index,
+            duration: const Duration(milliseconds: 500),
+            preferPosition: AutoScrollPosition.begin,
+          );
+        }
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading[index] = false;
         _searchResults[index] = _buildErrorSection(query);
+        if (index == _searchQueries.length - 1) {
+          _isFetching = false; // 에러 발생 시에도 검색 상태 종료
+        }
       });
-
-      // 에러 발생 시에는 데이터베이스에 저장하지 않음
     }
   }
 
   @override
   void dispose() {
-    // 화면이 종료될 때 세션 완료
     _searchHistoryService.completeCurrentSession();
+    _searchController.dispose();
+    _focusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  // --- UI Builder Methods ---
+
+  Widget _buildInitialView() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _searchController,
+            focusNode: _focusNode,
+            style: const TextStyle(fontSize: 28, color: Colors.black54),
+            decoration: const InputDecoration(
+              hintText: '무엇이든 물어보세요',
+              border: InputBorder.none,
+            ),
+            onSubmitted: (_) => _startSearch(),
+          ),
+          const Divider(thickness: 1),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultView() {
+    return ListView(
+      controller: _scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      children: _searchResults,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 하단 바를 동적으로 변경
+    Widget bottomBar;
+    if (!_isSearching) {
+      // 초기 검색 화면의 하단 바
+      bottomBar = BottomAppBar(
+        child: Row(
+          children: [
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.search),
+                label: const Text('검색'),
+                onPressed: _startSearch,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (_isFetching) {
+      // 검색 중일 때의 "중단" 버튼
+      bottomBar = BottomAppBar(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.stop_circle_outlined),
+              label: const Text('중단'),
+              onPressed: _stopFetching,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      // 검색 완료 후의 "추가 검색하기" 창
+      bottomBar = SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController
+                      ..clear(), // 추가 검색을 위해 기존 텍스트 지우기
+                    decoration: const InputDecoration(
+                      hintText: '추가 검색하기',
+                      border: InputBorder.none,
+                      icon: Icon(Icons.search),
+                    ),
+                    onSubmitted: (value) {
+                      final newQuery = value.trim();
+                      if (newQuery.isNotEmpty) {
+                        _addSearchResult(newQuery);
+                        _searchController.clear();
+                      }
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: () {
+                    final newQuery = _searchController.text.trim();
+                    if (newQuery.isNotEmpty) {
+                      _addSearchResult(newQuery);
+                      _searchController.clear();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+      ),
+      body: _isSearching ? _buildResultView() : _buildInitialView(),
+      bottomNavigationBar: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: bottomBar,
+      ),
+    );
   }
 
   Widget _buildLoadingSection(String query) {
@@ -157,7 +344,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildErrorSection(String query) {
+  Widget _buildErrorSection(
+    String query, {
+    String message = '검색 결과를 가져오는데 실패했습니다.',
+  }) {
     final index = _searchResults.length - 1;
     return AutoScrollTag(
       key: Key(index.toString()),
@@ -246,75 +436,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        leading: IconButton(
-          icon: const Icon(Icons.home),
-          onPressed: () {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          },
-        ),
-        actions: [IconButton(icon: const Icon(Icons.copy), onPressed: () {})],
-      ),
-      body: ListView(
-        controller: _scrollController,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        children: _searchResults,
-      ),
-      // 하단 플로팅 검색창
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(30),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _floatingController,
-                    decoration: const InputDecoration(
-                      hintText: '추가 검색하기',
-                      border: InputBorder.none,
-                      icon: Icon(Icons.search),
-                    ),
-                    onSubmitted: (value) {
-                      final newQuery = value.trim();
-                      if (newQuery.isNotEmpty) {
-                        _addSearchResult(newQuery);
-                        _floatingController.clear();
-                      }
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: () {
-                    final newQuery = _floatingController.text.trim();
-                    if (newQuery.isNotEmpty) {
-                      _addSearchResult(newQuery);
-                      _floatingController.clear();
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // 더미 데이터 생성 함수
   String _generateDummyData(String query) {
     final dummyResponses = {
       'hello': '''"Hello"는 인사말로 사용되는 영어 단어입니다.
