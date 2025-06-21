@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'search_result_screen.dart';
 import 'search_history_screen.dart';
+import 'profile_screen.dart';
+import 'services/language_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // 앱의 진입점
 void main() async {
   await dotenv.load(fileName: ".env");
+  await LanguageService.initialize(); // 언어 서비스 초기화
   runApp(const MyApp());
 }
 
@@ -50,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
       const _HomeTab(),
       SearchHistoryScreen(key: _historyScreenKey),
       const Center(child: Text('Explore Page')),
-      const Center(child: Text('Profile Page')),
+      const ProfileScreen(),
     ];
   }
 
