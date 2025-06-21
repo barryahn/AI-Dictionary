@@ -242,8 +242,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _searchController
-                      ..clear(), // 추가 검색을 위해 기존 텍스트 지우기
+                    controller: _searchController..clear(),
+                    focusNode: _focusNode,
                     decoration: const InputDecoration(
                       hintText: '추가 검색하기',
                       border: InputBorder.none,
@@ -254,6 +254,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       if (newQuery.isNotEmpty) {
                         _addSearchResult(newQuery);
                         _searchController.clear();
+                        FocusScope.of(context).unfocus();
                       }
                     },
                   ),
@@ -265,6 +266,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     if (newQuery.isNotEmpty) {
                       _addSearchResult(newQuery);
                       _searchController.clear();
+                      FocusScope.of(context).unfocus();
                     }
                   },
                 ),
