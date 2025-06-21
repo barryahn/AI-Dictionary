@@ -37,13 +37,68 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+  final GlobalKey<SearchHistoryScreenState> _historyScreenKey =
+      GlobalKey<SearchHistoryScreenState>();
+
+  late final List<Widget> _widgetOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    _widgetOptions = <Widget>[
+      const _HomeTab(),
+      SearchHistoryScreen(key: _historyScreenKey),
+      const Center(child: Text('Explore Page')),
+      const Center(child: Text('Profile Page')),
+    ];
+  }
+
+  void _onItemTapped(int index) {
+    // 기록 탭(index 1)을 누를 때마다 새로고침
+    if (index == 1) {
+      _historyScreenKey.currentState?.refresh();
+    }
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
+        ],
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+}
+
+class _HomeTab extends StatefulWidget {
+  const _HomeTab();
+
+  @override
+  State<_HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<_HomeTab> {
   // 언어 선택을 위한 상태 변수들
   String selectedFromLanguage = '영어';
   String selectedToLanguage = '한국어';
   final List<String> languages = ['영어', '한국어', '중국어', '스페인어', '프랑스어'];
-
-  // 현재 선택된 탭 인덱스
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -182,41 +237,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 80),
           ],
         ),
-      ),
-      // 하단 네비게이션 바
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-
-          // 기록 탭 클릭 시 검색 기록 화면으로 이동
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SearchHistoryScreen()),
-            );
-            // 탭 인덱스를 다시 0으로 되돌림
-            setState(() {
-              _selectedIndex = 0;
-            });
-          }
-        },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '', // 라벨을 비워 둡니다.
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-        ],
-        selectedItemColor: Colors.black, // 선택된 아이템 색상
-        unselectedItemColor: Colors.grey, // 선택되지 않은 아이템 색상
-        showSelectedLabels: false, // 선택된 라벨 숨기기
-        showUnselectedLabels: false, // 선택되지 않은 라벨 숨기기
-        type: BottomNavigationBarType.fixed,
       ),
     );
   }

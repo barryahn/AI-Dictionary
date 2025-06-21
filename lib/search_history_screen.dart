@@ -3,11 +3,13 @@ import 'services/search_history_service.dart';
 import 'database/database_helper.dart';
 
 class SearchHistoryScreen extends StatefulWidget {
+  const SearchHistoryScreen({super.key});
+
   @override
-  _SearchHistoryScreenState createState() => _SearchHistoryScreenState();
+  SearchHistoryScreenState createState() => SearchHistoryScreenState();
 }
 
-class _SearchHistoryScreenState extends State<SearchHistoryScreen> {
+class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   final SearchHistoryService _searchHistoryService = SearchHistoryService();
   List<SearchSession> _searchSessions = [];
   bool _isLoading = true;
@@ -15,21 +17,24 @@ class _SearchHistoryScreenState extends State<SearchHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSearchHistory();
+    refresh();
   }
 
-  Future<void> _loadSearchHistory() async {
+  Future<void> refresh() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
 
     try {
       final sessions = await _searchHistoryService.getAllSearchSessions();
+      if (!mounted) return;
       setState(() {
         _searchSessions = sessions;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -42,7 +47,7 @@ class _SearchHistoryScreenState extends State<SearchHistoryScreen> {
   Future<void> _deleteSession(int sessionId) async {
     try {
       await _searchHistoryService.deleteSearchSession(sessionId);
-      _loadSearchHistory();
+      await refresh(); // 삭제 후 새로고침
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('검색 기록이 삭제되었습니다')));
@@ -75,7 +80,7 @@ class _SearchHistoryScreenState extends State<SearchHistoryScreen> {
     if (confirmed == true) {
       try {
         await _searchHistoryService.clearAllSearchHistory();
-        _loadSearchHistory();
+        await refresh(); // 전체 삭제 후 새로고침
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('모든 검색 기록이 삭제되었습니다')));
