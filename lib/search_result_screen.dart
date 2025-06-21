@@ -74,17 +74,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     });
 
     if (!_isSessionStarted) {
-      _startSearchSession(query);
+      //_startSearchSession(query);
       _isSessionStarted = true;
     }
 
     _fetchSearchResult(query, _searchQueries.length - 1);
   }
 
-  void _startSearchSession(String firstQuery) {
-    final sessionName = _searchHistoryService.generateSessionName(firstQuery);
-    _searchHistoryService.startNewSession(sessionName);
-  }
+  // void _startSearchSession(String firstQuery) {
+  //   final sessionName = _searchHistoryService.generateSessionName(firstQuery);
+  //   _searchHistoryService.startNewSession(sessionName);
+  // }
 
   Future<void> _saveSearchCard(
     String query,
