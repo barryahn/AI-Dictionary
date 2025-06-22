@@ -231,24 +231,21 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     if (!_isSearching) {
       // 초기 검색 화면의 하단 바
       bottomBar = BottomAppBar(
+        color: Colors.grey[200],
+        height: 64,
         child: Row(
           children: [
             const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.search),
-                label: const Text('검색'),
-                onPressed: _startSearch,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                ),
+            ElevatedButton(
+              onPressed: _startSearch,
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(2),
+                backgroundColor: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 2),
+                child: Icon(Icons.send, color: Colors.grey[800], size: 24),
               ),
             ),
           ],
