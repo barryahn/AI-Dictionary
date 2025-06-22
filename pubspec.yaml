@@ -43,6 +43,7 @@ dependencies:
   sqflite: ^2.4.2
   sqflite_common_ffi: any
   shared_preferences: ^2.5.3
+  dart_openai: ^5.1.0
 
 dev_dependencies:
   flutter_test:

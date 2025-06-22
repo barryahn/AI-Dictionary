@@ -4,6 +4,7 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'services/search_history_service.dart';
+import 'services/openai_service.dart';
 import 'database/database_helper.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
@@ -93,6 +94,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   void _stopFetching() {
+    print('검색 중단 요청');
     setState(() {
       _isFetching = false;
       // 마지막 로딩 상태를 에러나 다른 상태로 바꿀 수 있습니다.
@@ -105,23 +107,37 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           index,
           message: "검색이 중단되었습니다.",
         );
+        print('검색 중단 완료: 인덱스 $index');
       }
     });
   }
 
   void _addSearchResult(String query) {
+    print('새 검색 추가: $query');
     setState(() {
       final index = _searchQueries.length;
       _searchQueries.add(query);
       _isLoading.add(true);
       _searchResults.add(_buildLoadingSection(query, index));
       _isFetching = true; // 검색 시작
+      print('검색 상태 설정: _isFetching = true, 로딩 인덱스 = $index');
     });
 
     if (!_isSessionStarted) {
       // 새로운 세션 시작
       _isSessionStarted = true;
     }
+
+    // 새 검색 추가 직후 스크롤
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _scrollController.scrollToIndex(
+          _searchQueries.length - 1,
+          duration: const Duration(milliseconds: 300),
+          preferPosition: AutoScrollPosition.begin,
+        );
+      }
+    });
 
     _fetchSearchResult(query, _searchQueries.length - 1);
   }
@@ -151,33 +167,59 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Future<void> _fetchSearchResult(String query, int index) async {
     try {
-      final result = await _generateDummyData(query);
+      final result = await OpenAIService.getWordDefinitionSimple(query);
       if (!mounted || !_isFetching) return; // 중단되었는지 확인
 
+      print('상태 업데이트 시작: 로딩 해제 및 결과 표시');
       setState(() {
-        _isLoading[index] = false;
-        _searchResults[index] = _buildResultSection(query, result, index);
+        // 로딩 상태 해제
+        if (index < _isLoading.length) {
+          _isLoading[index] = false;
+          print('로딩 상태 해제: 인덱스 $index');
+        }
+
+        // 결과 업데이트
+        if (index < _searchResults.length) {
+          _searchResults[index] = _buildResultSection(query, result, index);
+          print('결과 섹션 업데이트: 인덱스 $index');
+        }
+
+        // 마지막 검색이 완료되면 전체 검색 상태 해제
         if (index == _searchQueries.length - 1) {
-          _isFetching = false; // 마지막 검색 완료
+          _isFetching = false;
+          print('모든 검색 완료 - _isFetching = false');
         }
       });
+
+      // 강제로 위젯 다시 빌드
+      if (mounted) {
+        setState(() {});
+      }
+
+      print('검색 카드 저장 시작');
       await _saveSearchCard(query, result, false);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          _scrollController.scrollToIndex(
-            index,
-            duration: const Duration(milliseconds: 500),
-            preferPosition: AutoScrollPosition.begin,
-          );
-        }
-      });
+      print('검색 카드 저장 완료');
+
+      print('AI 응답 처리 완료: $query');
     } catch (e) {
+      print('AI 응답 오류: $e');
       if (!mounted) return;
+
       setState(() {
-        _isLoading[index] = false;
-        _searchResults[index] = _buildErrorSection(query, index);
+        // 에러 발생 시에도 로딩 상태 해제
+        if (index < _isLoading.length) {
+          _isLoading[index] = false;
+        }
+
+        // 에러 섹션으로 업데이트
+        if (index < _searchResults.length) {
+          _searchResults[index] = _buildErrorSection(query, index);
+        }
+
+        // 마지막 검색이 에러로 끝나면 전체 검색 상태 해제
         if (index == _searchQueries.length - 1) {
-          _isFetching = false; // 에러 발생 시에도 검색 상태 종료
+          _isFetching = false;
+          print('검색 에러로 완료 - _isFetching = false');
         }
       });
     }
@@ -220,7 +262,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return ListView(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      children: _searchResults,
+      children: _searchResults.asMap().entries.map((entry) {
+        final index = entry.key;
+        final widget = entry.value;
+        print('결과 위젯 $index: ${widget.runtimeType}');
+        return widget;
+      }).toList(),
     );
   }
 
@@ -253,6 +300,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       );
     } else if (_isFetching) {
       // 검색 중일 때의 "중단" 버튼
+      print('검색 중 하단 바 표시');
       bottomBar = BottomAppBar(
         child: Center(
           child: Padding(
@@ -277,6 +325,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       );
     } else {
       // 검색 완료 후의 "추가 검색하기" 창
+      print('검색 완료 후 하단 바 표시');
       bottomBar = SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -482,76 +531,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         ],
       ),
     );
-  }
-
-  String _generateDummyData(String query) {
-    final dummyResponses = {
-      'hello': '''"Hello"는 인사말로 사용되는 영어 단어입니다.
-
-**의미:**
-- 안녕하세요, 안녕
-- 친근한 인사말
-
-**예문:**
-1. Hello, how are you today?
-   안녕하세요, 오늘 어떠세요?
-
-2. Hello there! Nice to meet you.
-   안녕하세요! 만나서 반갑습니다.
-
-3. She said hello to everyone in the room.
-   그녀는 방 안의 모든 사람에게 인사를 했다.''',
-
-      'world': '''"World"는 세상, 세계를 의미하는 영어 단어입니다.
-
-**의미:**
-- 세상, 세계
-- 지구, 천하
-
-**예문:**
-1. The world is changing rapidly.
-   세상이 빠르게 변하고 있다.
-
-2. She traveled around the world.
-   그녀는 세계를 여행했다.
-
-3. It's a beautiful world we live in.
-   우리가 사는 세상은 아름답다.''',
-
-      'flutter': '''"Flutter"는 여러 의미를 가진 영어 단어입니다.
-
-**의미:**
-- 펄럭이다, 날개를 치다
-- 떨다, 흔들리다
-- Flutter (구글의 모바일 앱 개발 프레임워크)
-
-**예문:**
-1. The butterfly fluttered its wings.
-   나비가 날개를 펄럭였다.
-
-2. Her heart fluttered with excitement.
-   그녀의 마음이 흥분으로 떨렸다.
-
-3. Flutter is a popular framework for mobile development.
-   Flutter는 모바일 개발에 인기 있는 프레임워크이다.''',
-    };
-
-    // 쿼리에 해당하는 더미 데이터가 있으면 반환, 없으면 기본 응답
-    return dummyResponses[query.toLowerCase()] ??
-        '''"$query"에 대한 검색 결과입니다.
-
-**의미:**
-- 이 단어의 기본적인 의미와 용법
-
-**예문:**
-1. Example sentence 1
-   예문 번역 1
-
-2. Example sentence 2
-   예문 번역 2
-
-3. Example sentence 3
-   예문 번역 3''';
   }
 }
 
