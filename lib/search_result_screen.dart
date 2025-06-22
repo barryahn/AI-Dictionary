@@ -547,12 +547,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             const SizedBox(height: 24),
           ],
 
-          // 실제 뉘앙스
-          if (parsedData?['실제_뉘앙스'] != null) ...[
-            _buildSectionTitle('실제 뉘앙스'),
+          // 뉘앙스
+          if (parsedData?['뉘앙스'] != null) ...[
+            _buildSectionTitle('뉘앙스'),
             const SizedBox(height: 8),
             Text(
-              parsedData!['실제_뉘앙스'],
+              parsedData!['뉘앙스'],
               style: const TextStyle(
                 fontSize: 16,
                 height: 1.5,
@@ -562,12 +562,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             const SizedBox(height: 24),
           ],
 
-          // 사용 상황
-          if (parsedData?['사용_상황'] != null) ...[
-            _buildSectionTitle('사용 상황'),
+          // 회화에서의 사용
+          if (parsedData?['회화에서의_사용'] != null) ...[
+            _buildSectionTitle('회화에서의 사용'),
             const SizedBox(height: 8),
             Text(
-              parsedData!['사용_상황'],
+              parsedData!['회화에서의_사용'],
               style: const TextStyle(
                 fontSize: 16,
                 height: 1.5,
@@ -577,11 +577,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             const SizedBox(height: 24),
           ],
 
-          // 예문
-          if (parsedData?['예문'] != null) ...[
-            _buildSectionTitle('예문'),
+          // 대화 예시
+          if (parsedData?['대화_예시'] != null) ...[
+            _buildSectionTitle('대화 예시'),
             const SizedBox(height: 12),
-            _buildExamples(parsedData!['예문']),
+            _buildConversationExamples(parsedData!['대화_예시']),
             const SizedBox(height: 24),
           ],
 
@@ -699,34 +699,122 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildExamples(List<dynamic> examples) {
+  Widget _buildConversationExamples(List<dynamic> examples) {
     return Column(
       children: examples.asMap().entries.map<Widget>((entry) {
         final index = entry.key;
         final example = entry.value as Map<String, dynamic>;
-        final original = example.values.first ?? '';
-        final translation = example.values.last ?? '';
+        final enLines = example['en'] as List<dynamic>;
+        final koLines = example['ko'] as List<dynamic>;
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${index + 1}. $original',
-                style: const TextStyle(
+                '대화 ${index + 1}',
+                style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blue[700],
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                translation,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Column(
+                  children: [
+                    // 영어 대화
+                    ...enLines.map<Widget>((line) {
+                      final speaker = (line as Map<String, dynamic>)['speaker'];
+                      final text = (line as Map<String, dynamic>)['line'];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blue[100],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                speaker,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blue[700],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                text,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    const Divider(height: 16, color: Colors.grey),
+                    // 한국어 대화
+                    ...koLines.map<Widget>((line) {
+                      final speaker = (line as Map<String, dynamic>)['speaker'];
+                      final text = (line as Map<String, dynamic>)['line'];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.green[100],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                speaker,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.green[700],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                text,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
                 ),
               ),
             ],
@@ -741,8 +829,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       spacing: 8,
       runSpacing: 8,
       children: expressions.map<Widget>((expr) {
-        final word = (expr as Map<String, dynamic>).keys.first ?? '';
-        final meaning = (expr as Map<String, dynamic>).values.first ?? '';
+        final word = (expr as Map<String, dynamic>)['단어'] ?? '';
+        final meaning = (expr as Map<String, dynamic>)['뜻'] ?? '';
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
