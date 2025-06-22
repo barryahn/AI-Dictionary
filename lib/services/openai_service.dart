@@ -66,11 +66,11 @@ class OpenAIService {
             model: "gpt-4.1-nano",
             messages: requestMessages,
             temperature: 0.2,
-            maxTokens: 200,
+            maxTokens: 500,
           );
 
       return chatCompletion.choices.first.message.haveContent
-          ? chatCompletion.choices.first.message.content.toString()
+          ? chatCompletion.choices.first.message.content![0].text.toString()
           : '응답을 생성할 수 없습니다.';
     } catch (e) {
       print('OpenAI API 호출 오류: $e');
@@ -78,30 +78,46 @@ class OpenAIService {
     }
   }
 
-  static Future<String> getWordDefinitionSimple(String word) async {
+  static Future<String> getWordDefinitionSimple(
+    String word,
+    String fromLanguage,
+    String toLanguage,
+  ) async {
     try {
       await initialize();
 
       final prompt =
           '''
-"$word"라는 단어에 대해 다음 형식으로 답변해주세요:
+다음 단어 "$word"에 대해 무조건 JSON 형식으로 아래 예시처럼 답변해주세요:
 
-**사전적 뜻:**
-[단어의 기본적인 의미]
-
-**실제 뉘앙스:**
-[일상에서 사용할 때의 미묘한 차이]
-
-**사용 상황:**
-[어떤 상황에서 사용하는지 설명]
-
-**예문:**
-1. [예문 1] - [한국어 번역]
-2. [예문 2] - [한국어 번역]
-3. [예문 3] - [한국어 번역]
-
-**비슷한 표현:**
-[관련된 다른 단어나 표현들]
+{
+  "단어": "light",
+  "사전적_뜻": [
+    {"품사": "명사", "뜻": [
+      "(해, 전등 등의) 빛, 광선, 빛살",
+      "(특정한 색깔, 특질을 지닌) 빛",
+      "발광체, (특히 전깃)불, (전)등",
+    ]},
+    {"품사": "형용사", "뜻": [
+      "(날이) 밝은, (빛이) 밝은",
+      "(색깔이) 연한",
+      "가벼운, 무겁지 않은",
+    ]},
+    {"품사": "동사", "뜻": [
+      "불을 붙이다",
+      "(불이) 붙다)",
+      "(빛을) 비추다",
+    ]}
+  ],
+  "실제_뉘앙스": "일상 대화에서의 뉘앙스를 간단히 설명",
+  "사용_상황": "보통 이 단어를 어떤 상황에서 쓰는지 설명",
+  "예문": [
+    {"$fromLanguage": "예문 1", "$toLanguage": "번역 1"},
+    {"$fromLanguage": "예문 2", "$toLanguage": "번역 2"},
+    {"$fromLanguage": "예문 3", "$toLanguage": "번역 3"}
+  ],
+  "비슷한_표현": [{"단어1": "뜻1"}, {"단어2": "뜻2"}, {"단어3": "뜻3"}]
+}
 ''';
 
       final systemMessage = OpenAIChatCompletionChoiceMessageModel(
@@ -130,11 +146,11 @@ class OpenAIService {
             model: "gpt-4.1-nano",
             messages: requestMessages,
             temperature: 0.2,
-            maxTokens: 200,
+            maxTokens: 500,
           );
 
       return chatCompletion.choices.first.message.haveContent
-          ? chatCompletion.choices.first.message.content.toString()
+          ? chatCompletion.choices.first.message.content![0].text.toString()
           : '응답을 생성할 수 없습니다.';
     } catch (e) {
       print('OpenAI API 호출 오류: $e');

@@ -167,7 +167,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Future<void> _fetchSearchResult(String query, int index) async {
     try {
-      final result = await OpenAIService.getWordDefinitionSimple(query);
+      final result = await OpenAIService.getWordDefinitionSimple(
+        query,
+        '영어',
+        '한국어',
+      );
       if (!mounted || !_isFetching) return; // 중단되었는지 확인
 
       print('상태 업데이트 시작: 로딩 해제 및 결과 표시');
@@ -398,46 +402,51 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       key: Key(index.toString()),
       controller: _scrollController,
       index: index,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          // 검색 입력창(읽기 전용)
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: Colors.black),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  readOnly: true,
-                ),
-              ),
-            ],
-          ),
-          const Divider(thickness: 1),
-          // 검색어(큰 글씨)
-          Text(
-            query,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          // 로딩 인디케이터
-          const Center(
-            child: Column(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height - 200, // 화면 높이에서 상단 여백 제외
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            // 검색 입력창(읽기 전용)
+            Row(
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 8),
-                Text(
-                  '검색 중...',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                Expanded(
+                  child: TextField(
+                    controller: TextEditingController(text: query),
+                    style: const TextStyle(fontSize: 28, color: Colors.black),
+                    decoration: const InputDecoration(border: InputBorder.none),
+                    readOnly: true,
+                  ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          const Divider(thickness: 2, color: Colors.blue),
-        ],
+            const Divider(thickness: 1),
+            // 검색어(큰 글씨)
+            Text(
+              query,
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            // 로딩 인디케이터 - 남은 공간을 모두 차지
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    const Text(
+                      '검색 중...',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Divider(thickness: 2, color: Colors.blue),
+          ],
+        ),
       ),
     );
   }
@@ -490,6 +499,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildResultSection(String query, String aiResponse, int index) {
+    // JSON 파싱 시도
+    Map<String, dynamic>? parsedData;
+    try {
+      parsedData = jsonDecode(aiResponse);
+    } catch (e) {
+      print('JSON 파싱 실패: $e');
+      // JSON 파싱 실패 시 기존 방식으로 표시
+      return _buildFallbackResultSection(query, aiResponse, index);
+    }
+
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
@@ -512,24 +531,245 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ],
           ),
           const Divider(thickness: 1),
+
           // 검색어(큰 글씨)
           Text(
             query,
             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 24),
+
+          // 사전적 뜻
+          if (parsedData?['사전적_뜻'] != null) ...[
+            _buildSectionTitle('사전적 뜻'),
+            const SizedBox(height: 12),
+            _buildDictionaryMeanings(parsedData!['사전적_뜻']),
+            const SizedBox(height: 24),
+          ],
+
+          // 실제 뉘앙스
+          if (parsedData?['실제_뉘앙스'] != null) ...[
+            _buildSectionTitle('실제 뉘앙스'),
+            const SizedBox(height: 8),
+            Text(
+              parsedData!['실제_뉘앙스'],
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.5,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+
+          // 사용 상황
+          if (parsedData?['사용_상황'] != null) ...[
+            _buildSectionTitle('사용 상황'),
+            const SizedBox(height: 8),
+            Text(
+              parsedData!['사용_상황'],
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.5,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+
+          // 예문
+          if (parsedData?['예문'] != null) ...[
+            _buildSectionTitle('예문'),
+            const SizedBox(height: 12),
+            _buildExamples(parsedData!['예문']),
+            const SizedBox(height: 24),
+          ],
+
+          // 비슷한 표현
+          if (parsedData?['비슷한_표현'] != null) ...[
+            _buildSectionTitle('비슷한 표현'),
+            const SizedBox(height: 12),
+            _buildSimilarExpressions(parsedData!['비슷한_표현']),
+            const SizedBox(height: 16),
+          ],
+
+          const Divider(thickness: 2, color: Colors.blue),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFallbackResultSection(
+    String query,
+    String aiResponse,
+    int index,
+  ) {
+    return AutoScrollTag(
+      key: Key(index.toString()),
+      controller: _scrollController,
+      index: index,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: TextEditingController(text: query),
+                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  readOnly: true,
+                ),
+              ),
+            ],
+          ),
+          const Divider(thickness: 1),
+          Text(
+            query,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 4),
-          // 품사 정보 (AI 응답에서 추출하거나 기본값)
           const Text(
             '단어',
             style: TextStyle(fontSize: 18, color: Colors.black54),
           ),
-          // AI 응답 내용
           const SizedBox(height: 16),
           Text(aiResponse, style: const TextStyle(fontSize: 16, height: 1.5)),
           const SizedBox(height: 4),
           const Divider(thickness: 2, color: Colors.blue),
         ],
       ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    );
+  }
+
+  Widget _buildDictionaryMeanings(List<dynamic> meanings) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: meanings.map<Widget>((meaning) {
+        final partOfSpeech = (meaning as Map<String, dynamic>)['품사'] ?? '';
+        final definitions = (meaning as Map<String, dynamic>)['뜻'] ?? [];
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                partOfSpeech,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blue[700],
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...(definitions as List).map<Widget>(
+                (def) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• ', style: TextStyle(fontSize: 16)),
+                      Expanded(
+                        child: Text(
+                          def.toString(),
+                          style: const TextStyle(fontSize: 16, height: 1.4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildExamples(List<dynamic> examples) {
+    return Column(
+      children: examples.asMap().entries.map<Widget>((entry) {
+        final index = entry.key;
+        final example = entry.value as Map<String, dynamic>;
+        final original = example.values.first ?? '';
+        final translation = example.values.last ?? '';
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${index + 1}. $original',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                translation,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey[600],
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildSimilarExpressions(List<dynamic> expressions) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: expressions.map<Widget>((expr) {
+        final word = (expr as Map<String, dynamic>).keys.first ?? '';
+        final meaning = (expr as Map<String, dynamic>).values.first ?? '';
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                word,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                meaning.toString(),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }
