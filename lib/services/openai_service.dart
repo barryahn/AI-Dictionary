@@ -88,9 +88,9 @@ class OpenAIService {
 
       final prompt =
           '''
-다음 단어 "$word"에 대해 무조건 JSON 형식으로 아래 예시처럼 답변해주세요:
+다음 단어 "$word"에 대해 무조건 JSON 형식으로 아래 예시처럼 답변해주세요.
+만약 단어가 틀렸다면 올바른 단어로 수정해서 답변해주세요.
 
-{
   "단어": "light",
   "사전적_뜻": [
     {
@@ -147,7 +147,7 @@ class OpenAIService {
     {"단어": "단어2", "뜻": "뜻2"},
     {"단어": "단어3", "뜻": "뜻3"}
   ]
-}
+
 ''';
 
       final systemMessage = OpenAIChatCompletionChoiceMessageModel(

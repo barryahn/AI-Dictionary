@@ -172,6 +172,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         '영어',
         '한국어',
       );
+
+      // API 응답 결과 출력
+      print('=== API 응답 결과 (인덱스: $index) ===');
+      print('검색어: $query');
+      print('응답: $result');
+      print('=====================================');
+
       if (!mounted || !_isFetching) return; // 중단되었는지 확인
 
       print('상태 업데이트 시작: 로딩 해제 및 결과 표시');
@@ -422,12 +429,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ],
             ),
             const Divider(thickness: 1),
-            // 검색어(큰 글씨)
-            Text(
-              query,
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
             // 로딩 인디케이터 - 남은 공간을 모두 차지
             Expanded(
               child: Center(
@@ -478,12 +479,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ],
           ),
           const Divider(thickness: 1),
-          // 검색어(큰 글씨)
-          Text(
-            query,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
           // 에러 메시지
           Center(
             child: Text(
@@ -503,8 +498,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     Map<String, dynamic>? parsedData;
     try {
       parsedData = jsonDecode(aiResponse);
+      print('=== JSON 파싱 성공 (인덱스: $index) ===');
+      print('파싱된 데이터: $parsedData');
+      print('=====================================');
     } catch (e) {
-      print('JSON 파싱 실패: $e');
+      print('=== JSON 파싱 실패 (인덱스: $index) ===');
+      print('파싱 오류: $e');
+      print('원본 응답: $aiResponse');
+      print('=====================================');
       // JSON 파싱 실패 시 기존 방식으로 표시
       return _buildFallbackResultSection(query, aiResponse, index);
     }
@@ -532,12 +533,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ),
           const Divider(thickness: 1),
 
-          // 검색어(큰 글씨)
-          Text(
-            query,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 24),
+          // 검색어(큰 글씨) - JSON에서 단어 필드 사용
+          if (parsedData?['단어'] != null) ...[
+            Text(
+              parsedData?['단어'],
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+          ],
 
           // 사전적 뜻
           if (parsedData?['사전적_뜻'] != null) ...[
