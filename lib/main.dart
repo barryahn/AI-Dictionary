@@ -237,7 +237,10 @@ class _HomeTabState extends State<_HomeTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SearchResultScreen(),
+                    builder: (context) => SearchResultScreen(
+                      fromLanguage: selectedFromLanguage,
+                      toLanguage: selectedToLanguage,
+                    ),
                   ),
                 );
               },

@@ -11,7 +11,16 @@ import 'database/database_helper.dart';
 class SearchResultScreen extends StatefulWidget {
   final String? initialQuery;
   final SearchSession? searchSession;
-  const SearchResultScreen({super.key, this.initialQuery, this.searchSession});
+  final String fromLanguage;
+  final String toLanguage;
+
+  const SearchResultScreen({
+    super.key,
+    this.initialQuery,
+    this.searchSession,
+    this.fromLanguage = '영어',
+    this.toLanguage = '한국어',
+  });
 
   @override
   State<SearchResultScreen> createState() => _SearchResultScreenState();
@@ -169,8 +178,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     try {
       final result = await OpenAIService.getWordDefinitionSimple(
         query,
-        '영어',
-        '한국어',
+        widget.fromLanguage,
+        widget.toLanguage,
       );
 
       // API 응답 결과 출력
@@ -584,7 +593,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           if (parsedData?['대화_예시'] != null) ...[
             _buildSectionTitle('대화 예시'),
             const SizedBox(height: 12),
-            _buildConversationExamples(parsedData!['대화_예시']),
+            _buildConversationExamples(
+              parsedData!['대화_예시'],
+              widget.fromLanguage,
+              widget.toLanguage,
+            ),
             const SizedBox(height: 24),
           ],
 
@@ -702,13 +715,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildConversationExamples(List<dynamic> examples) {
+  Widget _buildConversationExamples(
+    List<dynamic> examples,
+    String fromLanguage,
+    String toLanguage,
+  ) {
     return Column(
       children: examples.asMap().entries.map<Widget>((entry) {
         final index = entry.key;
         final example = entry.value as Map<String, dynamic>;
-        final enLines = example['en'] as List<dynamic>;
-        final koLines = example['ko'] as List<dynamic>;
+        final enLines = example[fromLanguage] as List<dynamic>;
+        final koLines = example[toLanguage] as List<dynamic>;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 20),
