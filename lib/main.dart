@@ -128,7 +128,7 @@ class _HomeTabState extends State<_HomeTab> {
               children: <Widget>[
                 // 출발 언어 선택 드롭다운
                 SizedBox(
-                  width: 160,
+                  width: 140,
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(
                       isExpanded: true,
@@ -185,7 +185,7 @@ class _HomeTabState extends State<_HomeTab> {
                 const SizedBox(width: 20),
                 // 도착 언어 선택 드롭다운
                 SizedBox(
-                  width: 160,
+                  width: 140,
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(
                       isExpanded: true,
