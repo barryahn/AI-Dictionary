@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'dart:async';
 import 'search_result_screen.dart';
 import 'search_history_screen.dart';
 import 'profile_screen.dart';
@@ -104,6 +105,38 @@ class _HomeTabState extends State<_HomeTab> {
   String selectedFromLanguage = '영어';
   String selectedToLanguage = '한국어';
   final List<String> languages = ['영어', '한국어', '중국어', '스페인어', '프랑스어'];
+  StreamSubscription? _languageSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // LanguageService에서 저장된 언어 설정 불러오기
+    selectedFromLanguage = LanguageService.fromLanguage;
+    selectedToLanguage = LanguageService.toLanguage;
+
+    // 언어 변경 스트림 구독
+    _languageSubscription = LanguageService.languageStream.listen((languages) {
+      setState(() {
+        selectedFromLanguage = languages['fromLanguage']!;
+        selectedToLanguage = languages['toLanguage']!;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _languageSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _updateLanguages(String fromLang, String toLang) {
+    setState(() {
+      selectedFromLanguage = fromLang;
+      selectedToLanguage = toLang;
+    });
+    // LanguageService에 저장
+    LanguageService.setTranslationLanguages(fromLang, toLang);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,13 +187,7 @@ class _HomeTabState extends State<_HomeTab> {
                       value: selectedFromLanguage,
                       onChanged: (String? newValue) {
                         if (newValue == null) return;
-                        setState(() {
-                          if (newValue == selectedToLanguage) {
-                            // 같은 언어를 선택하면 서로 위치를 바꿈
-                            selectedToLanguage = selectedFromLanguage;
-                          }
-                          selectedFromLanguage = newValue;
-                        });
+                        _updateLanguages(newValue, selectedToLanguage);
                       },
                       buttonStyleData: const ButtonStyleData(
                         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -174,11 +201,7 @@ class _HomeTabState extends State<_HomeTab> {
                 const SizedBox(width: 20),
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      final temp = selectedFromLanguage;
-                      selectedFromLanguage = selectedToLanguage;
-                      selectedToLanguage = temp;
-                    });
+                    _updateLanguages(selectedToLanguage, selectedFromLanguage);
                   },
                   child: const Icon(Icons.arrow_forward_ios),
                 ),
@@ -211,13 +234,7 @@ class _HomeTabState extends State<_HomeTab> {
                       value: selectedToLanguage,
                       onChanged: (String? newValue) {
                         if (newValue == null) return;
-                        setState(() {
-                          if (newValue == selectedFromLanguage) {
-                            // 같은 언어를 선택하면 서로 위치를 바꿈
-                            selectedFromLanguage = selectedToLanguage;
-                          }
-                          selectedToLanguage = newValue;
-                        });
+                        _updateLanguages(selectedFromLanguage, newValue);
                       },
                       buttonStyleData: const ButtonStyleData(
                         padding: EdgeInsets.symmetric(horizontal: 16),

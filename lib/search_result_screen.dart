@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'services/search_history_service.dart';
 import 'services/openai_service.dart';
 import 'database/database_helper.dart';
+import 'services/language_service.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -39,9 +40,19 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
   int? _currentSessionId; // 현재 세션 ID를 저장
 
+  // 언어 선택을 위한 상태 변수들
+  late String _fromLanguage;
+  late String _toLanguage;
+  final List<String> _languages = ['영어', '한국어', '중국어', '스페인어', '프랑스어'];
+
   @override
   void initState() {
     super.initState();
+
+    // LanguageService에서 저장된 언어 설정 불러오기
+    _fromLanguage = LanguageService.fromLanguage;
+    _toLanguage = LanguageService.toLanguage;
+
     if (widget.searchSession != null) {
       _populateWithSessionData(widget.searchSession!);
     } else if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
@@ -178,8 +189,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     try {
       final result = await OpenAIService.getWordDefinitionSimple(
         query,
-        widget.fromLanguage,
-        widget.toLanguage,
+        _fromLanguage,
+        _toLanguage,
       );
 
       // API 응답 결과 출력
@@ -402,6 +413,113 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 출발 언어 드롭다운
+            Container(
+              height: 32,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey[300]!, width: 1),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _fromLanguage,
+                  items: _languages
+                      .where((lang) => lang != _toLanguage)
+                      .map(
+                        (lang) => DropdownMenuItem(
+                          value: lang,
+                          child: Text(
+                            lang,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      _updateLanguages(newValue, _toLanguage);
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  style: const TextStyle(color: Colors.black87),
+                  dropdownColor: Colors.white,
+                  elevation: 2,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Icon(
+                Icons.arrow_forward_ios,
+                size: 12,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(width: 6),
+            // 도착 언어 드롭다운
+            Container(
+              height: 32,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey[300]!, width: 1),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _toLanguage,
+                  items: _languages
+                      .where((lang) => lang != _fromLanguage)
+                      .map(
+                        (lang) => DropdownMenuItem(
+                          value: lang,
+                          child: Text(
+                            lang,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      _updateLanguages(_fromLanguage, newValue);
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  style: const TextStyle(color: Colors.black87),
+                  dropdownColor: Colors.white,
+                  elevation: 2,
+                ),
+              ),
+            ),
+          ],
+        ),
         elevation: 0,
         backgroundColor: Colors.white,
       ),
@@ -586,8 +704,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             const SizedBox(height: 12),
             _buildConversationExamples(
               parsedData['대화_예시'] as List<dynamic>,
-              widget.fromLanguage,
-              widget.toLanguage,
+              _fromLanguage,
+              _toLanguage,
             ),
             const SizedBox(height: 24),
           ],
@@ -940,5 +1058,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         );
       }).toList(),
     );
+  }
+
+  void _updateLanguages(String fromLang, String toLang) {
+    setState(() {
+      _fromLanguage = fromLang;
+      _toLanguage = toLang;
+    });
+    // LanguageService에 저장
+    LanguageService.setTranslationLanguages(fromLang, toLang);
   }
 }
