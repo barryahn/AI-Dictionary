@@ -18,82 +18,130 @@ class OpenAIService {
 
   static Future<String> getWordDefinitionSimple(
     String word,
-    String fromLanguage,
-    String toLanguage,
+    String l1,
+    String l2,
   ) async {
     try {
       await initialize();
 
+      // 언어 설정 확인을 위한 로그
+      print('=== OpenAI 서비스 언어 설정 ===');
+      print('검색 단어: $word');
+      print('출발 언어: $l1');
+      print('도착 언어: $l2');
+      print('==============================');
+
       final prompt =
           '''
-다음 단어 "$word"에 대해 무조건 JSON 형식으로 아래 예시처럼 답변해주세요.
-만약 단어가 틀렸다면 올바른 단어로 수정해서 답변해주세요.
-단어는 무조건 $fromLanguage로 변경해주세요.
-설명은 무조건 $toLanguage로 답변해주세요.
+다음 정보를 바탕으로 AI 언어사전 항목을 아래 예시와 같은 JSON 형식으로 생성해 주세요.
+나는 l1 언어를 구사하는 사람이고 l2 언어를 공부하고 있습니다.
 
-  "단어": "light",
+- 사용자의 모국어 (L1): $l1
+- 사용자의 공부할 언어 (L2): $l2
+- 사용자가 검색한 단어 (W): "$word"
+- isTheWordFromL2 변수: 검색한 단어가 l2 단어인지 여부
+
+[출력 형식 규칙]
+
+1. JSON은 반드시 유효한 형식으로 출력할 것. 예시A 또는 예시B 중 하나를 출력해야 합니다.
+2. 만약 적절한 검색 결과가 없다면 아래 규칙을 모두 무시하고 "검색 결과가 없습니다."라고 문자열만 출력할 것.
+3. "사전적_뜻" 항목에서는 해당 단어가 다른 품사와 번역이 있다면 모두 포함할 것.
+4. isTheWordFromL2가 true일 때, "뉘앙스" 항목은 $l2 단어 "$word"의 뉘앙스를 $l1로 간단히 설명. isTheWordFromL2가 false일 때, 번역된 단어들의 뉘앙스를 각각 설명.
+5. isTheWordFromL2가 true일 때, "회화에서의_사용" 항목은 실제 회화에서 언제 어떻게 해당 $l2 단어가 사용되는지 $l1로 설명. isTheWordFromL2가 false일 때, $l2로 번역된 단어들이 어떤 상황에서 사용되는지 설명.
+6. "대화_예시"는 총 최대 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성.
+7. "비슷한_표현"은 총 최대 4개. $l2 단어와 그 뜻을 $l1로 작성.
+
+
+**예시A: 아래는 l1가 영어이고 l2가 중국어일 때 중국어 단어 '照片'를 검색한 예시입니다.**
+
+{
+  "isTheWordFromL2": true, // 검색한 단어가 l2 단어인지 여부
+  "단어": "照片",
   "사전적_뜻": [
     {
-      "품사": "명사",
-      "뜻": [
-        "(해, 전등 등의) 빛, 광선, 빛살",
-        "(특정한 색깔, 특질을 지닌) 빛",
-        "발광체, (특히 전깃)불, (전)등"
-      ]
-    },
-    {
-      "품사": "형용사",
-      "뜻": [
-        "(날이) 밝은, (빛이) 밝은",
-        "(색깔이) 연한",
-        "가벼운, 무겁지 않은"
-      ]
-    },
-    {
-      "품사": "동사",
-      "뜻": [
-        "불을 붙이다",
-        "(불이) 붙다",
-        "(빛을) 비추다"
+      "품사": "Noun", //품사는 모국어로 작성
+      "번역": [
+        "photograph",
+        "photo",
+        "picture (taken with a camera)"
       ]
     }
   ],
-  "뉘앙스": "이 단어의 뉘앙스를 간단히 설명",
-  "회화에서의_사용": "실제로 회화에서 많이 쓰는 단어인지, 어떤 상황에서 쓰는지 설명",
+  "뉘앙스": "‘照片’ refers to a photo or picture taken with a camera, typically printed or digital. It is a neutral, standard word used for personal, professional, or casual contexts.",
   "대화_예시": [
-  {
-    "en": [
-      {"speaker": "A", "line": "Hi, can you turn on the light?"},
-      {"speaker": "B", "line": "Sure, it's a bit dark here."}
-    ],
-    "ko": [
-      {"speaker": "A", "line": "안녕, 불 좀 켜줄래?"},
-      {"speaker": "B", "line": "물론이지, 여기 좀 어둡네."}
-    ]
-  },
-  {
-    "en": [
-      {"speaker": "A", "line": "I love the morning light."},
-      {"speaker": "B", "line": "Yeah, it makes everything feel fresh."}
-    ],
-    "ko": [
-      {"speaker": "A", "line": "나는 아침 햇살이 정말 좋아."},
-      {"speaker": "B", "line": "맞아, 모든 게 상쾌하게 느껴져."}
-    ]
-  }
-],
+    {
+      "중국어": [
+        {"speaker": "A", "line": "你旅行的时候拍了照片吗？"},
+        {"speaker": "B", "line": "拍了，我拍了很多好看的照片！"}
+      ],
+      "영어": [
+        {"speaker": "A", "line": "Did you take any photos on your trip?"},
+        {"speaker": "B", "line": "Yes, I took a lot of great photos!"}
+      ]
+    },
+    ... 총 최대 2세트의 대화 예시를 작성하세요.
+  ],
   "비슷한_표현": [
-    {"단어": "단어1", "뜻": "뜻1"},
-    {"단어": "단어2", "뜻": "뜻2"},
-    {"단어": "단어3", "뜻": "뜻3"}
+    {"단어": "相片", "뜻": "photo (synonym; interchangeable in most contexts)"},
+    {"단어": "影像", "뜻": "image; often used in technical or formal settings"},
+    ... 총 최대 4개의 세트를 작성하세요.
   ]
+}
+
+**예시B: 아래는 l1가 영어이고 l2가 중국어일 때 영어 단어 'change'를 검색한 예시입니다.**
+
+{
+  "isTheWordFromL2": false, // 검색한 단어가 l2 단어인지 여부
+  "단어": "change",
+  "사전적_뜻": [
+    {
+      "품사": "Verb",
+      "번역": [
+        "改变 gǎibiàn",
+        "更换 gēnghuàn",
+        "换 huàn"
+      ]
+    },
+    {
+      "품사": "Noun",
+      "번역": [
+        "变化 biànhuà",
+        "零钱 língqián"
+      ]
+    }
+  ],
+  "뉘앙스": "The word ‘change’ in Chinese can vary depending on context. '改变' and '变化' often refer to more abstract or general changes (e.g., behavior, weather), while '更换' and '换' are for replacing things. '零钱' specifically means small coins or bills—spare change.",
+  "대화_예시": [
+    {
+      "중국어": [
+        {"speaker": "A", "line": "我想换工作。"},
+        {"speaker": "B", "line": "为什么？发生什么事了？"}
+      ],
+      "영어": [
+        {"speaker": "A", "line": "I want to change my job."},
+        {"speaker": "B", "line": "Why? What happened?"}
+      ]
+    },
+    ... 총 최대 2세트의 대화 예시를 포함하세요.
+  ],
+  "비슷한_표현": [
+    {"단어": "调整", "뜻": "adjust; used in situations involving fine-tuning or minor changes"},
+    {"단어": "转变", "뜻": "shift or transformation, especially in perspective or roles"},
+    ... 최소 2개, 최대 4개의 세트를 작성하세요.
+  ]
+}
 
 ''';
+
+      // 생성된 프롬프트 확인
+      print('=== 생성된 프롬프트 ===');
+      print(prompt);
+      print('======================');
 
       final systemMessage = OpenAIChatCompletionChoiceMessageModel(
         content: [
           OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            '당신은 언어 학습을 돕는 언어 전문가입니다. 명확하고 실용적인 설명을 제공해주세요.',
+            '당신은 언어 학습을 돕는 언어 전문가입니다. 명확하고 실용적인 설명을 제공해주세요. 모든 설명은 $l1로 답변하세요.',
           ),
         ],
         role: OpenAIChatMessageRole.system,
@@ -113,10 +161,10 @@ class OpenAIService {
       // the actual request.
       OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat
           .create(
-            model: "gpt-4.1-nano",
+            model: "gpt-4.1-mini",
             messages: requestMessages,
             temperature: 0.2,
-            maxTokens: 600,
+            maxTokens: 700,
           );
 
       return chatCompletion.choices.first.message.haveContent

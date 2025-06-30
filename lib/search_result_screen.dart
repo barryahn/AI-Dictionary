@@ -510,6 +510,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       print('=== JSON 파싱 성공 (인덱스: $index) ===');
       print('파싱된 데이터: $parsedData');
       print('=====================================');
+
+      // 파싱된 데이터가 Map인지 확인
+      if (parsedData is! Map<String, dynamic>) {
+        print('=== JSON 데이터가 Map이 아님 (인덱스: $index) ===');
+        return _buildFallbackResultSection(query, aiResponse, index);
+      }
     } catch (e) {
       print('=== JSON 파싱 실패 (인덱스: $index) ===');
       print('파싱 오류: $e');
@@ -543,43 +549,28 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           const Divider(thickness: 1),
 
           // 검색어(큰 글씨) - JSON에서 단어 필드 사용
-          if (parsedData?['단어'] != null) ...[
+          if (parsedData['단어'] != null) ...[
             Text(
-              parsedData?['단어'],
+              parsedData['단어'].toString(),
               style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
           ],
 
           // 사전적 뜻
-          if (parsedData?['사전적_뜻'] != null) ...[
+          if (parsedData['사전적_뜻'] != null && parsedData['사전적_뜻'] is List) ...[
             _buildSectionTitle('사전적 뜻'),
             const SizedBox(height: 12),
-            _buildDictionaryMeanings(parsedData!['사전적_뜻']),
+            _buildDictionaryMeanings(parsedData['사전적_뜻'] as List<dynamic>),
             const SizedBox(height: 24),
           ],
 
           // 뉘앙스
-          if (parsedData?['뉘앙스'] != null) ...[
+          if (parsedData['뉘앙스'] != null) ...[
             _buildSectionTitle('뉘앙스'),
             const SizedBox(height: 8),
             Text(
-              parsedData!['뉘앙스'],
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // 회화에서의 사용
-          if (parsedData?['회화에서의_사용'] != null) ...[
-            _buildSectionTitle('회화에서의 사용'),
-            const SizedBox(height: 8),
-            Text(
-              parsedData!['회화에서의_사용'],
+              parsedData['뉘앙스'].toString(),
               style: const TextStyle(
                 fontSize: 16,
                 height: 1.5,
@@ -590,11 +581,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ],
 
           // 대화 예시
-          if (parsedData?['대화_예시'] != null) ...[
+          if (parsedData['대화_예시'] != null && parsedData['대화_예시'] is List) ...[
             _buildSectionTitle('대화 예시'),
             const SizedBox(height: 12),
             _buildConversationExamples(
-              parsedData!['대화_예시'],
+              parsedData['대화_예시'] as List<dynamic>,
               widget.fromLanguage,
               widget.toLanguage,
             ),
@@ -602,10 +593,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ],
 
           // 비슷한 표현
-          if (parsedData?['비슷한_표현'] != null) ...[
+          if (parsedData['비슷한_표현'] != null && parsedData['비슷한_표현'] is List) ...[
             _buildSectionTitle('비슷한 표현'),
             const SizedBox(height: 12),
-            _buildSimilarExpressions(parsedData!['비슷한_표현']),
+            _buildSimilarExpressions(parsedData['비슷한_표현'] as List<dynamic>),
             const SizedBox(height: 16),
           ],
 
@@ -674,8 +665,21 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: meanings.map<Widget>((meaning) {
-        final partOfSpeech = (meaning as Map<String, dynamic>)['품사'] ?? '';
-        final definitions = (meaning as Map<String, dynamic>)['뜻'] ?? [];
+        // 안전한 타입 캐스팅
+        if (meaning is! Map<String, dynamic>) {
+          return const SizedBox.shrink();
+        }
+
+        final partOfSpeech = meaning['품사']?.toString() ?? '';
+        final definitionsRaw = meaning['번역'];
+
+        // definitions가 null이거나 리스트가 아닌 경우 처리
+        List<dynamic> definitions = [];
+        if (definitionsRaw is List) {
+          definitions = definitionsRaw;
+        } else if (definitionsRaw != null) {
+          definitions = [definitionsRaw.toString()];
+        }
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
@@ -691,7 +695,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              ...(definitions as List).map<Widget>(
+              ...definitions.map<Widget>(
                 (def) => Padding(
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Row(
@@ -723,9 +727,45 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return Column(
       children: examples.asMap().entries.map<Widget>((entry) {
         final index = entry.key;
-        final example = entry.value as Map<String, dynamic>;
-        final enLines = example[fromLanguage] as List<dynamic>;
-        final koLines = example[toLanguage] as List<dynamic>;
+        final exampleRaw = entry.value;
+
+        // 안전한 타입 캐스팅
+        if (exampleRaw is! Map<String, dynamic>) {
+          return const SizedBox.shrink();
+        }
+
+        final example = exampleRaw;
+
+        // 프롬프트에서 실제 언어명을 키로 사용하므로, 동적으로 찾기
+        List<dynamic> l2Lines = [];
+        List<dynamic> l1Lines = [];
+
+        // 모든 키를 확인하여 언어별 대화 찾기
+        example.forEach((key, value) {
+          if (value is List) {
+            // 키가 언어명인지 확인 (간단한 체크)
+            if (key.contains(toLanguage) ||
+                key.contains('중국어') ||
+                key.contains('영어') ||
+                key.contains('한국어')) {
+              l2Lines = value;
+            } else if (key.contains(fromLanguage) ||
+                key.contains('중국어') ||
+                key.contains('영어') ||
+                key.contains('한국어')) {
+              l1Lines = value;
+            }
+          }
+        });
+
+        // 만약 위 방법으로 찾지 못했다면, 첫 번째와 두 번째 리스트를 사용
+        if (l2Lines.isEmpty || l1Lines.isEmpty) {
+          final lists = example.values.where((value) => value is List).toList();
+          if (lists.length >= 2) {
+            l2Lines = lists[0] as List<dynamic>;
+            l1Lines = lists[1] as List<dynamic>;
+          }
+        }
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 20),
@@ -750,90 +790,106 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
                 child: Column(
                   children: [
-                    // 영어 대화
-                    ...enLines.map<Widget>((line) {
-                      final speaker = (line as Map<String, dynamic>)['speaker'];
-                      final text = (line as Map<String, dynamic>)['line'];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.blue[100],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                speaker,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.blue[700],
+                    // L2 언어 대화 (예: 중국어)
+                    if (l2Lines.isNotEmpty) ...[
+                      ...l2Lines.map<Widget>((line) {
+                        // 안전한 타입 캐스팅
+                        if (line is! Map<String, dynamic>) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final speaker = line['speaker']?.toString() ?? '';
+                        final text = line['line']?.toString() ?? '';
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  speaker,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.blue[700],
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                text,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black87,
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  text,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black87,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                    const Divider(height: 16, color: Colors.grey),
-                    // 한국어 대화
-                    ...koLines.map<Widget>((line) {
-                      final speaker = (line as Map<String, dynamic>)['speaker'];
-                      final text = (line as Map<String, dynamic>)['line'];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green[100],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                speaker,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.green[700],
+                            ],
+                          ),
+                        );
+                      }),
+                      const Divider(height: 16, color: Colors.grey),
+                    ],
+                    // L1 언어 대화 (예: 영어)
+                    if (l1Lines.isNotEmpty) ...[
+                      ...l1Lines.map<Widget>((line) {
+                        // 안전한 타입 캐스팅
+                        if (line is! Map<String, dynamic>) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final speaker = line['speaker']?.toString() ?? '';
+                        final text = line['line']?.toString() ?? '';
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  speaker,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.green[700],
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                text,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey[600],
-                                  fontStyle: FontStyle.italic,
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  text,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
                   ],
                 ),
               ),
@@ -849,8 +905,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       spacing: 8,
       runSpacing: 8,
       children: expressions.map<Widget>((expr) {
-        final word = (expr as Map<String, dynamic>)['단어'] ?? '';
-        final meaning = (expr as Map<String, dynamic>)['뜻'] ?? '';
+        // 안전한 타입 캐스팅
+        if (expr is! Map<String, dynamic>) {
+          return const SizedBox.shrink();
+        }
+
+        final word = expr['단어']?.toString() ?? '';
+        final meaning = expr['뜻']?.toString() ?? '';
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -871,7 +932,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
               ),
               Text(
-                meaning.toString(),
+                meaning,
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
@@ -879,61 +940,5 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         );
       }).toList(),
     );
-  }
-}
-
-// 예문(영어/한글) 표시용 위젯
-class _ExampleRow extends StatelessWidget {
-  final String en;
-  final String ko;
-  const _ExampleRow({required this.en, required this.ko});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(en, style: const TextStyle(fontSize: 16)),
-          Text(ko, style: const TextStyle(fontSize: 16, color: Colors.black54)),
-          const SizedBox(height: 4),
-        ],
-      ),
-    );
-  }
-}
-
-Future<String> getAIResponse(String word) async {
-  final apiKey = dotenv.env['OPENAI_API_KEY'];
-  final url = Uri.parse('https://api.openai.com/v1/chat/completions');
-
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $apiKey',
-    },
-    body: jsonEncode({
-      "model": "gpt-3.5-turbo",
-      "messages": [
-        {"role": "system", "content": "You are an English teacher."},
-        {
-          "role": "user",
-          "content":
-              "Give me a simple explanation and example sentences for the word '$word'.",
-        },
-      ],
-      "temperature": 0.7,
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    final decoded = jsonDecode(response.body);
-    final content = decoded['choices'][0]['message']['content'];
-    return content.trim();
-  } else {
-    print('Failed: ${response.body}');
-    return 'Sorry, I couldn\'t get a response.';
   }
 }
