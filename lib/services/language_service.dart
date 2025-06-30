@@ -49,15 +49,25 @@ class LanguageService {
     String fromLang,
     String toLang,
   ) async {
-    _fromLanguage = fromLang;
-    _toLanguage = toLang;
+    // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+    if (fromLang == toLang) {
+      final temp = _fromLanguage;
+      _fromLanguage = _toLanguage;
+      _toLanguage = temp;
+    } else {
+      _fromLanguage = fromLang;
+      _toLanguage = toLang;
+    }
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_fromLanguageKey, fromLang);
-    await prefs.setString(_toLanguageKey, toLang);
+    await prefs.setString(_fromLanguageKey, _fromLanguage);
+    await prefs.setString(_toLanguageKey, _toLanguage);
 
     // 언어 변경 알림 전송
-    _languageController.add({'fromLanguage': fromLang, 'toLanguage': toLang});
+    _languageController.add({
+      'fromLanguage': _fromLanguage,
+      'toLanguage': _toLanguage,
+    });
   }
 
   // 언어 이름 가져오기

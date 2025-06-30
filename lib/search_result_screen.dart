@@ -429,7 +429,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 child: DropdownButton<String>(
                   value: _fromLanguage,
                   items: _languages
-                      .where((lang) => lang != _toLanguage)
                       .map(
                         (lang) => DropdownMenuItem(
                           value: lang,
@@ -446,7 +445,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       .toList(),
                   onChanged: (String? newValue) {
                     if (newValue != null) {
-                      _updateLanguages(newValue, _toLanguage);
+                      // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+                      if (newValue == _toLanguage) {
+                        _updateLanguages(_toLanguage, _fromLanguage);
+                      } else {
+                        _updateLanguages(newValue, _toLanguage);
+                      }
                     }
                   },
                   icon: const Icon(
@@ -461,16 +465,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
             ),
             const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Icon(
-                Icons.arrow_forward_ios,
-                size: 12,
-                color: Colors.grey,
+            // 화살표 버튼 (언어 위치 바꾸기)
+            GestureDetector(
+              onTap: () {
+                _updateLanguages(_toLanguage, _fromLanguage);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 12,
+                  color: Colors.grey,
+                ),
               ),
             ),
             const SizedBox(width: 6),
@@ -487,7 +497,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 child: DropdownButton<String>(
                   value: _toLanguage,
                   items: _languages
-                      .where((lang) => lang != _fromLanguage)
                       .map(
                         (lang) => DropdownMenuItem(
                           value: lang,
@@ -504,7 +513,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       .toList(),
                   onChanged: (String? newValue) {
                     if (newValue != null) {
-                      _updateLanguages(_fromLanguage, newValue);
+                      // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+                      if (newValue == _fromLanguage) {
+                        _updateLanguages(_toLanguage, _fromLanguage);
+                      } else {
+                        _updateLanguages(_fromLanguage, newValue);
+                      }
                     }
                   },
                   icon: const Icon(
