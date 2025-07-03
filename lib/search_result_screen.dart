@@ -9,6 +9,7 @@ import 'services/openai_service.dart';
 import 'database/database_helper.dart';
 import 'services/language_service.dart';
 import 'theme/beige_colors.dart';
+import 'l10n/app_localizations.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -127,7 +128,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         _searchResults[index] = _buildErrorSection(
           _searchQueries.last,
           index,
-          message: "검색이 중단되었습니다.",
+          message: AppLocalizations.of(context).search_stopped,
         );
         print('검색 중단 완료: 인덱스 $index');
       }
@@ -279,8 +280,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             controller: _searchController,
             focusNode: _focusNode,
             style: const TextStyle(fontSize: 28, color: BeigeColors.text),
-            decoration: const InputDecoration(
-              hintText: '어떤 단어든 물어보세요',
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context).search_hint,
               hintStyle: TextStyle(
                 color: BeigeColors.textLight,
                 fontWeight: FontWeight.w400,
@@ -342,7 +343,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         child: Center(
           child: ElevatedButton.icon(
             icon: const Icon(Icons.stop_circle_outlined),
-            label: const Text('중단'),
+            label: Text(AppLocalizations.of(context).stop_search),
             onPressed: _stopFetching,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red[300],
@@ -375,7 +376,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     controller: _searchController..clear(),
                     focusNode: _focusNode,
                     decoration: InputDecoration(
-                      hintText: '추가 검색하기',
+                      hintText: AppLocalizations.of(context).additional_search,
                       hintStyle: TextStyle(
                         color: BeigeColors.text,
                         fontWeight: FontWeight.w500,
@@ -431,7 +432,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 child: DropdownButton2<String>(
                   isExpanded: true,
                   hint: Text(
-                    '언어',
+                    AppLocalizations.of(context).language,
                     style: TextStyle(
                       fontSize: 14,
                       color: BeigeColors.textLight,
@@ -509,7 +510,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 child: DropdownButton2<String>(
                   isExpanded: true,
                   hint: Text(
-                    '언어',
+                    AppLocalizations.of(context).language,
                     style: TextStyle(
                       fontSize: 14,
                       color: BeigeColors.textLight,
@@ -609,8 +610,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   children: [
                     CircularProgressIndicator(color: BeigeColors.textLight),
                     const SizedBox(height: 16),
-                    const Text(
-                      '검색 중...',
+                    Text(
+                      AppLocalizations.of(context).searching,
                       style: TextStyle(
                         fontSize: 18,
                         color: BeigeColors.textLight,
@@ -627,11 +628,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildErrorSection(
-    String query,
-    int index, {
-    String message = '검색 결과를 가져오는데 실패했습니다.',
-  }) {
+  Widget _buildErrorSection(String query, int index, {String? message}) {
+    final errorMessage = message ?? AppLocalizations.of(context).search_failed;
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
@@ -657,7 +655,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           // 에러 메시지
           Center(
             child: Text(
-              message,
+              errorMessage,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.red[400],
@@ -733,7 +731,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
           // 사전적 뜻
           if (parsedData['사전적_뜻'] != null && parsedData['사전적_뜻'] is List) ...[
-            _buildSectionTitle('사전적 뜻'),
+            _buildSectionTitle(AppLocalizations.of(context).dictionary_meaning),
             const SizedBox(height: 12),
             _buildDictionaryMeanings(parsedData['사전적_뜻'] as List<dynamic>),
             const SizedBox(height: 24),
@@ -741,7 +739,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
           // 뉘앙스
           if (parsedData['뉘앙스'] != null) ...[
-            _buildSectionTitle('뉘앙스'),
+            _buildSectionTitle(AppLocalizations.of(context).nuance),
             const SizedBox(height: 8),
             Text(
               parsedData['뉘앙스'].toString(),
@@ -756,7 +754,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
           // 대화 예시
           if (parsedData['대화_예시'] != null && parsedData['대화_예시'] is List) ...[
-            _buildSectionTitle('대화 예시'),
+            _buildSectionTitle(
+              AppLocalizations.of(context).conversation_examples,
+            ),
             const SizedBox(height: 12),
             _buildConversationExamples(
               parsedData['대화_예시'] as List<dynamic>,
@@ -768,7 +768,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
           // 비슷한 표현
           if (parsedData['비슷한_표현'] != null && parsedData['비슷한_표현'] is List) ...[
-            _buildSectionTitle('비슷한 표현'),
+            _buildSectionTitle(
+              AppLocalizations.of(context).similar_expressions,
+            ),
             const SizedBox(height: 12),
             _buildSimilarExpressions(parsedData['비슷한_표현'] as List<dynamic>),
             const SizedBox(height: 16),
@@ -960,7 +962,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '대화 ${index + 1}',
+                '${AppLocalizations.of(context).conversation} ${index + 1}',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

@@ -3,6 +3,7 @@ import 'services/search_history_service.dart';
 import 'database/database_helper.dart';
 import 'search_result_screen.dart';
 import 'theme/beige_colors.dart';
+import 'l10n/app_localizations.dart';
 
 class SearchHistoryScreen extends StatefulWidget {
   const SearchHistoryScreen({super.key});
@@ -40,9 +41,11 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('검색 기록을 불러오는데 실패했습니다: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
+        ),
+      );
     }
   }
 
@@ -50,13 +53,15 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
     try {
       await _searchHistoryService.deleteSearchSession(sessionId);
       await refresh(); // 삭제 후 새로고침
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('검색 기록이 삭제되었습니다')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).delete_history)),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('삭제에 실패했습니다: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
+        ),
+      );
     }
   }
 
@@ -64,16 +69,19 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('모든 기록 삭제'),
-        content: Text('모든 검색 기록을 삭제하시겠습니까?'),
+        title: Text(AppLocalizations.of(context).clear_all_history),
+        content: Text(AppLocalizations.of(context).clear_all_confirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('취소'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('삭제', style: TextStyle(color: Colors.red)),
+            child: Text(
+              AppLocalizations.of(context).delete,
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -83,13 +91,17 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
       try {
         await _searchHistoryService.clearAllSearchHistory();
         await refresh(); // 전체 삭제 후 새로고침
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('모든 검색 기록이 삭제되었습니다')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context).all_history_deleted),
+          ),
+        );
       } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('삭제에 실패했습니다: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
+          ),
+        );
       }
     }
   }
@@ -99,13 +111,19 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}일 전';
+      return AppLocalizations.of(
+        context,
+      ).getWithParams('days_ago', {'days': difference.inDays.toString()});
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}시간 전';
+      return AppLocalizations.of(
+        context,
+      ).getWithParams('hours_ago', {'hours': difference.inHours.toString()});
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}분 전';
+      return AppLocalizations.of(context).getWithParams('minutes_ago', {
+        'minutes': difference.inMinutes.toString(),
+      });
     } else {
-      return '방금 전';
+      return AppLocalizations.of(context).just_now;
     }
   }
 
@@ -118,7 +136,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: BeigeColors.text),
         title: Text(
-          '검색 기록',
+          AppLocalizations.of(context).search_history,
           style: TextStyle(
             color: BeigeColors.text,
             fontWeight: FontWeight.bold,
@@ -144,7 +162,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                   Icon(Icons.history, size: 64, color: BeigeColors.textLight),
                   const SizedBox(height: 16),
                   Text(
-                    '검색 기록이 없습니다',
+                    AppLocalizations.of(context).no_history,
                     style: TextStyle(
                       fontSize: 18,
                       color: BeigeColors.textLight,
@@ -152,7 +170,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '단어를 검색하면 여기에 기록됩니다',
+                    AppLocalizations.of(context).history_description,
                     style: TextStyle(
                       fontSize: 14,
                       color: BeigeColors.textLight,

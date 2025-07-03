@@ -7,6 +7,9 @@ class LanguageService {
   static const String _toLanguageKey = 'to_language';
   static const String korean = 'ko';
   static const String english = 'en';
+  static const String chinese = 'zh';
+  static const String french = 'fr';
+  static const String spanish = 'es';
 
   static String _currentLanguage = korean; // 기본값은 한국어
   static String _fromLanguage = '영어'; // 기본 출발 언어
@@ -37,11 +40,14 @@ class LanguageService {
 
   // 언어 변경
   static Future<void> setLanguage(String language) async {
-    if (language != korean && language != english) return;
+    if (![korean, english, chinese, french, spanish].contains(language)) return;
 
     _currentLanguage = language;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_languageKey, language);
+
+    // 앱 언어 변경 알림 전송
+    _languageController.add({'appLanguage': language});
   }
 
   // 번역 언어 변경
@@ -77,6 +83,12 @@ class LanguageService {
         return '한국어';
       case english:
         return 'English';
+      case chinese:
+        return '中文';
+      case french:
+        return 'Français';
+      case spanish:
+        return 'Español';
       default:
         return '한국어';
     }
@@ -89,6 +101,9 @@ class LanguageService {
   static List<Map<String, String>> get supportedLanguages => [
     {'code': korean, 'name': '한국어'},
     {'code': english, 'name': 'English'},
+    {'code': chinese, 'name': '中文'},
+    {'code': french, 'name': 'Français'},
+    {'code': spanish, 'name': 'Español'},
   ];
 
   // 번역 지원 언어 목록

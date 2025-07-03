@@ -9,6 +9,8 @@ import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'theme/beige_colors.dart';
+import 'l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 // 앱의 진입점
 void main() async {
@@ -18,14 +20,47 @@ void main() async {
   runApp(const MyApp());
 }
 
-// 앱의 기본 설정을 정의하는 StatelessWidget
-class MyApp extends StatelessWidget {
+// 앱의 기본 설정을 정의하는 StatefulWidget
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale _locale = Locale(LanguageService.currentLanguage);
+
+  @override
+  void initState() {
+    super.initState();
+    LanguageService.languageStream.listen((data) {
+      if (data.containsKey('appLanguage')) {
+        setState(() {
+          _locale = Locale(data['appLanguage']!);
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AI Dictionary',
+      locale: _locale,
+      supportedLocales: const [
+        Locale('ko'),
+        Locale('en'),
+        Locale('zh'),
+        Locale('fr'),
+        Locale('es'),
+      ],
+      localizationsDelegates: [
+        const AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: BeigeColors.primary,
@@ -80,7 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _widgetOptions = <Widget>[
       const _HomeTab(),
       SearchHistoryScreen(key: _historyScreenKey),
-      const Center(child: Text('Explore Page')),
       const ProfileScreen(),
     ];
   }
@@ -106,7 +140,6 @@ class _MyHomePageState extends State<MyHomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
         selectedItemColor: BeigeColors.text,
@@ -321,7 +354,7 @@ class _HomeTabState extends State<_HomeTab> {
                   child: TextField(
                     decoration: InputDecoration(
                       icon: Icon(Icons.search, color: BeigeColors.text),
-                      hintText: '검색할 단어를 입력해보세요',
+                      hintText: AppLocalizations.of(context).main_search_hint,
                       hintStyle: TextStyle(
                         color: BeigeColors.text,
                         fontSize: 16,

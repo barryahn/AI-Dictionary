@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'services/search_history_service.dart';
 import 'services/language_service.dart';
 import 'theme/beige_colors.dart';
+import 'l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -29,14 +30,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: BeigeColors.background,
       appBar: AppBar(
         backgroundColor: BeigeColors.background,
         elevation: 0,
-        title: const Text(
-          '프로필',
-          style: TextStyle(
+        title: Text(
+          loc.get('profile_title'),
+          style: const TextStyle(
             color: BeigeColors.text,
             fontWeight: FontWeight.bold,
           ),
@@ -51,18 +53,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   // 프로필 헤더
-                  _buildProfileHeader(),
+                  _buildProfileHeader(loc),
                   const SizedBox(height: 20),
-
                   // 설정 메뉴
-                  _buildSettingsMenu(),
+                  _buildSettingsMenu(loc),
                 ],
               ),
             ),
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(AppLocalizations loc) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -80,30 +81,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Icon(Icons.person, size: 40, color: BeigeColors.text),
           ),
           const SizedBox(height: 16),
-
           // 사용자 이름
-          const Text(
-            'AI Dictionary 사용자',
-            style: TextStyle(
+          Text(
+            loc.get('ai_dictionary_user'),
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: BeigeColors.text,
             ),
           ),
           const SizedBox(height: 4),
-
-          // 사용자 이메일
+          // 사용자 이메일 (예시)
           Text(
             'user@example.com',
             style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
           ),
           const SizedBox(height: 16),
-
           // 편집 버튼
           OutlinedButton(
             onPressed: () {
-              // 프로필 편집 기능
-              _showEditProfileDialog();
+              _showEditProfileDialog(loc);
             },
             style: OutlinedButton.styleFrom(
               foregroundColor: BeigeColors.text,
@@ -112,18 +109,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            child: const Text('프로필 편집'),
+            child: Text(loc.get('edit_profile')),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsMenu() {
+  Widget _buildSettingsMenu(AppLocalizations loc) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: BeigeColors.light,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -137,51 +134,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           _buildMenuItem(
             icon: Icons.language,
-            title: '앱 언어 설정',
+            title: loc.get('app_language_setting'),
             subtitle: LanguageService.currentLanguageName,
-            onTap: () => _showLanguageSettings(),
+            onTap: () => _showLanguageSettings(loc),
           ),
           _buildDivider(),
           _buildMenuItem(
             icon: Icons.notifications,
-            title: '알림 설정',
-            subtitle: '학습 알림 받기',
-            onTap: () => _showNotificationSettings(),
+            title: loc.get('notification_setting'),
+            subtitle: loc.get('notification_description'),
+            onTap: () => _showNotificationSettings(loc),
           ),
           _buildDivider(),
           _buildMenuItem(
             icon: Icons.dark_mode,
-            title: '다크 모드',
-            subtitle: '시스템 설정 따름',
-            onTap: () => _toggleDarkMode(),
+            title: loc.get('dark_mode'),
+            subtitle: loc.get('dark_mode_description'),
+            onTap: () => _toggleDarkMode(loc),
           ),
           _buildDivider(),
           _buildMenuItem(
             icon: Icons.storage,
-            title: '저장 공간',
-            subtitle: '검색 기록 관리',
-            onTap: () => _showStorageSettings(),
+            title: loc.get('storage'),
+            subtitle: loc.get('storage_description'),
+            onTap: () => _showStorageSettings(loc),
           ),
           _buildDivider(),
           _buildMenuItem(
             icon: Icons.help,
-            title: '도움말',
-            subtitle: '사용법 및 FAQ',
-            onTap: () => _showHelp(),
+            title: loc.get('help'),
+            subtitle: loc.get('help_description'),
+            onTap: () => _showHelp(loc),
           ),
           _buildDivider(),
           _buildMenuItem(
             icon: Icons.info,
-            title: '앱 정보',
-            subtitle: '버전 1.0.0',
-            onTap: () => _showAppInfo(),
+            title: loc.get('app_info'),
+            subtitle: loc.get('app_version'),
+            onTap: () => _showAppInfo(loc),
           ),
           _buildDivider(),
           _buildMenuItem(
             icon: Icons.logout,
-            title: '로그아웃',
-            subtitle: '계정에서 로그아웃',
-            onTap: () => _showLogoutDialog(),
+            title: loc.get('logout'),
+            subtitle: loc.get('logout_description'),
+            onTap: () => _showLogoutDialog(loc),
             textColor: Colors.red[400],
           ),
         ],
@@ -227,27 +224,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // 다이얼로그 및 설정 메서드들
-  void _showEditProfileDialog() {
+  void _showEditProfileDialog(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('프로필 편집'),
-        content: const Text('프로필 편집 기능은 준비 중입니다.'),
+        title: Text(loc.get('edit_profile')),
+        content: Text(loc.get('feature_coming_soon')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+            child: Text(loc.get('confirm')),
           ),
         ],
       ),
     );
   }
 
-  void _showLanguageSettings() {
+  void _showLanguageSettings(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('앱 언어 설정'),
+        title: Text(loc.get('app_language_setting')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: LanguageService.supportedLanguages.map((language) {
@@ -262,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 await LanguageService.setLanguage(language['code']!);
                 setState(() {}); // UI 업데이트
                 Navigator.pop(context);
-                _showLanguageChangedDialog(language['name']!);
+                _showLanguageChangedDialog(loc, language['name']!);
               },
             );
           }).toList(),
@@ -270,136 +267,140 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(loc.get('cancel')),
           ),
         ],
       ),
     );
   }
 
-  void _showLanguageChangedDialog(String languageName) {
+  void _showLanguageChangedDialog(AppLocalizations loc, String languageName) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('언어 변경'),
-        content: Text('앱 언어가 $languageName로 변경되었습니다.'),
+        title: Text(
+          loc.get('language_changed').replaceAll('{language}', languageName),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+            child: Text(loc.get('confirm')),
           ),
         ],
       ),
     );
   }
 
-  void _showNotificationSettings() {
+  void _showNotificationSettings(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('알림 설정'),
-        content: const Text('알림 설정 기능은 준비 중입니다.'),
+        title: Text(loc.get('notification_setting')),
+        content: Text(loc.get('feature_coming_soon')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+            child: Text(loc.get('confirm')),
           ),
         ],
       ),
     );
   }
 
-  void _toggleDarkMode() {
+  void _toggleDarkMode(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('다크 모드'),
-        content: const Text('다크 모드 기능은 준비 중입니다.'),
+        title: Text(loc.get('dark_mode')),
+        content: Text(loc.get('feature_coming_soon')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+            child: Text(loc.get('confirm')),
           ),
         ],
       ),
     );
   }
 
-  void _showStorageSettings() {
+  void _showStorageSettings(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('저장 공간'),
-        content: const Text('저장 공간 관리 기능은 준비 중입니다.'),
+        title: Text(loc.get('storage')),
+        content: Text(loc.get('feature_coming_soon')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+            child: Text(loc.get('confirm')),
           ),
         ],
       ),
     );
   }
 
-  void _showHelp() {
+  void _showHelp(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('도움말'),
-        content: const Text('도움말 기능은 준비 중입니다.'),
+        title: Text(loc.get('help')),
+        content: Text(loc.get('feature_coming_soon')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+            child: Text(loc.get('confirm')),
           ),
         ],
       ),
     );
   }
 
-  void _showAppInfo() {
+  void _showAppInfo(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('앱 정보'),
-        content: const Column(
+        title: Text(loc.get('app_info')),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('AI Dictionary'),
-            SizedBox(height: 8),
-            Text('버전: 1.0.0'),
-            SizedBox(height: 8),
-            Text('개발자: AI Dictionary Team'),
+            Text(loc.get('app_name')),
+            const SizedBox(height: 8),
+            Text('${loc.get('version')}: 1.0.0'),
+            const SizedBox(height: 8),
+            Text('${loc.get('developer')}: ${loc.get('ai_dictionary_team')}'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
+            child: Text(loc.get('confirm')),
           ),
         ],
       ),
     );
   }
 
-  void _showLogoutDialog() {
+  void _showLogoutDialog(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('정말 로그아웃하시겠습니까?'),
+        title: Text(loc.get('logout')),
+        content: Text(loc.get('logout_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(loc.get('cancel')),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               // 로그아웃 로직
             },
-            child: const Text('로그아웃', style: TextStyle(color: Colors.red)),
+            child: Text(
+              loc.get('logout'),
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
