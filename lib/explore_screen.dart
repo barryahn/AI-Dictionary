@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
 import 'search_result_screen.dart';
-
-// 베이지 색상 팔레트 정의
-class BeigeColors {
-  static const Color primary = Color(0xFFD4C4A8); // 메인 베이지
-  static const Color extraLight = Color(0xFFF9F5ED); // 더 밝은 베이지
-  static const Color light = Color(0xFFF5F1E8); // 밝은 베이지
-  static const Color dark = Color(0xFFB8A898); // 어두운 베이지
-  static const Color accent = Color(0xFFE8DCC0); // 액센트 베이지
-  static const Color text = Color(0xFF5D4E37); // 텍스트 색상
-  static const Color textLight = Color(0xFF8B7355); // 밝은 텍스트
-  static const Color background = Color(0xFFFDFBF7); // 배경색
-  static const Color divider = Color(0xFFE07A5F); // 구분선 색상
-  static const Color highlight = Color(0xFFE07A5F); // 하이라이트 색상
-}
+import 'theme/beige_colors.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});

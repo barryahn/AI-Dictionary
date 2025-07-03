@@ -3,24 +3,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'dart:async';
 import 'search_result_screen.dart';
 import 'search_history_screen.dart';
+import 'explore_screen.dart';
 import 'profile_screen.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-// 베이지 색상 팔레트 정의
-class BeigeColors {
-  static const Color primary = Color(0xFFD4C4A8); // 메인 베이지
-  static const Color extraLight = Color(0xFFF9F5ED); // 더 밝은 베이지
-  static const Color light = Color(0xFFF5F1E8); // 밝은 베이지
-  static const Color dark = Color(0xFFB8A898); // 어두운 베이지
-  static const Color accent = Color(0xFFE8DCC0); // 액센트 베이지
-  static const Color text = Color(0xFF5D4E37); // 텍스트 색상
-  static const Color textLight = Color(0xFF8B7355); // 밝은 텍스트
-  static const Color background = Color(0xFFFDFBF7); // 배경색
-  static const Color divider = Color(0xFFE07A5F); // 구분선 색상
-  static const Color highlight = Color(0xFFE07A5F); // 하이라이트 색상
-}
+import 'theme/beige_colors.dart';
 
 // 앱의 진입점
 void main() async {
@@ -92,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _widgetOptions = <Widget>[
       const _HomeTab(),
       SearchHistoryScreen(key: _historyScreenKey),
-      const Center(child: Text('Explore Page')),
+      const ExploreScreen(),
       const ProfileScreen(),
     ];
   }
