@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _widgetOptions = <Widget>[
       const _HomeTab(),
       SearchHistoryScreen(key: _historyScreenKey),
-      const ExploreScreen(),
+      const Center(child: Text('Explore Page')),
       const ProfileScreen(),
     ];
   }
