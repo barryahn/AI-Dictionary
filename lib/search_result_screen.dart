@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'services/search_history_service.dart';
 import 'services/openai_service.dart';
 import 'database/database_helper.dart';
@@ -437,25 +438,26 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // 출발 언어 드롭다운
-            Container(
-              height: 32,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: BeigeColors.background,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: BeigeColors.dark, width: 1),
-              ),
+            SizedBox(
+              width: 108,
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _fromLanguage,
+                child: DropdownButton2<String>(
+                  isExpanded: true,
+                  hint: Text(
+                    '언어',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: BeigeColors.textLight,
+                    ),
+                  ),
                   items: _languages
                       .map(
-                        (lang) => DropdownMenuItem(
-                          value: lang,
+                        (String item) => DropdownMenuItem<String>(
+                          value: item,
                           child: Text(
-                            lang,
+                            item,
                             style: const TextStyle(
-                              fontSize: 13,
+                              fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: BeigeColors.text,
                             ),
@@ -463,6 +465,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         ),
                       )
                       .toList(),
+                  value: _fromLanguage,
                   onChanged: (String? newValue) {
                     if (newValue != null) {
                       // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
@@ -473,14 +476,23 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       }
                     }
                   },
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 18,
-                    color: BeigeColors.textLight,
+                  buttonStyleData: ButtonStyleData(
+                    padding: const EdgeInsets.only(left: 12, right: 6),
+                    height: 36,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      color: BeigeColors.extraLight,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: BeigeColors.dark, width: 1),
+                    ),
                   ),
-                  style: const TextStyle(color: BeigeColors.text),
-                  dropdownColor: BeigeColors.background,
-                  elevation: 2,
+                  menuItemStyleData: const MenuItemStyleData(height: 48),
+                  dropdownStyleData: DropdownStyleData(
+                    decoration: BoxDecoration(
+                      color: BeigeColors.background,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -504,25 +516,26 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ),
             const SizedBox(width: 6),
             // 도착 언어 드롭다운
-            Container(
-              height: 32,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: BeigeColors.background,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: BeigeColors.dark, width: 1),
-              ),
+            SizedBox(
+              width: 108,
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _toLanguage,
+                child: DropdownButton2<String>(
+                  isExpanded: true,
+                  hint: Text(
+                    '언어',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: BeigeColors.textLight,
+                    ),
+                  ),
                   items: _languages
                       .map(
-                        (lang) => DropdownMenuItem(
-                          value: lang,
+                        (String item) => DropdownMenuItem<String>(
+                          value: item,
                           child: Text(
-                            lang,
+                            item,
                             style: const TextStyle(
-                              fontSize: 13,
+                              fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: BeigeColors.text,
                             ),
@@ -530,6 +543,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         ),
                       )
                       .toList(),
+                  value: _toLanguage,
                   onChanged: (String? newValue) {
                     if (newValue != null) {
                       // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
@@ -540,14 +554,23 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       }
                     }
                   },
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 18,
-                    color: BeigeColors.textLight,
+                  buttonStyleData: ButtonStyleData(
+                    padding: const EdgeInsets.only(left: 12, right: 6),
+                    height: 36,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      color: BeigeColors.extraLight,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: BeigeColors.dark, width: 1),
+                    ),
                   ),
-                  style: const TextStyle(color: BeigeColors.text),
-                  dropdownColor: BeigeColors.background,
-                  elevation: 2,
+                  menuItemStyleData: const MenuItemStyleData(height: 48),
+                  dropdownStyleData: DropdownStyleData(
+                    decoration: BoxDecoration(
+                      color: BeigeColors.background,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
               ),
             ),
