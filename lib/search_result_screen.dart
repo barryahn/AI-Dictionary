@@ -8,6 +8,20 @@ import 'services/openai_service.dart';
 import 'database/database_helper.dart';
 import 'services/language_service.dart';
 
+// 베이지 색상 팔레트 정의
+class BeigeColors {
+  static const Color primary = Color(0xFFD4C4A8); // 메인 베이지
+  static const Color extraLight = Color(0xFFF9F5ED); // 더 밝은 베이지
+  static const Color light = Color(0xFFF5F1E8); // 밝은 베이지
+  static const Color dark = Color(0xFFB8A898); // 어두운 베이지
+  static const Color accent = Color(0xFFE8DCC0); // 액센트 베이지
+  static const Color text = Color(0xFF5D4E37); // 텍스트 색상
+  static const Color textLight = Color(0xFF8B7355); // 밝은 텍스트
+  static const Color background = Color(0xFFFDFBF7); // 배경색
+  static const Color divider = Color(0xFFE07A5F); // 구분선 색상
+  static const Color highlight = Color(0xFFE07A5F); // 하이라이트 색상
+}
+
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
   final String? initialQuery;
@@ -276,14 +290,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           TextField(
             controller: _searchController,
             focusNode: _focusNode,
-            style: const TextStyle(fontSize: 28, color: Colors.black54),
+            style: const TextStyle(fontSize: 28, color: BeigeColors.text),
             decoration: const InputDecoration(
-              hintText: '무엇이든 물어보세요',
+              hintText: '어떤 단어든 물어보세요',
+              hintStyle: TextStyle(
+                color: BeigeColors.textLight,
+                fontWeight: FontWeight.w400,
+              ),
               border: InputBorder.none,
             ),
             onSubmitted: (_) => _startSearch(),
           ),
-          const Divider(thickness: 1),
+          Divider(thickness: 1, color: BeigeColors.dark),
         ],
       ),
     );
@@ -309,7 +327,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     if (!_isSearching) {
       // 초기 검색 화면의 하단 바
       bottomBar = BottomAppBar(
-        color: Colors.grey[200],
+        color: BeigeColors.light,
         height: 64,
         child: Row(
           children: [
@@ -319,11 +337,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               style: ElevatedButton.styleFrom(
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(2),
-                backgroundColor: Colors.white,
+                backgroundColor: BeigeColors.background,
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 2),
-                child: Icon(Icons.send, color: Colors.grey[800], size: 24),
+                child: Icon(Icons.send, color: BeigeColors.text, size: 24),
               ),
             ),
           ],
@@ -334,22 +352,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       print('검색 중 하단 바 표시');
       bottomBar = BottomAppBar(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.stop_circle_outlined),
-              label: const Text('중단'),
-              onPressed: _stopFetching,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
+          child: ElevatedButton.icon(
+            icon: const Icon(Icons.stop_circle_outlined),
+            label: const Text('중단'),
+            onPressed: _stopFetching,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red[300],
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
           ),
         ),
@@ -362,8 +375,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: BeigeColors.light,
               borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: BeigeColors.dark),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -372,10 +386,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   child: TextField(
                     controller: _searchController..clear(),
                     focusNode: _focusNode,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: '추가 검색하기',
+                      hintStyle: TextStyle(
+                        color: BeigeColors.text,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
                       border: InputBorder.none,
-                      icon: Icon(Icons.search),
+                      icon: Icon(Icons.search, color: BeigeColors.text),
                     ),
                     onSubmitted: (value) {
                       final newQuery = value.trim();
@@ -388,7 +407,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.send),
+                  icon: Icon(Icons.send, color: BeigeColors.text),
                   onPressed: () {
                     final newQuery = _searchController.text.trim();
                     if (newQuery.isNotEmpty) {
@@ -407,10 +426,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
+      backgroundColor: BeigeColors.background,
       appBar: AppBar(
+        foregroundColor: BeigeColors.text,
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.close, color: BeigeColors.text),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -419,11 +439,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             // 출발 언어 드롭다운
             Container(
               height: 32,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: BeigeColors.background,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey[300]!, width: 1),
+                border: Border.all(color: BeigeColors.dark, width: 1),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -437,7 +457,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: Colors.black87,
+                              color: BeigeColors.text,
                             ),
                           ),
                         ),
@@ -456,30 +476,29 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     size: 18,
-                    color: Colors.grey,
+                    color: BeigeColors.textLight,
                   ),
-                  style: const TextStyle(color: Colors.black87),
-                  dropdownColor: Colors.white,
+                  style: const TextStyle(color: BeigeColors.text),
+                  dropdownColor: BeigeColors.background,
                   elevation: 2,
                 ),
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 4),
             // 화살표 버튼 (언어 위치 바꾸기)
             GestureDetector(
               onTap: () {
                 _updateLanguages(_toLanguage, _fromLanguage);
               },
               child: Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.only(left: 10, right: 10),
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Icon(
                   Icons.arrow_forward_ios,
                   size: 12,
-                  color: Colors.grey,
+                  color: BeigeColors.text,
                 ),
               ),
             ),
@@ -487,11 +506,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             // 도착 언어 드롭다운
             Container(
               height: 32,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: BeigeColors.background,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey[300]!, width: 1),
+                border: Border.all(color: BeigeColors.dark, width: 1),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -505,7 +524,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: Colors.black87,
+                              color: BeigeColors.text,
                             ),
                           ),
                         ),
@@ -524,10 +543,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     size: 18,
-                    color: Colors.grey,
+                    color: BeigeColors.textLight,
                   ),
-                  style: const TextStyle(color: Colors.black87),
-                  dropdownColor: Colors.white,
+                  style: const TextStyle(color: BeigeColors.text),
+                  dropdownColor: BeigeColors.background,
                   elevation: 2,
                 ),
               ),
@@ -535,7 +554,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ],
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
       ),
       body: _isSearching ? _buildResultView() : _buildInitialView(),
       bottomNavigationBar: Padding(
@@ -562,31 +580,37 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 Expanded(
                   child: TextField(
                     controller: TextEditingController(text: query),
-                    style: const TextStyle(fontSize: 28, color: Colors.black),
+                    style: const TextStyle(
+                      fontSize: 28,
+                      color: BeigeColors.text,
+                    ),
                     decoration: const InputDecoration(border: InputBorder.none),
                     readOnly: true,
                   ),
                 ),
               ],
             ),
-            const Divider(thickness: 1),
+            Divider(thickness: 1, color: BeigeColors.dark),
             // 로딩 인디케이터 - 남은 공간을 모두 차지
             Expanded(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const CircularProgressIndicator(),
+                    CircularProgressIndicator(color: BeigeColors.textLight),
                     const SizedBox(height: 16),
                     const Text(
                       '검색 중...',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: BeigeColors.textLight,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            const Divider(thickness: 2, color: Colors.blue),
+            const Divider(thickness: 2, color: BeigeColors.divider),
           ],
         ),
       ),
@@ -612,23 +636,27 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
               ),
             ],
           ),
-          const Divider(thickness: 1),
+          Divider(thickness: 1, color: BeigeColors.dark),
           // 에러 메시지
           Center(
             child: Text(
               message,
-              style: const TextStyle(fontSize: 16, color: Colors.red),
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.red[400],
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           const SizedBox(height: 16),
-          const Divider(thickness: 2, color: Colors.blue),
+          Divider(thickness: 2, color: BeigeColors.divider),
         ],
       ),
     );
@@ -671,20 +699,24 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
               ),
             ],
           ),
-          const Divider(thickness: 1),
+          Divider(thickness: 1, color: BeigeColors.dark),
 
           // 검색어(큰 글씨) - JSON에서 단어 필드 사용
           if (parsedData['단어'] != null) ...[
             Text(
               parsedData['단어'].toString(),
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: BeigeColors.text,
+              ),
             ),
             const SizedBox(height: 24),
           ],
@@ -706,7 +738,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               style: const TextStyle(
                 fontSize: 16,
                 height: 1.5,
-                color: Colors.black87,
+                color: BeigeColors.text,
               ),
             ),
             const SizedBox(height: 24),
@@ -732,7 +764,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             const SizedBox(height: 16),
           ],
 
-          const Divider(thickness: 2, color: Colors.blue),
+          Divider(thickness: 2, color: BeigeColors.divider),
         ],
       ),
     );
@@ -756,27 +788,33 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: Colors.black),
+                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
               ),
             ],
           ),
-          const Divider(thickness: 1),
+          Divider(thickness: 1, color: BeigeColors.dark),
           Text(
             query,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: BeigeColors.text,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            aiResponse,
+            style: const TextStyle(
+              fontSize: 16,
+              height: 1.5,
+              color: BeigeColors.text,
+            ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            '단어',
-            style: TextStyle(fontSize: 18, color: Colors.black54),
-          ),
-          const SizedBox(height: 16),
-          Text(aiResponse, style: const TextStyle(fontSize: 16, height: 1.5)),
-          const SizedBox(height: 4),
-          const Divider(thickness: 2, color: Colors.blue),
+          Divider(thickness: 2, color: BeigeColors.divider),
         ],
       ),
     );
@@ -788,7 +826,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       style: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: Colors.black,
+        color: BeigeColors.text,
       ),
     );
   }
@@ -823,7 +861,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.blue[700],
+                  color: BeigeColors.highlight,
                 ),
               ),
               const SizedBox(height: 8),
@@ -833,11 +871,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('• ', style: TextStyle(fontSize: 16)),
+                      Text(
+                        '• ',
+                        style: TextStyle(fontSize: 16, color: BeigeColors.text),
+                      ),
                       Expanded(
                         child: Text(
                           def.toString(),
-                          style: const TextStyle(fontSize: 16, height: 1.4),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            height: 1.4,
+                            color: BeigeColors.text,
+                          ),
                         ),
                       ),
                     ],
@@ -909,16 +954,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.blue[700],
+                  color: BeigeColors.highlight,
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: BeigeColors.background,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[300]!),
+                  border: Border.all(color: BeigeColors.dark),
                 ),
                 child: Column(
                   children: [
@@ -952,7 +997,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.blue[700],
+                                    color: BeigeColors.text,
                                   ),
                                 ),
                               ),
@@ -962,7 +1007,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   text,
                                   style: const TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black87,
+                                    color: BeigeColors.text,
                                   ),
                                 ),
                               ),
@@ -970,7 +1015,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           ),
                         );
                       }),
-                      const Divider(height: 16, color: Colors.grey),
+                      Divider(height: 16, color: BeigeColors.dark),
                     ],
                     // L1 언어 대화 (예: 영어)
                     if (l1Lines.isNotEmpty) ...[
@@ -1002,7 +1047,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.green[700],
+                                    color: BeigeColors.text,
                                   ),
                                 ),
                               ),
@@ -1012,7 +1057,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   text,
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.grey[600],
+                                    color: BeigeColors.text,
                                     fontStyle: FontStyle.italic,
                                   ),
                                 ),
@@ -1048,9 +1093,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: BeigeColors.background,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: BeigeColors.dark),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1058,14 +1103,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Text(
                 word,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: BeigeColors.text,
                 ),
               ),
               Text(
                 meaning,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: const TextStyle(fontSize: 12, color: BeigeColors.text),
               ),
             ],
           ),

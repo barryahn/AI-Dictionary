@@ -2,6 +2,20 @@ import 'package:flutter/material.dart';
 import 'services/search_history_service.dart';
 import 'services/language_service.dart';
 
+// 베이지 색상 팔레트 정의
+class BeigeColors {
+  static const Color primary = Color(0xFFD4C4A8); // 메인 베이지
+  static const Color extraLight = Color(0xFFF9F5ED); // 더 밝은 베이지
+  static const Color light = Color(0xFFF5F1E8); // 밝은 베이지
+  static const Color dark = Color(0xFFB8A898); // 어두운 베이지
+  static const Color accent = Color(0xFFE8DCC0); // 액센트 베이지
+  static const Color text = Color(0xFF5D4E37); // 텍스트 색상
+  static const Color textLight = Color(0xFF8B7355); // 밝은 텍스트
+  static const Color background = Color(0xFFFDFBF7); // 배경색
+  static const Color divider = Color(0xFFE07A5F); // 구분선 색상
+  static const Color highlight = Color(0xFFE07A5F); // 하이라이트 색상
+}
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -29,18 +43,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: BeigeColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: BeigeColors.background,
         elevation: 0,
         title: const Text(
           '프로필',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: BeigeColors.text,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: BeigeColors.text),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(color: BeigeColors.textLight),
+            )
           : SingleChildScrollView(
               child: Column(
                 children: [
@@ -60,12 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
+      decoration: BoxDecoration(color: BeigeColors.background),
       child: Column(
         children: [
           // 프로필 이미지
@@ -73,24 +87,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.blue[100],
+              color: BeigeColors.accent,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person, size: 40, color: Colors.blue),
+            child: Icon(Icons.person, size: 40, color: BeigeColors.text),
           ),
           const SizedBox(height: 16),
 
           // 사용자 이름
           const Text(
             'AI Dictionary 사용자',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: BeigeColors.text,
+            ),
           ),
           const SizedBox(height: 4),
 
           // 사용자 이메일
           Text(
             'user@example.com',
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
           ),
           const SizedBox(height: 16),
 
@@ -101,6 +119,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _showEditProfileDialog();
             },
             style: OutlinedButton.styleFrom(
+              foregroundColor: BeigeColors.text,
+              side: BorderSide(color: BeigeColors.dark),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -114,13 +134,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildSettingsMenu() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: BeigeColors.dark.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -175,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: '로그아웃',
             subtitle: '계정에서 로그아웃',
             onTap: () => _showLogoutDialog(),
-            textColor: Colors.red,
+            textColor: Colors.red[400],
           ),
         ],
       ),
@@ -190,25 +210,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Color? textColor,
   }) {
     return ListTile(
-      leading: Icon(icon, color: textColor ?? Colors.grey[700]),
+      leading: Icon(icon, color: textColor ?? BeigeColors.text),
       title: Text(
         title,
-        style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+        style: TextStyle(
+          color: textColor ?? BeigeColors.text,
+          fontWeight: FontWeight.w500,
+        ),
       ),
       subtitle: Text(
         subtitle,
         style: TextStyle(
-          color: textColor?.withOpacity(0.7) ?? Colors.grey[600],
+          color: textColor?.withValues(alpha: 0.7) ?? BeigeColors.text,
           fontSize: 12,
         ),
       ),
-      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+      trailing: Icon(Icons.chevron_right, color: BeigeColors.textLight),
       onTap: onTap,
     );
   }
 
   Widget _buildDivider() {
-    return const Divider(height: 1, indent: 56);
+    return Divider(
+      height: 1,
+      indent: 56,
+      endIndent: 20,
+      color: BeigeColors.dark.withValues(alpha: 0.4),
+    );
   }
 
   // 다이얼로그 및 설정 메서드들

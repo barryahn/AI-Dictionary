@@ -8,6 +8,20 @@ import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+// 베이지 색상 팔레트 정의
+class BeigeColors {
+  static const Color primary = Color(0xFFD4C4A8); // 메인 베이지
+  static const Color extraLight = Color(0xFFF9F5ED); // 더 밝은 베이지
+  static const Color light = Color(0xFFF5F1E8); // 밝은 베이지
+  static const Color dark = Color(0xFFB8A898); // 어두운 베이지
+  static const Color accent = Color(0xFFE8DCC0); // 액센트 베이지
+  static const Color text = Color(0xFF5D4E37); // 텍스트 색상
+  static const Color textLight = Color(0xFF8B7355); // 밝은 텍스트
+  static const Color background = Color(0xFFFDFBF7); // 배경색
+  static const Color divider = Color(0xFFE07A5F); // 구분선 색상
+  static const Color highlight = Color(0xFFE07A5F); // 하이라이트 색상
+}
+
 // 앱의 진입점
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -23,9 +37,32 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'AI Dictionary',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: BeigeColors.primary,
+          brightness: Brightness.light,
+        ),
+        scaffoldBackgroundColor: BeigeColors.background,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: BeigeColors.background,
+          foregroundColor: BeigeColors.text,
+          elevation: 0,
+          titleTextStyle: TextStyle(
+            color: BeigeColors.text,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: BeigeColors.background,
+          selectedItemColor: BeigeColors.text,
+          unselectedItemColor: BeigeColors.textLight,
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: BeigeColors.text),
+          bodyMedium: TextStyle(color: BeigeColors.text),
+        ),
       ),
       home: const MyHomePage(title: 'AI Dictionary'),
     );
@@ -73,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: BeigeColors.background,
       body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -83,11 +121,12 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: BeigeColors.text,
+        unselectedItemColor: BeigeColors.textLight,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
+        backgroundColor: BeigeColors.background,
       ),
     );
   }
@@ -141,13 +180,16 @@ class _HomeTabState extends State<_HomeTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: BeigeColors.background,
       appBar: AppBar(
         title: const Text(
           'AI Dictionary',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: BeigeColors.text,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: BeigeColors.background,
         elevation: 0,
       ),
       body: Padding(
@@ -173,13 +215,15 @@ class _HomeTabState extends State<_HomeTab> {
                         ),
                       ),
                       items: languages
-                          // .where((item) => item != selectedToLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
                           .map(
                             (String item) => DropdownMenuItem<String>(
                               value: item,
                               child: Text(
                                 item,
-                                style: const TextStyle(fontSize: 20),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: BeigeColors.text,
+                                ),
                               ),
                             ),
                           )
@@ -195,6 +239,12 @@ class _HomeTabState extends State<_HomeTab> {
                         width: 140,
                       ),
                       menuItemStyleData: const MenuItemStyleData(height: 40),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          color: BeigeColors.light,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -203,7 +253,7 @@ class _HomeTabState extends State<_HomeTab> {
                   onTap: () {
                     _updateLanguages(selectedToLanguage, selectedFromLanguage);
                   },
-                  child: const Icon(Icons.arrow_forward_ios),
+                  child: Icon(Icons.arrow_forward_ios, color: BeigeColors.text),
                 ),
                 const SizedBox(width: 20),
                 // 도착 언어 선택 드롭다운
@@ -226,7 +276,10 @@ class _HomeTabState extends State<_HomeTab> {
                               value: item,
                               child: Text(
                                 item,
-                                style: const TextStyle(fontSize: 20),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: BeigeColors.text,
+                                ),
                               ),
                             ),
                           )
@@ -242,6 +295,12 @@ class _HomeTabState extends State<_HomeTab> {
                         width: 140,
                       ),
                       menuItemStyleData: const MenuItemStyleData(height: 40),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          color: BeigeColors.light,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -263,15 +322,23 @@ class _HomeTabState extends State<_HomeTab> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
+                  color: BeigeColors.light,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: const IgnorePointer(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 4,
+                ),
+                child: IgnorePointer(
                   child: TextField(
                     decoration: InputDecoration(
-                      icon: Icon(Icons.search),
-                      hintText: 'Search',
+                      icon: Icon(Icons.search, color: BeigeColors.text),
+                      hintText: '검색할 단어를 입력해보세요',
+                      hintStyle: TextStyle(
+                        color: BeigeColors.text,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                       border: InputBorder.none,
                     ),
                   ),

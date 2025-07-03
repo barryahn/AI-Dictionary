@@ -3,6 +3,20 @@ import 'services/search_history_service.dart';
 import 'database/database_helper.dart';
 import 'search_result_screen.dart';
 
+// 베이지 색상 팔레트 정의
+class BeigeColors {
+  static const Color primary = Color(0xFFD4C4A8); // 메인 베이지
+  static const Color extraLight = Color(0xFFF9F5ED); // 더 밝은 베이지
+  static const Color light = Color(0xFFF5F1E8); // 밝은 베이지
+  static const Color dark = Color(0xFFB8A898); // 어두운 베이지
+  static const Color accent = Color(0xFFE8DCC0); // 액센트 베이지
+  static const Color text = Color(0xFF5D4E37); // 텍스트 색상
+  static const Color textLight = Color(0xFF8B7355); // 밝은 텍스트
+  static const Color background = Color(0xFFFDFBF7); // 배경색
+  static const Color divider = Color(0xFFE07A5F); // 구분선 색상
+  static const Color highlight = Color(0xFFE07A5F); // 하이라이트 색상
+}
+
 class SearchHistoryScreen extends StatefulWidget {
   const SearchHistoryScreen({super.key});
 
@@ -111,78 +125,91 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: BeigeColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: BeigeColors.background,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: BeigeColors.text),
         title: Text(
           '검색 기록',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: BeigeColors.text,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           if (_searchSessions.isNotEmpty)
             IconButton(
-              icon: Icon(Icons.delete_sweep, color: Colors.red),
+              icon: Icon(Icons.delete_sweep, color: Colors.red[400]),
               onPressed: _clearAllHistory,
             ),
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(color: BeigeColors.textLight),
+            )
           : _searchSessions.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.history, size: 64, color: Colors.grey[400]),
-                  SizedBox(height: 16),
+                  Icon(Icons.history, size: 64, color: BeigeColors.textLight),
+                  const SizedBox(height: 16),
                   Text(
                     '검색 기록이 없습니다',
-                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: BeigeColors.textLight,
+                    ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     '단어를 검색하면 여기에 기록됩니다',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: BeigeColors.textLight,
+                    ),
                   ),
                 ],
               ),
             )
           : ListView.builder(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               itemCount: _searchSessions.length,
               itemBuilder: (context, index) {
                 final session = _searchSessions[index];
                 return Card(
-                  margin: EdgeInsets.only(bottom: 12),
+                  margin: const EdgeInsets.only(bottom: 12),
                   elevation: 2,
+                  color: BeigeColors.extraLight,
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(16),
+                    contentPadding: const EdgeInsets.all(16),
                     title: Text(
                       session.sessionName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: BeigeColors.text,
                       ),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           _formatDateTime(session.createdAt),
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: BeigeColors.textLight,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          '검색한 단어: ${session.cards.map((card) => card.query).join(', ')}',
+                          session.cards.map((card) => card.query).join(', '),
                           style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blue[600],
+                            fontSize: 14,
+                            color: BeigeColors.highlight,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -192,26 +219,30 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blue[50],
+                            color: BeigeColors.accent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             '${session.cards.length}개',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.blue[700],
+                              color: BeigeColors.text,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red, size: 20),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red[400],
+                            size: 20,
+                          ),
                           onPressed: () => _deleteSession(session.id!),
                         ),
                       ],
