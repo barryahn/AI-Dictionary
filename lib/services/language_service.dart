@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import '../l10n/app_localizations.dart';
 
 class LanguageService {
   static const String _languageKey = 'app_language';
@@ -106,7 +107,18 @@ class LanguageService {
     {'code': spanish, 'name': 'Español'},
   ];
 
-  // 번역 지원 언어 목록
+  // 번역 지원 언어 목록 (다국어 지원)
+  static List<Map<String, String>> getLocalizedTranslationLanguages(
+    AppLocalizations loc,
+  ) => [
+    {'code': '영어', 'name': loc.english},
+    {'code': '한국어', 'name': loc.korean},
+    {'code': '중국어', 'name': loc.chinese},
+    {'code': '스페인어', 'name': loc.spanish},
+    {'code': '프랑스어', 'name': loc.french},
+  ];
+
+  // 번역 지원 언어 목록 (기본 - 하위 호환성)
   static List<String> get translationLanguages => [
     '영어',
     '한국어',

@@ -164,7 +164,6 @@ class _HomeTabState extends State<_HomeTab> {
   // 언어 선택을 위한 상태 변수들
   String selectedFromLanguage = '영어';
   String selectedToLanguage = '한국어';
-  final List<String> languages = ['영어', '한국어', '중국어', '스페인어', '프랑스어'];
   StreamSubscription? _languageSubscription;
 
   @override
@@ -235,20 +234,24 @@ class _HomeTabState extends State<_HomeTab> {
                           color: Theme.of(context).hintColor,
                         ),
                       ),
-                      items: languages
-                          .map(
-                            (String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  color: BeigeColors.text,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      items:
+                          LanguageService.getLocalizedTranslationLanguages(
+                                AppLocalizations.of(context),
+                              )
+                              .map(
+                                (Map<String, String> item) =>
+                                    DropdownMenuItem<String>(
+                                      value: item['code']!,
+                                      child: Text(
+                                        item['name']!,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          color: BeigeColors.text,
+                                        ),
+                                      ),
+                                    ),
+                              )
+                              .toList(),
                       value: selectedFromLanguage,
                       onChanged: (String? newValue) {
                         if (newValue == null) return;
@@ -290,21 +293,25 @@ class _HomeTabState extends State<_HomeTab> {
                           color: Theme.of(context).hintColor,
                         ),
                       ),
-                      items: languages
-                          // .where((item) => item != selectedFromLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
-                          .map(
-                            (String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  color: BeigeColors.text,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      items:
+                          LanguageService.getLocalizedTranslationLanguages(
+                                AppLocalizations.of(context),
+                              )
+                              // .where((item) => item != selectedFromLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
+                              .map(
+                                (Map<String, String> item) =>
+                                    DropdownMenuItem<String>(
+                                      value: item['code']!,
+                                      child: Text(
+                                        item['name']!,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          color: BeigeColors.text,
+                                        ),
+                                      ),
+                                    ),
+                              )
+                              .toList(),
                       value: selectedToLanguage,
                       onChanged: (String? newValue) {
                         if (newValue == null) return;

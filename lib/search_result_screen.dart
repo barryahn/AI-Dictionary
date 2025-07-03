@@ -46,7 +46,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   // 언어 선택을 위한 상태 변수들
   late String _fromLanguage;
   late String _toLanguage;
-  final List<String> _languages = ['영어', '한국어', '중국어', '스페인어', '프랑스어'];
 
   @override
   void initState() {
@@ -438,21 +437,25 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       color: BeigeColors.textLight,
                     ),
                   ),
-                  items: _languages
-                      .map(
-                        (String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: BeigeColors.text,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
+                  items:
+                      LanguageService.getLocalizedTranslationLanguages(
+                            AppLocalizations.of(context),
+                          )
+                          .map(
+                            (Map<String, String> item) =>
+                                DropdownMenuItem<String>(
+                                  value: item['code']!,
+                                  child: Text(
+                                    item['name']!,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: BeigeColors.text,
+                                    ),
+                                  ),
+                                ),
+                          )
+                          .toList(),
                   value: _fromLanguage,
                   onChanged: (String? newValue) {
                     if (newValue != null) {
@@ -516,21 +519,25 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       color: BeigeColors.textLight,
                     ),
                   ),
-                  items: _languages
-                      .map(
-                        (String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: BeigeColors.text,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
+                  items:
+                      LanguageService.getLocalizedTranslationLanguages(
+                            AppLocalizations.of(context),
+                          )
+                          .map(
+                            (Map<String, String> item) =>
+                                DropdownMenuItem<String>(
+                                  value: item['code']!,
+                                  child: Text(
+                                    item['name']!,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: BeigeColors.text,
+                                    ),
+                                  ),
+                                ),
+                          )
+                          .toList(),
                   value: _toLanguage,
                   onChanged: (String? newValue) {
                     if (newValue != null) {

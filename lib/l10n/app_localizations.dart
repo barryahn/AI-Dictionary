@@ -35,6 +35,11 @@ class AppLocalizations {
       'from_language': '출발 언어',
       'to_language': '도착 언어',
       'language': '언어',
+      'english': '영어',
+      'korean': '한국어',
+      'chinese': '중국어',
+      'spanish': '스페인어',
+      'french': '프랑스어',
 
       // 검색 결과
       'dictionary_meaning': '사전적 뜻',
@@ -143,6 +148,11 @@ class AppLocalizations {
       'from_language': 'From',
       'to_language': 'To',
       'language': 'Language',
+      'english': 'English',
+      'korean': 'Korean',
+      'chinese': 'Chinese',
+      'spanish': 'Spanish',
+      'french': 'French',
 
       // Search Results
       'dictionary_meaning': 'Dictionary Meaning',
@@ -253,6 +263,11 @@ class AppLocalizations {
       'from_language': '从',
       'to_language': '到',
       'language': '语言',
+      'english': '英语',
+      'korean': '韩语',
+      'chinese': '中文',
+      'spanish': '西班牙语',
+      'french': '法语',
 
       // 搜索结果
       'dictionary_meaning': '词典含义',
@@ -361,6 +376,11 @@ class AppLocalizations {
       'from_language': 'De',
       'to_language': 'À',
       'language': 'Langue',
+      'english': 'Anglais',
+      'korean': 'Coréen',
+      'chinese': 'Chinois',
+      'spanish': 'Espagnol',
+      'french': 'Français',
 
       // Résultats de recherche
       'dictionary_meaning': 'Signification du dictionnaire',
@@ -474,6 +494,11 @@ class AppLocalizations {
       'from_language': 'De',
       'to_language': 'A',
       'language': 'Idioma',
+      'english': 'Inglés',
+      'korean': 'Coreano',
+      'chinese': 'Chino',
+      'spanish': 'Español',
+      'french': 'Francés',
 
       // Resultados de búsqueda
       'dictionary_meaning': 'Significado del diccionario',
@@ -593,6 +618,11 @@ class AppLocalizations {
   String get from_language => get('from_language');
   String get to_language => get('to_language');
   String get language => get('language');
+  String get english => get('english');
+  String get korean => get('korean');
+  String get chinese => get('chinese');
+  String get spanish => get('spanish');
+  String get french => get('french');
 
   // 검색 결과
   String get dictionary_meaning => get('dictionary_meaning');
