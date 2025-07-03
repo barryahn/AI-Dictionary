@@ -280,6 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context) => AlertDialog(
         title: Text(
           loc.get('language_changed').replaceAll('{language}', languageName),
+          style: const TextStyle(fontSize: 16),
         ),
         actions: [
           TextButton(
