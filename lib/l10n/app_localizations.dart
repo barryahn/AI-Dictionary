@@ -38,6 +38,7 @@ class AppLocalizations {
       'english': '영어',
       'korean': '한국어',
       'chinese': '중국어',
+      'taiwanese': '대만어',
       'spanish': '스페인어',
       'french': '프랑스어',
 
@@ -151,6 +152,7 @@ class AppLocalizations {
       'english': 'English',
       'korean': 'Korean',
       'chinese': 'Chinese',
+      'taiwanese': 'Taiwanese',
       'spanish': 'Spanish',
       'french': 'French',
 
@@ -266,6 +268,7 @@ class AppLocalizations {
       'english': '英语',
       'korean': '韩语',
       'chinese': '中文',
+      'taiwanese': '繁体中文',
       'spanish': '西班牙语',
       'french': '法语',
 
@@ -352,6 +355,120 @@ class AppLocalizations {
       'hours_ago': '{hours}小时前',
       'days_ago': '{days}天前',
     },
+    'zh-TW': {
+      // 應用標題
+      'app_title': 'AI 辭典',
+
+      // 導航
+      'home': '首頁',
+      'history': '歷史',
+      'explore': '探索',
+      'profile': '個人',
+
+      // 搜尋相關
+      'search_hint': '詢問任何單字',
+      'search_button': '搜尋',
+      'additional_search': '繼續搜尋',
+      'searching': '搜尋中...',
+      'stop_search': '停止',
+      'search_failed': '獲取搜尋結果失敗。',
+      'search_stopped': '搜尋已停止。',
+      'main_search_hint': '輸入要搜尋的單字',
+
+      // 語言選擇
+      'from_language': '從',
+      'to_language': '到',
+      'language': '語言',
+      'english': '英語',
+      'korean': '韓語',
+      'chinese': '簡體中文',
+      'taiwanese': '繁體中文',
+      'spanish': '西班牙語',
+      'french': '法語',
+
+      // 搜尋結果
+      'dictionary_meaning': '辭典含義',
+      'nuance': '細微差別',
+      'conversation_examples': '對話範例',
+      'similar_expressions': '相似表達',
+      'conversation': '對話',
+      'word': '單字',
+
+      // 搜尋歷史
+      'search_history': '搜尋歷史',
+      'no_history': '無搜尋歷史',
+      'history_description': '搜尋歷史將顯示在這裡',
+      'searched_words': '搜尋的單字',
+      'delete_history': '搜尋歷史已刪除',
+      'delete_failed': '刪除失敗',
+      'clear_all_history': '清除所有歷史',
+      'clear_all_confirm': '刪除所有搜尋歷史？',
+      'cancel': '取消',
+      'delete': '刪除',
+      'all_history_deleted': '所有搜尋歷史已刪除',
+
+      // 個人資料
+      'profile_title': '個人資料',
+      'ai_dictionary_user': 'AI 辭典使用者',
+      'edit_profile': '編輯資料',
+      'app_language_setting': '應用語言',
+      'notification_setting': '通知',
+      'notification_description': '接收學習通知',
+      'dark_mode': '深色模式',
+      'dark_mode_description': '跟隨系統設定',
+      'storage': '儲存',
+      'storage_description': '管理搜尋歷史',
+      'help': '幫助',
+      'help_description': '使用方法和常見問題',
+      'app_info': '應用資訊',
+      'app_version': '版本 1.0.0',
+      'logout': '登出',
+      'logout_description': '從帳戶登出',
+      'logout_confirm': '確定要登出嗎？',
+
+      // 對話框
+      'confirm': '確認',
+      'language_changed': '應用語言已更改為{language}。',
+      'feature_coming_soon': '功能即將推出。',
+      'app_name': 'AI 辭典',
+      'version': '版本',
+      'developer': '開發者',
+      'ai_dictionary_team': 'AI 辭典團隊',
+
+      // 探索頁面
+      'explore_title': '探索',
+      'word_of_day': '今日推薦單字',
+      'view_details': '查看詳情',
+      'popular_searches': '熱門搜尋',
+      'word_categories': '單字分類',
+      'daily_life': '日常生活',
+      'business': '商務',
+      'travel': '旅行',
+      'emotions': '情感',
+      'learning': '學習',
+      'hobby': '愛好',
+      'language_tips': '語言學習技巧',
+      'daily_learning': '每天學習10分鐘',
+      'daily_learning_desc': '即使時間短，持續學習也很重要',
+      'use_in_conversation': '在實際對話中使用',
+      'use_in_conversation_desc': '嘗試在實際情況中使用學到的單字',
+      'remember_in_sentence': '在句子中記憶',
+      'remember_in_sentence_desc': '在上下文中記憶單字有助於保持記憶',
+      'practice_pronunciation': '練習發音',
+      'practice_pronunciation_desc': '透過大聲說話練習發音',
+      'trending_words': '熱門單字',
+      'learning_stats': '學習統計',
+      'today_learning': '今天',
+      'this_week': '本週',
+      'total_learning': '總計',
+      'words': '單字',
+
+      // 時間相關
+      'just_now': '剛剛',
+      'minutes_ago': '{minutes}分鐘前',
+      'hours_ago': '{hours}小時前',
+      'days_ago': '{days}天前',
+    },
     'fr': {
       // Titre de l'application
       'app_title': 'Dictionnaire IA',
@@ -379,6 +496,7 @@ class AppLocalizations {
       'english': 'Anglais',
       'korean': 'Coréen',
       'chinese': 'Chinois',
+      'taiwanese': 'Taiwanais',
       'spanish': 'Espagnol',
       'french': 'Français',
 
@@ -497,6 +615,7 @@ class AppLocalizations {
       'english': 'Inglés',
       'korean': 'Coreano',
       'chinese': 'Chino',
+      'taiwanese': 'Taiwanés',
       'spanish': 'Español',
       'french': 'Francés',
 
@@ -621,6 +740,7 @@ class AppLocalizations {
   String get english => get('english');
   String get korean => get('korean');
   String get chinese => get('chinese');
+  String get taiwanese => get('taiwanese');
   String get spanish => get('spanish');
   String get french => get('french');
 
@@ -658,7 +778,14 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   bool isSupported(Locale locale) {
-    return ['ko', 'en', 'zh', 'fr', 'es'].contains(locale.languageCode);
+    return [
+      'ko',
+      'en',
+      'zh',
+      'zh-TW',
+      'fr',
+      'es',
+    ].contains(locale.languageCode);
   }
 
   @override

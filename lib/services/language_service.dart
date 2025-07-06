@@ -9,6 +9,7 @@ class LanguageService {
   static const String korean = 'ko';
   static const String english = 'en';
   static const String chinese = 'zh';
+  static const String taiwanese = 'zh-TW';
   static const String french = 'fr';
   static const String spanish = 'es';
 
@@ -41,7 +42,15 @@ class LanguageService {
 
   // 언어 변경
   static Future<void> setLanguage(String language) async {
-    if (![korean, english, chinese, french, spanish].contains(language)) return;
+    if (![
+      korean,
+      english,
+      chinese,
+      taiwanese,
+      french,
+      spanish,
+    ].contains(language))
+      return;
 
     _currentLanguage = language;
     final prefs = await SharedPreferences.getInstance();
@@ -86,6 +95,8 @@ class LanguageService {
         return 'English';
       case chinese:
         return '中文';
+      case taiwanese:
+        return '繁體中文';
       case french:
         return 'Français';
       case spanish:
@@ -103,6 +114,7 @@ class LanguageService {
     {'code': korean, 'name': '한국어'},
     {'code': english, 'name': 'English'},
     {'code': chinese, 'name': '中文'},
+    {'code': taiwanese, 'name': '繁體中文'},
     {'code': french, 'name': 'Français'},
     {'code': spanish, 'name': 'Español'},
   ];
@@ -114,6 +126,7 @@ class LanguageService {
     {'code': '영어', 'name': loc.english},
     {'code': '한국어', 'name': loc.korean},
     {'code': '중국어', 'name': loc.chinese},
+    {'code': '대만어', 'name': loc.taiwanese},
     {'code': '스페인어', 'name': loc.spanish},
     {'code': '프랑스어', 'name': loc.french},
   ];
@@ -123,6 +136,7 @@ class LanguageService {
     '영어',
     '한국어',
     '중국어',
+    '대만어',
     '스페인어',
     '프랑스어',
   ];
