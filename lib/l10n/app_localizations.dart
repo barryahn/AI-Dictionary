@@ -124,6 +124,10 @@ class AppLocalizations {
       'minutes_ago': '{minutes}분 전',
       'hours_ago': '{hours}시간 전',
       'days_ago': '{days}일 전',
+
+      // 검색 기록 관련
+      'and_others': '외',
+      'items': '개',
     },
     'en': {
       // App Title
@@ -240,6 +244,10 @@ class AppLocalizations {
       'minutes_ago': '{minutes} minutes ago',
       'hours_ago': '{hours} hours ago',
       'days_ago': '{days} days ago',
+
+      // Search History Related
+      'and_others': 'and',
+      'items': ' more',
     },
     'zh': {
       // 应用标题
@@ -354,6 +362,10 @@ class AppLocalizations {
       'minutes_ago': '{minutes}分钟前',
       'hours_ago': '{hours}小时前',
       'days_ago': '{days}天前',
+
+      // 搜索历史相关
+      'and_others': '和另外',
+      'items': '个',
     },
     'zh-TW': {
       // 應用標題
@@ -468,6 +480,10 @@ class AppLocalizations {
       'minutes_ago': '{minutes}分鐘前',
       'hours_ago': '{hours}小時前',
       'days_ago': '{days}天前',
+
+      // 搜尋歷史相關
+      'and_others': '和另外',
+      'items': '個',
     },
     'fr': {
       // Titre de l'application
@@ -587,6 +603,10 @@ class AppLocalizations {
       'minutes_ago': 'Il y a {minutes} minutes',
       'hours_ago': 'Il y a {hours} heures',
       'days_ago': 'Il y a {days} jours',
+
+      // Historique de recherche
+      'and_others': 'et',
+      'items': ' autres',
     },
     'es': {
       // Título de la aplicación
@@ -705,11 +725,22 @@ class AppLocalizations {
       'minutes_ago': 'Hace {minutes} minutos',
       'hours_ago': 'Hace {hours} horas',
       'days_ago': 'Hace {days} días',
+
+      // Historial de búsqueda
+      'and_others': 'y',
+      'items': ' más',
     },
   };
 
   String get(String key) {
-    final languageCode = locale.languageCode;
+    // zh-TW와 같은 복합 로케일 처리
+    String languageCode;
+    if (locale.languageCode == 'zh' && locale.countryCode == 'TW') {
+      languageCode = 'zh-TW';
+    } else {
+      languageCode = locale.languageCode;
+    }
+
     final translations =
         _localizedValues[languageCode] ?? _localizedValues['en']!;
     return translations[key] ?? key;
@@ -770,6 +801,10 @@ class AppLocalizations {
   String get minutes_ago => get('minutes_ago');
   String get hours_ago => get('hours_ago');
   String get days_ago => get('days_ago');
+
+  // 검색 기록 관련
+  String get and_others => get('and_others');
+  String get items => get('items');
 }
 
 /// 로컬라이제이션 델리게이트
@@ -778,14 +813,12 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   bool isSupported(Locale locale) {
-    return [
-      'ko',
-      'en',
-      'zh',
-      'zh-TW',
-      'fr',
-      'es',
-    ].contains(locale.languageCode);
+    // zh-TW와 같은 복합 로케일을 제대로 처리
+    if (locale.languageCode == 'zh' && locale.countryCode == 'TW') {
+      return true;
+    }
+
+    return ['ko', 'en', 'zh', 'fr', 'es'].contains(locale.languageCode);
   }
 
   @override

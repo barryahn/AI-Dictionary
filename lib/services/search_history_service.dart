@@ -17,9 +17,7 @@ class SearchHistoryService {
   ) async {
     if (_currentSessionId == null) {
       // 세션이 없으면 자동으로 생성
-      await startNewSession(
-        '검색 세션 ${DateTime.now().toString().substring(0, 19)}',
-      );
+      await startNewSession(DateTime.now().toString().substring(0, 19));
     }
 
     final card = SearchCard(

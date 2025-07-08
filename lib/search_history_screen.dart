@@ -190,14 +190,37 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                   color: BeigeColors.extraLight,
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16),
-                    title: Text(
-                      session.sessionName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: BeigeColors.text,
-                      ),
-                    ),
+                    title: session.cards.length == 1
+                        ? Text(
+                            session.cards.first.query,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: BeigeColors.text,
+                            ),
+                          )
+                        : RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: session.cards.first.query,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: BeigeColors.text,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      ' ${AppLocalizations.of(context).and_others} ${session.cards.length - 1}${AppLocalizations.of(context).items}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: BeigeColors.text,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

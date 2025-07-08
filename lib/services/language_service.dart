@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 
 class LanguageService {
@@ -105,6 +106,14 @@ class LanguageService {
       default:
         return '한국어';
     }
+  }
+
+  // 로케일 생성 헬퍼 메서드
+  static Locale createLocale(String languageCode) {
+    if (languageCode == 'zh-TW') {
+      return const Locale('zh', 'TW');
+    }
+    return Locale(languageCode);
   }
 
   // 현재 언어 이름 가져오기
