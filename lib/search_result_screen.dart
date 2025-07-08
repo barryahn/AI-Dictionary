@@ -42,32 +42,26 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   int? _currentSessionId; // 현재 세션 ID를 저장
 
   // 언어 선택을 위한 상태 변수들
-  late String _fromLanguage;
-  late String _toLanguage;
+  late String _fromLanguage = LanguageService.fromLanguage;
+  late String _toLanguage = LanguageService.toLanguage;
 
   @override
   void initState() {
     super.initState();
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // LanguageService에서 저장된 언어 설정 불러오기
-    _fromLanguage = LanguageService.fromLanguage;
-    _toLanguage = LanguageService.toLanguage;
-
-    if (widget.searchSession != null) {
-      _populateWithSessionData(widget.searchSession!);
-    } else if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
-      _searchController.text = widget.initialQuery!;
-      _startSearch();
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(_focusNode);
-      });
-    }
+    Future.delayed(const Duration(milliseconds: 50), () {
+      if (widget.searchSession != null) {
+        _populateWithSessionData(widget.searchSession!);
+      } else if (widget.initialQuery != null &&
+          widget.initialQuery!.isNotEmpty) {
+        _searchController.text = widget.initialQuery!;
+        _startSearch();
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(_focusNode);
+        });
+      }
+    });
   }
 
   void _populateWithSessionData(SearchSession session) {
