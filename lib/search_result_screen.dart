@@ -48,6 +48,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
     // LanguageService에서 저장된 언어 설정 불러오기
     _fromLanguage = LanguageService.fromLanguage;
