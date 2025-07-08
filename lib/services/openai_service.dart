@@ -36,10 +36,10 @@ class OpenAIService {
 다음 정보를 바탕으로 AI 언어사전 항목을 아래 예시와 같은 JSON 형식으로 생성해 주세요.
 나는 l1 언어를 구사하는 사람이고 l2 언어를 공부하고 있습니다.
 
-- 사용자의 모국어 (L1): $l1
-- 사용자의 공부할 언어 (L2): $l2
-- 사용자가 검색한 단어 (W): "$word"
-- isTheWordFromL2 변수: 검색한 단어가 l2 단어인지 여부
+- 사용자의 모국어 (l1): $l1
+- 사용자의 공부할 언어 (l2): $l2
+- 사용자 검색어: "$word"
+- isTheWordFromL2 변수: 검색어가 $l2인지 여부
 
 [출력 형식 규칙]
 
@@ -47,9 +47,11 @@ class OpenAIService {
 2. 검색어에 오타가 있으면 오타를 수정하고 검색 결과를 출력할 것.
 3. 만약 적절한 검색 결과가 없다면 아래 규칙을 모두 무시하고 "적절한 검색 결과가 없습니다."라는 문자열만 출력할 것. 다른 문자열은 출력하지 말 것.
 4. "사전적_뜻" 항목에서는 해당 단어가 다른 품사와 번역이 있다면 모두 포함할 것.
-5. isTheWordFromL2가 true일 때, "뉘앙스" 항목은 $l2 단어 "$word"를 반드시 $l1로 간단히 설명. isTheWordFromL2가 false일 때, 번역된 단어들의 뉘앙스를 각각 설명.
+5-1. isTheWordFromL2가 true일 때, "뉘앙스" 항목은 $l2 단어 "$word"를 반드시 $l1로 간단히 설명.
+5-2. isTheWordFromL2가 false일 때, "뉘앙스" 항목은 "사전적_뜻" 항목의 번역 단어들의 뉘앙스를 각각 설명.
 6. "대화_예시"는 총 최대 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
 7. "비슷한_표현"은 총 최대 4개. $l2 단어와 그 뜻을 $l1로 작성.
+8. 모든 설명은 $l1로 답변하세요.
 
 
 **예시A: 아래는 l1가 영어이고 l2가 중국어일 때 중국어 단어 '照片'를 검색한 예시입니다.**
@@ -141,7 +143,7 @@ class OpenAIService {
       final systemMessage = OpenAIChatCompletionChoiceMessageModel(
         content: [
           OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            '당신은 언어 학습을 돕는 언어 전문가입니다. 명확하고 실용적인 설명을 제공해주세요. 모든 설명은 $l1로 답변하세요.',
+            '당신은 $l1 사용자의 $l2 학습을 돕는 언어 전문가입니다. 명확하고 실용적인 설명을 제공해주세요. $l1가 모국어인 사람이 이해할 수 있도록 모든 설명은 $l1로 답변하세요.',
           ),
         ],
         role: OpenAIChatMessageRole.system,
@@ -163,7 +165,7 @@ class OpenAIService {
           .create(
             model: "gpt-4.1-mini",
             messages: requestMessages,
-            temperature: 0.2,
+            temperature: 0.1,
             maxTokens: 700,
           );
 
