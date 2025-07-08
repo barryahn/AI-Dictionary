@@ -49,8 +49,9 @@ class LanguageService {
       taiwanese,
       french,
       spanish,
-    ].contains(language))
+    ].contains(language)) {
       return;
+    }
 
     _currentLanguage = language;
     final prefs = await SharedPreferences.getInstance();

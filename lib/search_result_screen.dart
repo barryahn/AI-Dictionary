@@ -954,10 +954,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
         // 만약 위 방법으로 찾지 못했다면, 첫 번째와 두 번째 리스트를 사용
         if (l2Lines.isEmpty || l1Lines.isEmpty) {
-          final lists = example.values.where((value) => value is List).toList();
+          final lists = example.values.whereType<List>().toList();
           if (lists.length >= 2) {
-            l2Lines = lists[0] as List<dynamic>;
-            l1Lines = lists[1] as List<dynamic>;
+            l2Lines = lists[0];
+            l1Lines = lists[1];
           }
         }
 

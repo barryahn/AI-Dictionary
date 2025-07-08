@@ -3,7 +3,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'dart:async';
 import 'search_result_screen.dart';
 import 'search_history_screen.dart';
-import 'explore_screen.dart';
 import 'profile_screen.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
