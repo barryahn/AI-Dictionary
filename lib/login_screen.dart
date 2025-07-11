@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'services/auth_service.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
