@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "401470234441",
+    "project_id": "ai-dictionary-bfdc7",
+    "storage_bucket": "ai-dictionary-bfdc7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401470234441:android:e67ff0bb18d2ead407c498",
+        "android_client_info": {
+          "package_name": "com.example.ai_dictionary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCxZAnjXdMfd2sa3p8eTGeLVl5dHmNYVQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -13,10 +13,13 @@ import 'package:provider/provider.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 // 앱의 진입점
 void main() async {
   await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LanguageService.initialize(); // 언어 서비스 초기화
   await OpenAIService.initialize(); // OpenAI 서비스 초기화
   await AuthService().initialize(); // 인증 서비스 초기화
