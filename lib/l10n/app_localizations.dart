@@ -83,6 +83,10 @@ class AppLocalizations {
       'logout_confirm': '정말 로그아웃하시겠습니까?',
       'logout_success': '로그아웃되었습니다.',
 
+      // 게스트 사용자
+      'guest_user': '게스트 사용자',
+      'guest_description': '로그인하여 더 많은 기능을 이용하세요',
+
       // 로그인/회원가입
       'login': '로그인',
       'register': '회원가입',
@@ -220,6 +224,10 @@ class AppLocalizations {
       'logout_description': 'Logout from account',
       'logout_confirm': 'Are you sure you want to logout?',
       'logout_success': 'Logged out successfully.',
+
+      // Guest User
+      'guest_user': 'Guest User',
+      'guest_description': 'Login to access more features',
 
       // Login/Register
       'login': 'Login',
@@ -360,6 +368,10 @@ class AppLocalizations {
       'logout_description': '从账户退出',
       'logout_confirm': '确定要退出登录吗？',
       'logout_success': '已成功退出登录。',
+
+      // 访客用户
+      'guest_user': '访客用户',
+      'guest_description': '登录以访问更多功能',
 
       // 登录/注册
       'login': '登录',

@@ -31,6 +31,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: BeigeColors.background,
+      appBar: AppBar(
+        backgroundColor: BeigeColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: BeigeColors.text),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -249,8 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (success && mounted) {
-        // 로그인 성공 시 메인 화면으로 이동
-        Navigator.of(context).pushReplacementNamed('/home');
+        // 로그인 성공 시 이전 화면으로 돌아가기
+        Navigator.of(context).pop();
       } else if (mounted) {
         // 에러 메시지 표시
         ScaffoldMessenger.of(context).showSnackBar(

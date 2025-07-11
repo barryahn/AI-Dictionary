@@ -404,11 +404,8 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
-        if (authService.isLoggedIn) {
-          return const MyHomePage(title: 'AI Dictionary');
-        } else {
-          return const LoginScreen();
-        }
+        // 로그인 상태와 관계없이 메인 화면을 보여줌
+        return const MyHomePage(title: 'AI Dictionary');
       },
     );
   }

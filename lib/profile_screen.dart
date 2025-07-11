@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
 import 'services/language_service.dart';
 import 'services/auth_service.dart';
+import 'login_screen.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
 
@@ -87,7 +88,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               // 사용자 이름
               Text(
-                authService.userName ?? loc.get('ai_dictionary_user'),
+                authService.isLoggedIn
+                    ? (authService.userName ?? loc.get('ai_dictionary_user'))
+                    : loc.get('guest_user'),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -97,24 +100,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 4),
               // 사용자 이메일
               Text(
-                authService.userEmail ?? 'user@example.com',
+                authService.isLoggedIn
+                    ? (authService.userEmail ?? 'user@example.com')
+                    : loc.get('guest_description'),
                 style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
               ),
               const SizedBox(height: 16),
-              // 편집 버튼
-              OutlinedButton(
-                onPressed: () {
-                  _showEditProfileDialog(loc);
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: BeigeColors.text,
-                  side: BorderSide(color: BeigeColors.dark),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              // 로그인/편집 버튼
+              if (authService.isLoggedIn)
+                OutlinedButton(
+                  onPressed: () {
+                    _showEditProfileDialog(loc);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: BeigeColors.text,
+                    side: BorderSide(color: BeigeColors.dark),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
+                  child: Text(loc.get('edit_profile')),
+                )
+              else
+                ElevatedButton(
+                  onPressed: () {
+                    _showLoginDialog(loc);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: BeigeColors.accent,
+                    foregroundColor: BeigeColors.text,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(loc.get('login')),
                 ),
-                child: Text(loc.get('edit_profile')),
-              ),
             ],
           ),
         );
@@ -123,72 +143,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildSettingsMenu(AppLocalizations loc) {
-    return Container(
-      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-      decoration: BoxDecoration(
-        color: BeigeColors.light,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: BeigeColors.dark.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+    return Consumer<AuthService>(
+      builder: (context, authService, child) {
+        return Container(
+          margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+          decoration: BoxDecoration(
+            color: BeigeColors.light,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: BeigeColors.dark.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _buildMenuItem(
-            icon: Icons.language,
-            title: loc.get('app_language_setting'),
-            subtitle: LanguageService.currentLanguageName,
-            onTap: () => _showLanguageSettings(loc),
+          child: Column(
+            children: [
+              _buildMenuItem(
+                icon: Icons.language,
+                title: loc.get('app_language_setting'),
+                subtitle: LanguageService.currentLanguageName,
+                onTap: () => _showLanguageSettings(loc),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.notifications,
+                title: loc.get('notification_setting'),
+                subtitle: loc.get('notification_description'),
+                onTap: () => _showNotificationSettings(loc),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.dark_mode,
+                title: loc.get('dark_mode'),
+                subtitle: loc.get('dark_mode_description'),
+                onTap: () => _toggleDarkMode(loc),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.storage,
+                title: loc.get('storage'),
+                subtitle: loc.get('storage_description'),
+                onTap: () => _showStorageSettings(loc),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.help,
+                title: loc.get('help'),
+                subtitle: loc.get('help_description'),
+                onTap: () => _showHelp(loc),
+              ),
+              _buildDivider(),
+              _buildMenuItem(
+                icon: Icons.info,
+                title: loc.get('app_info'),
+                subtitle: loc.get('app_version'),
+                onTap: () => _showAppInfo(loc),
+              ),
+              _buildDivider(),
+              if (authService.isLoggedIn)
+                _buildMenuItem(
+                  icon: Icons.logout,
+                  title: loc.get('logout'),
+                  subtitle: loc.get('logout_description'),
+                  onTap: () => _showLogoutDialog(loc),
+                  textColor: Colors.red[400],
+                ),
+            ],
           ),
-          _buildDivider(),
-          _buildMenuItem(
-            icon: Icons.notifications,
-            title: loc.get('notification_setting'),
-            subtitle: loc.get('notification_description'),
-            onTap: () => _showNotificationSettings(loc),
-          ),
-          _buildDivider(),
-          _buildMenuItem(
-            icon: Icons.dark_mode,
-            title: loc.get('dark_mode'),
-            subtitle: loc.get('dark_mode_description'),
-            onTap: () => _toggleDarkMode(loc),
-          ),
-          _buildDivider(),
-          _buildMenuItem(
-            icon: Icons.storage,
-            title: loc.get('storage'),
-            subtitle: loc.get('storage_description'),
-            onTap: () => _showStorageSettings(loc),
-          ),
-          _buildDivider(),
-          _buildMenuItem(
-            icon: Icons.help,
-            title: loc.get('help'),
-            subtitle: loc.get('help_description'),
-            onTap: () => _showHelp(loc),
-          ),
-          _buildDivider(),
-          _buildMenuItem(
-            icon: Icons.info,
-            title: loc.get('app_info'),
-            subtitle: loc.get('app_version'),
-            onTap: () => _showAppInfo(loc),
-          ),
-          _buildDivider(),
-          _buildMenuItem(
-            icon: Icons.logout,
-            title: loc.get('logout'),
-            subtitle: loc.get('logout_description'),
-            onTap: () => _showLogoutDialog(loc),
-            textColor: Colors.red[400],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -426,6 +451,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLoginDialog(AppLocalizations loc) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
 }
