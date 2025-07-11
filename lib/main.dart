@@ -4,9 +4,12 @@ import 'dart:async';
 import 'search_result_screen.dart';
 import 'search_history_screen.dart';
 import 'profile_screen.dart';
+import 'login_screen.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
+import 'services/auth_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,6 +19,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await LanguageService.initialize(); // 언어 서비스 초기화
   await OpenAIService.initialize(); // OpenAI 서비스 초기화
+  await AuthService().initialize(); // 인증 서비스 초기화
   runApp(const MyApp());
 }
 
@@ -52,50 +56,53 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AI Dictionary',
-      locale: _locale,
-      supportedLocales: const [
-        Locale('ko'),
-        Locale('en'),
-        Locale('zh'),
-        Locale('zh', 'TW'),
-        Locale('fr'),
-        Locale('es'),
-      ],
-      localizationsDelegates: [
-        const AppLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: BeigeColors.primary,
-          brightness: Brightness.light,
-        ),
-        scaffoldBackgroundColor: BeigeColors.background,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: BeigeColors.background,
-          foregroundColor: BeigeColors.text,
-          elevation: 0,
-          titleTextStyle: TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+    return ChangeNotifierProvider(
+      create: (context) => AuthService(),
+      child: MaterialApp(
+        title: 'AI Dictionary',
+        locale: _locale,
+        supportedLocales: const [
+          Locale('ko'),
+          Locale('en'),
+          Locale('zh'),
+          Locale('zh', 'TW'),
+          Locale('fr'),
+          Locale('es'),
+        ],
+        localizationsDelegates: [
+          const AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: BeigeColors.primary,
+            brightness: Brightness.light,
+          ),
+          scaffoldBackgroundColor: BeigeColors.background,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: BeigeColors.background,
+            foregroundColor: BeigeColors.text,
+            elevation: 0,
+            titleTextStyle: TextStyle(
+              color: BeigeColors.text,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: BeigeColors.background,
+            selectedItemColor: BeigeColors.text,
+            unselectedItemColor: BeigeColors.textLight,
+          ),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(color: BeigeColors.text),
+            bodyMedium: TextStyle(color: BeigeColors.text),
           ),
         ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: BeigeColors.background,
-          selectedItemColor: BeigeColors.text,
-          unselectedItemColor: BeigeColors.textLight,
-        ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(color: BeigeColors.text),
-          bodyMedium: TextStyle(color: BeigeColors.text),
-        ),
+        home: const AuthWrapper(),
       ),
-      home: const MyHomePage(title: 'AI Dictionary'),
     );
   }
 }
@@ -385,6 +392,24 @@ class _HomeTabState extends State<_HomeTab> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// 인증 상태에 따라 화면을 전환하는 래퍼 위젯
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AuthService>(
+      builder: (context, authService, child) {
+        if (authService.isLoggedIn) {
+          return const MyHomePage(title: 'AI Dictionary');
+        } else {
+          return const LoginScreen();
+        }
+      },
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
 import 'services/language_service.dart';
+import 'services/auth_service.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
 
@@ -64,55 +66,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileHeader(AppLocalizations loc) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: BeigeColors.background),
-      child: Column(
-        children: [
-          // 프로필 이미지
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: BeigeColors.accent,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.person, size: 40, color: BeigeColors.text),
-          ),
-          const SizedBox(height: 16),
-          // 사용자 이름
-          Text(
-            loc.get('ai_dictionary_user'),
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: BeigeColors.text,
-            ),
-          ),
-          const SizedBox(height: 4),
-          // 사용자 이메일 (예시)
-          Text(
-            'user@example.com',
-            style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
-          ),
-          const SizedBox(height: 16),
-          // 편집 버튼
-          OutlinedButton(
-            onPressed: () {
-              _showEditProfileDialog(loc);
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: BeigeColors.text,
-              side: BorderSide(color: BeigeColors.dark),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+    return Consumer<AuthService>(
+      builder: (context, authService, child) {
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(color: BeigeColors.background),
+          child: Column(
+            children: [
+              // 프로필 이미지
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: BeigeColors.accent,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.person, size: 40, color: BeigeColors.text),
               ),
-            ),
-            child: Text(loc.get('edit_profile')),
+              const SizedBox(height: 16),
+              // 사용자 이름
+              Text(
+                authService.userName ?? loc.get('ai_dictionary_user'),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: BeigeColors.text,
+                ),
+              ),
+              const SizedBox(height: 4),
+              // 사용자 이메일
+              Text(
+                authService.userEmail ?? 'user@example.com',
+                style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
+              ),
+              const SizedBox(height: 16),
+              // 편집 버튼
+              OutlinedButton(
+                onPressed: () {
+                  _showEditProfileDialog(loc);
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: BeigeColors.text,
+                  side: BorderSide(color: BeigeColors.dark),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Text(loc.get('edit_profile')),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -394,9 +400,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text(loc.get('cancel')),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
               // 로그아웃 로직
+              final authService = Provider.of<AuthService>(
+                context,
+                listen: false,
+              );
+              await authService.logout();
+
+              // 로그아웃 완료 메시지
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(loc.get('logout_success')),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
             },
             child: Text(
               loc.get('logout'),
