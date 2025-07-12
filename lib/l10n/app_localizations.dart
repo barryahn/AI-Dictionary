@@ -10,10 +10,13 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
+  // 앱 이름 상수
+  static const String appName = 'Sasha';
+
   static const Map<String, Map<String, String>> _localizedValues = {
     'ko': {
       // 앱 제목
-      'app_title': 'AI Dictionary',
+      'app_title': appName,
 
       // 네비게이션
       'home': '홈',
@@ -65,7 +68,7 @@ class AppLocalizations {
 
       // 프로필
       'profile_title': '프로필',
-      'ai_dictionary_user': 'AI Dictionary 사용자',
+      'ai_dictionary_user': '$appName 사용자',
       'edit_profile': '프로필 편집',
       'app_language_setting': '앱 언어 설정',
       'notification_setting': '알림 설정',
@@ -90,7 +93,7 @@ class AppLocalizations {
       // 로그인/회원가입
       'login': '로그인',
       'register': '회원가입',
-      'login_subtitle': 'AI Dictionary에 로그인하세요',
+      'login_subtitle': '$appName에 로그인하세요',
       'register_subtitle': '새 계정을 만들어보세요',
       'email': '이메일',
       'email_hint': '이메일을 입력하세요',
@@ -110,10 +113,10 @@ class AppLocalizations {
       'confirm': '확인',
       'language_changed': '앱 언어가 {language}로 변경되었습니다.',
       'feature_coming_soon': '기능은 준비 중입니다.',
-      'app_name': 'AI Dictionary',
+      'app_name': appName,
       'version': '버전',
       'developer': '개발자',
-      'ai_dictionary_team': 'AI Dictionary Team',
+      'ai_dictionary_team': '$appName Team',
 
       // 탐색 페이지
       'explore_title': '탐색',
@@ -155,7 +158,7 @@ class AppLocalizations {
     },
     'en': {
       // App Title
-      'app_title': 'AI Dictionary',
+      'app_title': appName,
 
       // Navigation
       'home': 'Home',
@@ -207,7 +210,7 @@ class AppLocalizations {
 
       // Profile
       'profile_title': 'Profile',
-      'ai_dictionary_user': 'AI Dictionary User',
+      'ai_dictionary_user': '$appName User',
       'edit_profile': 'Edit Profile',
       'app_language_setting': 'App Language',
       'notification_setting': 'Notifications',
@@ -232,7 +235,7 @@ class AppLocalizations {
       // Login/Register
       'login': 'Login',
       'register': 'Register',
-      'login_subtitle': 'Login to AI Dictionary',
+      'login_subtitle': 'Login to $appName',
       'register_subtitle': 'Create a new account',
       'email': 'Email',
       'email_hint': 'Enter your email',
@@ -252,10 +255,10 @@ class AppLocalizations {
       'confirm': 'Confirm',
       'language_changed': 'App language changed to {language}.',
       'feature_coming_soon': 'Feature coming soon.',
-      'app_name': 'AI Dictionary',
+      'app_name': appName,
       'version': 'Version',
       'developer': 'Developer',
-      'ai_dictionary_team': 'AI Dictionary Team',
+      'ai_dictionary_team': '$appName Team',
 
       // Explore Page
       'explore_title': 'Explore',
@@ -299,7 +302,7 @@ class AppLocalizations {
     },
     'zh': {
       // 应用标题
-      'app_title': 'AI 词典',
+      'app_title': appName,
 
       // 导航
       'home': '首页',
@@ -351,7 +354,7 @@ class AppLocalizations {
 
       // 个人资料
       'profile_title': '个人资料',
-      'ai_dictionary_user': 'AI 词典用户',
+      'ai_dictionary_user': '$appName 用户',
       'edit_profile': '编辑资料',
       'app_language_setting': '应用语言',
       'notification_setting': '通知',
@@ -376,7 +379,7 @@ class AppLocalizations {
       // 登录/注册
       'login': '登录',
       'register': '注册',
-      'login_subtitle': '登录AI词典',
+      'login_subtitle': '登录$appName',
       'register_subtitle': '创建新账户',
       'email': '邮箱',
       'email_hint': '请输入邮箱',
@@ -396,10 +399,10 @@ class AppLocalizations {
       'confirm': '确认',
       'language_changed': '应用语言已更改为{language}。',
       'feature_coming_soon': '功能即将推出。',
-      'app_name': 'AI 词典',
+      'app_name': appName,
       'version': '版本',
       'developer': '开发者',
-      'ai_dictionary_team': 'AI 词典团队',
+      'ai_dictionary_team': '$appName团队',
 
       // 探索页面
       'explore_title': '探索',
@@ -441,7 +444,7 @@ class AppLocalizations {
     },
     'zh-TW': {
       // 應用標題
-      'app_title': 'AI 辭典',
+      'app_title': appName,
 
       // 導航
       'home': '首頁',
@@ -493,7 +496,7 @@ class AppLocalizations {
 
       // 個人資料
       'profile_title': '個人資料',
-      'ai_dictionary_user': 'AI 辭典使用者',
+      'ai_dictionary_user': '$appName 使用者',
       'edit_profile': '編輯資料',
       'app_language_setting': '應用語言',
       'notification_setting': '通知',
@@ -518,7 +521,7 @@ class AppLocalizations {
       // 登入/註冊
       'login': '登入',
       'register': '註冊',
-      'login_subtitle': '登入AI辭典',
+      'login_subtitle': '登入$appName',
       'register_subtitle': '建立新帳戶',
       'email': '信箱',
       'email_hint': '請輸入信箱',
@@ -538,10 +541,10 @@ class AppLocalizations {
       'confirm': '確認',
       'language_changed': '應用語言已更改為{language}。',
       'feature_coming_soon': '功能即將推出。',
-      'app_name': 'AI 辭典',
+      'app_name': appName,
       'version': '版本',
       'developer': '開發者',
-      'ai_dictionary_team': 'AI 辭典團隊',
+      'ai_dictionary_team': '$appName團隊',
 
       // 探索頁面
       'explore_title': '探索',
@@ -583,7 +586,7 @@ class AppLocalizations {
     },
     'fr': {
       // Titre de l'application
-      'app_title': 'Dictionnaire IA',
+      'app_title': appName,
 
       // Navigation
       'home': 'Accueil',
@@ -635,7 +638,7 @@ class AppLocalizations {
 
       // Profil
       'profile_title': 'Profil',
-      'ai_dictionary_user': 'Utilisateur du Dictionnaire IA',
+      'ai_dictionary_user': 'Utilisateur de $appName',
       'edit_profile': 'Modifier le profil',
       'app_language_setting': 'Langue de l\'application',
       'notification_setting': 'Notifications',
@@ -661,12 +664,12 @@ class AppLocalizations {
       // Connexion/Inscription
       'login': 'Se connecter',
       'register': 'S\'inscrire',
-      'login_subtitle': 'Se connecter au Dictionnaire IA',
+      'login_subtitle': 'Se connecter à $appName',
       'register_subtitle': 'Créer un nouveau compte',
-      'email': 'E-mail',
-      'email_hint': 'Entrez votre e-mail',
-      'email_required': 'Veuillez entrer votre e-mail',
-      'email_invalid': 'Veuillez entrer un format d\'e-mail valide',
+      'email': 'Email',
+      'email_hint': 'Entrez votre email',
+      'email_required': 'Veuillez entrer votre email',
+      'email_invalid': 'Veuillez entrer un format d\'email valide',
       'password': 'Mot de passe',
       'password_hint': 'Entrez votre mot de passe',
       'password_required': 'Veuillez entrer votre mot de passe',
@@ -683,10 +686,10 @@ class AppLocalizations {
       'language_changed':
           'La langue de l\'application a été changée en {language}.',
       'feature_coming_soon': 'Fonctionnalité à venir.',
-      'app_name': 'Dictionnaire IA',
+      'app_name': appName,
       'version': 'Version',
       'developer': 'Développeur',
-      'ai_dictionary_team': 'Équipe du Dictionnaire IA',
+      'ai_dictionary_team': 'Équipe de $appName',
 
       // Page d'exploration
       'explore_title': 'Explorer',
@@ -732,7 +735,7 @@ class AppLocalizations {
     },
     'es': {
       // Título de la aplicación
-      'app_title': 'Diccionario IA',
+      'app_title': appName,
 
       // Navegación
       'home': 'Inicio',
@@ -784,7 +787,7 @@ class AppLocalizations {
 
       // Perfil
       'profile_title': 'Perfil',
-      'ai_dictionary_user': 'Usuario del Diccionario IA',
+      'ai_dictionary_user': 'Usuario de $appName',
       'edit_profile': 'Editar perfil',
       'app_language_setting': 'Idioma de la aplicación',
       'notification_setting': 'Notificaciones',
@@ -809,7 +812,7 @@ class AppLocalizations {
       // Iniciar sesión/Registrarse
       'login': 'Iniciar sesión',
       'register': 'Registrarse',
-      'login_subtitle': 'Iniciar sesión en Diccionario IA',
+      'login_subtitle': 'Iniciar sesión en $appName',
       'register_subtitle': 'Crear una nueva cuenta',
       'email': 'Correo electrónico',
       'email_hint': 'Ingresa tu correo electrónico',
@@ -829,10 +832,10 @@ class AppLocalizations {
       'confirm': 'Confirmar',
       'language_changed': 'El idioma de la aplicación cambió a {language}.',
       'feature_coming_soon': 'Función próximamente.',
-      'app_name': 'Diccionario IA',
+      'app_name': appName,
       'version': 'Versión',
       'developer': 'Desarrollador',
-      'ai_dictionary_team': 'Equipo del Diccionario IA',
+      'ai_dictionary_team': 'Equipo de $appName',
 
       // Página de exploración
       'explore_title': 'Explorar',
