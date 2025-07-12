@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         labelText: loc.get('email'),
-        hintText: loc.get('email_hint'),
+        hintText: loc.get('abc@gmail.com'),
         prefixIcon: Icon(Icons.email, color: BeigeColors.text),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -152,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
       obscureText: _obscurePassword,
       decoration: InputDecoration(
         labelText: loc.get('password'),
-        hintText: loc.get('password_hint'),
+        hintText: loc.get(''),
         prefixIcon: Icon(Icons.lock, color: BeigeColors.text),
         suffixIcon: IconButton(
           icon: Icon(
