@@ -108,6 +108,9 @@ class AppLocalizations {
       'login_failed': '로그인에 실패했습니다',
       'register_failed': '회원가입에 실패했습니다',
       'error_occurred': '오류가 발생했습니다',
+      'google_login': 'Google로 로그인',
+      'google_login_failed': 'Google 로그인에 실패했습니다',
+      'or': '또는',
 
       // 다이얼로그
       'confirm': '확인',
@@ -250,6 +253,9 @@ class AppLocalizations {
       'login_failed': 'Login failed',
       'register_failed': 'Registration failed',
       'error_occurred': 'An error occurred',
+      'google_login': 'Sign in with Google',
+      'google_login_failed': 'Google sign in failed',
+      'or': 'or',
 
       // Dialogs
       'confirm': 'Confirm',
@@ -394,6 +400,9 @@ class AppLocalizations {
       'login_failed': '登录失败',
       'register_failed': '注册失败',
       'error_occurred': '发生错误',
+      'google_login': '使用Google登录',
+      'google_login_failed': 'Google登录失败',
+      'or': '或',
 
       // 对话框
       'confirm': '确认',
@@ -536,6 +545,9 @@ class AppLocalizations {
       'login_failed': '登入失敗',
       'register_failed': '註冊失敗',
       'error_occurred': '發生錯誤',
+      'google_login': '使用Google登入',
+      'google_login_failed': 'Google登入失敗',
+      'or': '或',
 
       // 對話框
       'confirm': '確認',
@@ -680,6 +692,9 @@ class AppLocalizations {
       'login_failed': 'Échec de la connexion',
       'register_failed': 'Échec de l\'inscription',
       'error_occurred': 'Une erreur s\'est produite',
+      'google_login': 'Se connecter avec Google',
+      'google_login_failed': 'Échec de la connexion Google',
+      'or': 'ou',
 
       // Dialogues
       'confirm': 'Confirmer',
@@ -827,6 +842,9 @@ class AppLocalizations {
       'login_failed': 'Error al iniciar sesión',
       'register_failed': 'Error al registrarse',
       'error_occurred': 'Ocurrió un error',
+      'google_login': 'Iniciar sesión con Google',
+      'google_login_failed': 'Error al iniciar sesión con Google',
+      'or': 'o',
 
       // Diálogos
       'confirm': 'Confirmar',
