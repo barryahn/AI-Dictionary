@@ -14,6 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _scrollController = ScrollController();
   bool _isLoading = false;
   bool _isLoginMode = true;
   bool _obscurePassword = true;
@@ -22,7 +23,26 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToBottom() {
+    // 키보드가 이미 올라와있는지 확인
+    final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+
+    // 키보드가 이미 올라와있으면 딜레이 없이, 아니면 딜레이 후 스크롤
+    final delay = keyboardVisible ? 0 : 600;
+
+    Future.delayed(Duration(milliseconds: delay), () {
+      if (_scrollController.hasClients && mounted) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   @override
@@ -39,11 +59,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Padding(
           padding: const EdgeInsets.only(
             left: 24,
             right: 24,
-            top: 72,
+            top: 64,
             bottom: 24,
           ),
           child: Form(
@@ -123,6 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
+      onTap: _scrollToBottom,
       decoration: InputDecoration(
         labelText: loc.get('email'),
         hintText: loc.get('abc@gmail.com'),
@@ -158,6 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscurePassword,
+      onTap: _scrollToBottom,
       decoration: InputDecoration(
         labelText: loc.get('password'),
         hintText: loc.get(''),
