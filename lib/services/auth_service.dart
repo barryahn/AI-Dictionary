@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
@@ -12,6 +13,7 @@ class AuthService extends ChangeNotifier {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   bool _isLoggedIn = false;
   String? _userEmail;
@@ -25,6 +27,9 @@ class AuthService extends ChangeNotifier {
 
   // 초기화
   Future<void> initialize() async {
+    // Google Sign In 초기화
+    await _googleSignIn.initialize();
+
     final currentUser = _auth.currentUser;
     if (currentUser != null) {
       _isLoggedIn = true;
@@ -50,6 +55,53 @@ class AuthService extends ChangeNotifier {
       if (kDebugMode) {
         print('사용자 데이터 로드 실패: $e');
       }
+    }
+  }
+
+  // 구글 로그인
+  Future<bool> googleLogin() async {
+    try {
+      final GoogleSignInAccount googleSignInAccount = await _googleSignIn
+          .authenticate();
+
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          googleSignInAccount.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+      if (user != null) {
+        _isLoggedIn = true;
+        _userEmail = user.email;
+        _userName = user.displayName;
+        _accessToken = await user.getIdToken();
+
+        // Firestore에 user email이 없을 때만 데이터 저장
+        final userDoc = await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (!userDoc.exists) {
+          await _firestore.collection('users').doc(user.uid).set({
+            'email': user.email,
+            'name': user.displayName,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        await _saveUserData();
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('구글 로그인 실패: $e');
+      }
+      return false;
     }
   }
 

@@ -68,6 +68,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 _buildSubmitButton(loc),
                 const SizedBox(height: 16),
 
+                // 구분선
+                _buildDivider(loc),
+                const SizedBox(height: 16),
+
+                // Google 로그인 버튼
+                _buildGoogleLoginButton(loc),
+                const SizedBox(height: 16),
+
                 // 모드 전환 버튼
                 _buildModeToggleButton(loc),
               ],
@@ -232,6 +240,102 @@ class _LoginScreenState extends State<LoginScreen> {
         style: TextStyle(color: BeigeColors.text, fontSize: 14),
       ),
     );
+  }
+
+  Widget _buildDivider(AppLocalizations loc) {
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: BeigeColors.dark.withOpacity(0.3),
+            thickness: 1,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            loc.get('or') ?? '또는',
+            style: TextStyle(color: BeigeColors.textLight, fontSize: 14),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            color: BeigeColors.dark.withOpacity(0.3),
+            thickness: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGoogleLoginButton(AppLocalizations loc) {
+    return OutlinedButton.icon(
+      onPressed: _isLoading ? null : () => _handleGoogleLogin(loc),
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: BeigeColors.text,
+        side: BorderSide(color: BeigeColors.dark),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      icon: Image.asset(
+        'assets/google_logo.png',
+        height: 20,
+        width: 20,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.g_mobiledata, size: 20, color: BeigeColors.text);
+        },
+      ),
+      label: Text(
+        loc.get('google_login') ?? 'Google로 로그인',
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Future<void> _handleGoogleLogin(AppLocalizations loc) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      bool success = await authService.value.googleLogin();
+
+      if (success && mounted) {
+        // 로그인 성공 시 이전 화면으로 돌아가기
+        Navigator.of(context).pop();
+      } else if (mounted) {
+        // 에러 메시지 표시
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              loc.get('google_login_failed') ?? 'Google 로그인에 실패했습니다.',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: BeigeColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              (loc.get('error_occurred') ?? '오류가 발생했습니다: ') + e.toString(),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: BeigeColors.error,
+          ),
+        );
+        print(e);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _handleSubmit(AppLocalizations loc) async {
