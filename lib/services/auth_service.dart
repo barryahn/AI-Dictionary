@@ -1,10 +1,17 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
 class AuthService extends ChangeNotifier {
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
   AuthService._internal();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool _isLoggedIn = false;
   String? _userEmail;
@@ -18,7 +25,17 @@ class AuthService extends ChangeNotifier {
 
   // 초기화
   Future<void> initialize() async {
-    await _loadUserData();
+    final currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      _isLoggedIn = true;
+      _userEmail = currentUser.email;
+      _userName = currentUser.displayName;
+      _accessToken = await currentUser.getIdToken();
+      await _saveUserData();
+    } else {
+      await _loadUserData();
+    }
+    notifyListeners();
   }
 
   // 사용자 데이터 로드
@@ -29,7 +46,6 @@ class AuthService extends ChangeNotifier {
       _userEmail = prefs.getString('userEmail');
       _userName = prefs.getString('userName');
       _accessToken = prefs.getString('accessToken');
-      notifyListeners();
     } catch (e) {
       if (kDebugMode) {
         print('사용자 데이터 로드 실패: $e');
@@ -40,26 +56,30 @@ class AuthService extends ChangeNotifier {
   // 로그인
   Future<bool> login(String email, String password) async {
     try {
-      // 실제 구현에서는 서버 API 호출
-      // 여기서는 시뮬레이션
-      await Future.delayed(const Duration(seconds: 1));
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      // 임시 로그인 로직 (실제로는 서버 검증 필요)
-      if (email.isNotEmpty && password.isNotEmpty) {
+      final user = userCredential.user;
+      if (user != null) {
         _isLoggedIn = true;
-        _userEmail = email;
-        _userName = email.split('@')[0]; // 이메일에서 사용자명 추출
-        _accessToken = 'temp_token_${DateTime.now().millisecondsSinceEpoch}';
+        _userEmail = user.email;
 
-        // 데이터 저장
+        // Firestore에서 추가 정보 가져오기
+        final doc = await _firestore.collection('users').doc(user.uid).get();
+        _userName =
+            doc.data()?['name'] ?? user.displayName ?? email.split('@')[0];
+        _accessToken = await user.getIdToken();
+
         await _saveUserData();
         notifyListeners();
         return true;
       }
       return false;
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
-        print('로그인 실패: $e');
+        print('로그인 실패: ${e.message}');
       }
       return false;
     }
@@ -68,25 +88,32 @@ class AuthService extends ChangeNotifier {
   // 회원가입
   Future<bool> register(String email, String password, String name) async {
     try {
-      // 실제 구현에서는 서버 API 호출
-      await Future.delayed(const Duration(seconds: 1));
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
-      // 임시 회원가입 로직
-      if (email.isNotEmpty && password.isNotEmpty && name.isNotEmpty) {
+      final user = userCredential.user;
+      if (user != null) {
+        await user.updateDisplayName(name);
+
+        await _firestore.collection('users').doc(user.uid).set({
+          'email': email,
+          'name': name,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
         _isLoggedIn = true;
-        _userEmail = email;
+        _userEmail = user.email;
         _userName = name;
-        _accessToken = 'temp_token_${DateTime.now().millisecondsSinceEpoch}';
+        _accessToken = await user.getIdToken();
 
-        // 데이터 저장
         await _saveUserData();
         notifyListeners();
         return true;
       }
       return false;
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
-        print('회원가입 실패: $e');
+        print('회원가입 실패: ${e.message}');
       }
       return false;
     }
@@ -95,12 +122,13 @@ class AuthService extends ChangeNotifier {
   // 로그아웃
   Future<void> logout() async {
     try {
+      await _auth.signOut();
+
       _isLoggedIn = false;
       _userEmail = null;
       _userName = null;
       _accessToken = null;
 
-      // 데이터 삭제
       await _clearUserData();
       notifyListeners();
     } catch (e) {
@@ -143,10 +171,19 @@ class AuthService extends ChangeNotifier {
   // 사용자 정보 업데이트
   Future<bool> updateUserInfo(String name) async {
     try {
-      _userName = name;
-      await _saveUserData();
-      notifyListeners();
-      return true;
+      final user = _auth.currentUser;
+      if (user != null) {
+        await user.updateDisplayName(name);
+        await _firestore.collection('users').doc(user.uid).update({
+          'name': name,
+        });
+
+        _userName = name;
+        await _saveUserData();
+        notifyListeners();
+        return true;
+      }
+      return false;
     } catch (e) {
       if (kDebugMode) {
         print('사용자 정보 업데이트 실패: $e');

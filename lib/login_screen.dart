@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSubmitButton(AppLocalizations loc) {
     return ElevatedButton(
-      onPressed: _isLoading ? null : _handleSubmit,
+      onPressed: _isLoading ? null : () => _handleSubmit(loc),
       style: ElevatedButton.styleFrom(
         backgroundColor: BeigeColors.accent,
         foregroundColor: BeigeColors.text,
@@ -224,12 +224,12 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoginMode
             ? loc.get('no_account_register')
             : loc.get('have_account_login'),
-        style: TextStyle(color: BeigeColors.accent, fontSize: 14),
+        style: TextStyle(color: BeigeColors.text, fontSize: 14),
       ),
     );
   }
 
-  Future<void> _handleSubmit() async {
+  Future<void> _handleSubmit(AppLocalizations loc) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -239,19 +239,17 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final authService = AuthService();
-      bool success;
+      bool success = false;
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
 
       if (_isLoginMode) {
-        success = await authService.login(
-          _emailController.text.trim(),
-          _passwordController.text,
-        );
+        success = await authService.value.login(email, password);
       } else {
-        success = await authService.register(
-          _emailController.text.trim(),
-          _passwordController.text,
-          _emailController.text.split('@')[0], // 임시 사용자명
+        success = await authService.value.register(
+          email,
+          password,
+          _emailController.text.split('@')[0],
         );
       }
 
@@ -264,21 +262,29 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(
             content: Text(
               _isLoginMode
-                  ? AppLocalizations.of(context).get('login_failed')
-                  : AppLocalizations.of(context).get('register_failed'),
+                  ? loc.get('login_failed')
+                  : loc.get('register_failed'),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: BeigeColors.error,
           ),
         );
+
+        // 비밀번호 입력칸 초기화
+        _passwordController.clear();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).get('error_occurred')),
-            backgroundColor: Colors.red,
+            content: Text(
+              loc.get('error_occurred') + e.toString(),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: BeigeColors.error,
           ),
         );
+        print(e);
       }
     } finally {
       if (mounted) {
