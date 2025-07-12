@@ -509,6 +509,9 @@ class AppLocalizations {
       'logout': '登出',
       'logout_description': '從帳戶登出',
       'logout_confirm': '確定要登出嗎？',
+      'logout_success': '已成功登出。',
+      'guest_user': '訪客使用者',
+      'guest_description': '登入以使用更多功能',
 
       // 對話框
       'confirm': '確認',
@@ -627,6 +630,10 @@ class AppLocalizations {
       'logout': 'Déconnexion',
       'logout_description': 'Se déconnecter du compte',
       'logout_confirm': 'Êtes-vous sûr de vouloir vous déconnecter ?',
+      'logout_success': 'Déconnexion réussie.',
+      'guest_user': 'Utilisateur invité',
+      'guest_description':
+          'Connectez-vous pour accéder à plus de fonctionnalités',
 
       // Dialogues
       'confirm': 'Confirmer',
@@ -750,6 +757,9 @@ class AppLocalizations {
       'logout': 'Cerrar sesión',
       'logout_description': 'Cerrar sesión de la cuenta',
       'logout_confirm': '¿Estás seguro de que quieres cerrar sesión?',
+      'logout_success': 'Cierre de sesión exitoso.',
+      'guest_user': 'Usuario invitado',
+      'guest_description': 'Inicia sesión para acceder a más funciones',
 
       // Diálogos
       'confirm': 'Confirmar',
