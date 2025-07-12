@@ -510,8 +510,29 @@ class AppLocalizations {
       'logout_description': '從帳戶登出',
       'logout_confirm': '確定要登出嗎？',
       'logout_success': '已成功登出。',
+
+      // 訪客使用者
       'guest_user': '訪客使用者',
       'guest_description': '登入以使用更多功能',
+
+      // 登入/註冊
+      'login': '登入',
+      'register': '註冊',
+      'login_subtitle': '登入AI辭典',
+      'register_subtitle': '建立新帳戶',
+      'email': '信箱',
+      'email_hint': '請輸入信箱',
+      'email_required': '請輸入信箱',
+      'email_invalid': '請輸入有效的信箱格式',
+      'password': '密碼',
+      'password_hint': '請輸入密碼',
+      'password_required': '請輸入密碼',
+      'password_too_short': '密碼至少需要6個字元',
+      'no_account_register': '沒有帳戶？註冊',
+      'have_account_login': '已有帳戶？登入',
+      'login_failed': '登入失敗',
+      'register_failed': '註冊失敗',
+      'error_occurred': '發生錯誤',
 
       // 對話框
       'confirm': '確認',
@@ -631,9 +652,31 @@ class AppLocalizations {
       'logout_description': 'Se déconnecter du compte',
       'logout_confirm': 'Êtes-vous sûr de vouloir vous déconnecter ?',
       'logout_success': 'Déconnexion réussie.',
+
+      // Utilisateur invité
       'guest_user': 'Utilisateur invité',
       'guest_description':
           'Connectez-vous pour accéder à plus de fonctionnalités',
+
+      // Connexion/Inscription
+      'login': 'Se connecter',
+      'register': 'S\'inscrire',
+      'login_subtitle': 'Se connecter au Dictionnaire IA',
+      'register_subtitle': 'Créer un nouveau compte',
+      'email': 'E-mail',
+      'email_hint': 'Entrez votre e-mail',
+      'email_required': 'Veuillez entrer votre e-mail',
+      'email_invalid': 'Veuillez entrer un format d\'e-mail valide',
+      'password': 'Mot de passe',
+      'password_hint': 'Entrez votre mot de passe',
+      'password_required': 'Veuillez entrer votre mot de passe',
+      'password_too_short':
+          'Le mot de passe doit contenir au moins 6 caractères',
+      'no_account_register': 'Vous n\'avez pas de compte ? Inscrivez-vous',
+      'have_account_login': 'Vous avez déjà un compte ? Connectez-vous',
+      'login_failed': 'Échec de la connexion',
+      'register_failed': 'Échec de l\'inscription',
+      'error_occurred': 'Une erreur s\'est produite',
 
       // Dialogues
       'confirm': 'Confirmer',
@@ -758,8 +801,29 @@ class AppLocalizations {
       'logout_description': 'Cerrar sesión de la cuenta',
       'logout_confirm': '¿Estás seguro de que quieres cerrar sesión?',
       'logout_success': 'Cierre de sesión exitoso.',
+
+      // Usuario invitado
       'guest_user': 'Usuario invitado',
       'guest_description': 'Inicia sesión para acceder a más funciones',
+
+      // Iniciar sesión/Registrarse
+      'login': 'Iniciar sesión',
+      'register': 'Registrarse',
+      'login_subtitle': 'Iniciar sesión en Diccionario IA',
+      'register_subtitle': 'Crear una nueva cuenta',
+      'email': 'Correo electrónico',
+      'email_hint': 'Ingresa tu correo electrónico',
+      'email_required': 'Por favor ingresa tu correo electrónico',
+      'email_invalid': 'Por favor ingresa un formato de correo válido',
+      'password': 'Contraseña',
+      'password_hint': 'Ingresa tu contraseña',
+      'password_required': 'Por favor ingresa tu contraseña',
+      'password_too_short': 'La contraseña debe tener al menos 6 caracteres',
+      'no_account_register': '¿No tienes cuenta? Regístrate',
+      'have_account_login': '¿Ya tienes cuenta? Inicia sesión',
+      'login_failed': 'Error al iniciar sesión',
+      'register_failed': 'Error al registrarse',
+      'error_occurred': 'Ocurrió un error',
 
       // Diálogos
       'confirm': 'Confirmar',
