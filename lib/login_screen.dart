@@ -279,7 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       icon: Image.asset(
-        'assets/google_logo.png',
+        'assets/google_logo_new.png',
         height: 20,
         width: 20,
         errorBuilder: (context, error, stackTrace) {
