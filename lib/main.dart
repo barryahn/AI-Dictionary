@@ -219,8 +219,8 @@ class _HomeTabState extends State<_HomeTab> {
     return Scaffold(
       backgroundColor: BeigeColors.background,
       appBar: AppBar(
-        title: const Text(
-          'AI Dictionary',
+        title: Text(
+          AppLocalizations.of(context).get('app_title'),
           style: TextStyle(
             color: BeigeColors.text,
             fontWeight: FontWeight.bold,
@@ -407,7 +407,7 @@ class AuthWrapper extends StatelessWidget {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
         // 로그인 상태와 관계없이 메인 화면을 보여줌
-        return const MyHomePage(title: 'AI Dictionary');
+        return MyHomePage(title: AppLocalizations.of(context).get('app_title'));
       },
     );
   }

@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'AI Dictionary',
+          loc.get('app_title'),
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
