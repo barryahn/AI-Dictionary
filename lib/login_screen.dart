@@ -38,9 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 72,
+            bottom: 24,
+          ),
           child: Form(
             key: _formKey,
             child: Column(
@@ -49,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 // 앱 로고/제목
                 _buildHeader(loc),
-                const SizedBox(height: 48),
+                const SizedBox(height: 60),
 
                 // 이메일 입력 필드
                 _buildEmailField(loc),
