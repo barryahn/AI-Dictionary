@@ -217,9 +217,9 @@ $toneInstruction
 
       OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat
           .create(
-            model: "gpt-4o-mini",
+            model: "gpt-4.1-mini",
             messages: requestMessages,
-            temperature: 0.3,
+            temperature: 0.2,
             maxTokens: 1000,
           );
 
