@@ -20,8 +20,8 @@ class TranslationScreenState extends State<TranslationScreen> {
   StreamSubscription? _languageSubscription;
 
   // 번역 분위기 설정
-  String selectedTone = '일상 대화';
-  final List<String> toneOptions = ['일상 대화', '공식 문서'];
+  double selectedToneLevel = 2.0; // 0: 친함, 1: 일상, 2: 기본, 3: 공손, 4: 격식
+  final List<String> toneLabels = ['친구', '지인', '기본', '공손', '격식'];
 
   // 번역 관련 변수들
   final TextEditingController _inputController = TextEditingController();
@@ -71,10 +71,24 @@ class TranslationScreenState extends State<TranslationScreen> {
 
     try {
       String toneInstruction = '';
-      if (selectedTone == '일상 대화') {
-        toneInstruction = '일상 대화에 적합한 자연스러운 톤으로 번역해주세요.';
-      } else if (selectedTone == '공식 문서') {
-        toneInstruction = '공식 문서에 적합한 격식 있는 톤으로 번역해주세요.';
+      int toneIndex = selectedToneLevel.round();
+
+      switch (toneIndex) {
+        case 0: // 친구
+          toneInstruction = '친근하고 편안한 톤으로 번역해주세요. 반말로 친구 사이에 사용하는 표현을 사용해주세요.';
+          break;
+        case 1: // 지인
+          toneInstruction = '일상 대화에 적합한 자연스러운 톤으로 번역해주세요.';
+          break;
+        case 2: // 기본
+          toneInstruction = '기본적이고 중립적인 톤으로 번역해주세요.';
+          break;
+        case 3: // 공손
+          toneInstruction = '공손하고 예의 바른 톤으로 번역해주세요.';
+          break;
+        case 4: // 격식
+          toneInstruction = '격식 있고 공식적인 톤으로 번역해주세요.';
+          break;
       }
 
       final translatedText = await OpenAIService.translateText(
@@ -255,61 +269,102 @@ class TranslationScreenState extends State<TranslationScreen> {
     );
   }
 
-  // 번역 분위기 설정 Horizontal Picker
+  // 번역 분위기 설정 슬라이더
   Widget _buildTonePicker() {
-    return Column(
-      children: [
-        Text(
-          '번역 분위기',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: BeigeColors.text,
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          height: 50,
-          decoration: BoxDecoration(
-            color: BeigeColors.light,
-            borderRadius: BorderRadius.circular(25),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.tune, color: BeigeColors.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                '번역 분위기',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: BeigeColors.text,
+                ),
+              ),
+            ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: toneOptions.map((tone) {
-              bool isSelected = selectedTone == tone;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedTone = tone;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? BeigeColors.primary
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    tone,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : BeigeColors.text,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+          const SizedBox(height: 20),
+          // 슬라이더
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: BeigeColors.primary,
+              inactiveTrackColor: BeigeColors.light,
+              thumbColor: BeigeColors.primary,
+              overlayColor: BeigeColors.primary.withOpacity(0.2),
+              trackHeight: 4,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+            ),
+            child: Slider(
+              value: selectedToneLevel,
+              min: 0,
+              max: 4,
+              divisions: 4,
+              onChanged: (value) {
+                setState(() {
+                  selectedToneLevel = value;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          // 라벨 표시
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: toneLabels.asMap().entries.map((entry) {
+              int index = entry.key;
+              String label = entry.value;
+              bool isSelected = selectedToneLevel.round() == index;
+
+              return Column(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? BeigeColors.primary
+                          : Colors.grey.withOpacity(0.3),
+                      shape: BoxShape.circle,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
+                      color: isSelected
+                          ? BeigeColors.primary
+                          : BeigeColors.textLight,
+                    ),
+                  ),
+                ],
               );
             }).toList(),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -331,46 +386,115 @@ class TranslationScreenState extends State<TranslationScreen> {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: BeigeColors.light,
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
       ),
-      child: TextField(
-        controller: _inputController,
-        maxLines: null,
-        expands: true,
-        decoration: InputDecoration(
-          hintText: '번역할 텍스트를 입력하세요...',
-          hintStyle: TextStyle(color: BeigeColors.textLight),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(16),
-        ),
-        style: TextStyle(color: BeigeColors.text, fontSize: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Row(
+              children: [
+                Icon(Icons.edit, color: BeigeColors.primary, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  '입력 텍스트',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: BeigeColors.textLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: TextField(
+              controller: _inputController,
+              maxLines: null,
+              expands: true,
+              decoration: InputDecoration(
+                hintText: '번역할 텍스트를 입력하세요.',
+                hintStyle: TextStyle(
+                  color: BeigeColors.textLight,
+                  fontSize: 16,
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              ),
+              style: TextStyle(
+                color: BeigeColors.text,
+                fontSize: 16,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   // 번역 버튼
   Widget _buildTranslateButton() {
-    return SizedBox(
+    return Container(
       width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _translateText,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: BeigeColors.primary,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+      height: 56,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [BeigeColors.primary, BeigeColors.primary.withOpacity(0.8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: BeigeColors.primary.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isLoading ? null : _translateText,
+          borderRadius: BorderRadius.circular(16),
+          child: Center(
+            child: _isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.translate, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
+                      const Text(
+                        '번역하기',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ),
-        child: _isLoading
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              )
-            : const Text(
-                '번역하기',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
       ),
     );
   }
@@ -381,22 +505,78 @@ class TranslationScreenState extends State<TranslationScreen> {
       height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: BeigeColors.light,
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Text(
-            _translatedText.isEmpty ? '번역 결과가 여기에 표시됩니다.' : _translatedText,
-            style: TextStyle(
-              color: _translatedText.isEmpty
-                  ? BeigeColors.textLight
-                  : BeigeColors.text,
-              fontSize: 16,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.translate,
+                  color: _translatedText.isEmpty
+                      ? BeigeColors.textLight
+                      : BeigeColors.primary,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '번역 결과',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _translatedText.isEmpty
+                        ? BeigeColors.textLight
+                        : BeigeColors.text,
+                  ),
+                ),
+                if (_isLoading) ...[
+                  const SizedBox(width: 8),
+                  const SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        BeigeColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-        ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              child: SingleChildScrollView(
+                child: Text(
+                  _translatedText.isEmpty
+                      ? '번역 결과가 여기에 표시됩니다.'
+                      : _translatedText,
+                  style: TextStyle(
+                    color: _translatedText.isEmpty
+                        ? BeigeColors.textLight
+                        : BeigeColors.text,
+                    fontSize: 16,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
