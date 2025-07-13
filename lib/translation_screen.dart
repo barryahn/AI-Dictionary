@@ -20,8 +20,8 @@ class TranslationScreenState extends State<TranslationScreen> {
   StreamSubscription? _languageSubscription;
 
   // 번역 분위기 설정
-  double selectedToneLevel = 2.0; // 0: 친함, 1: 일상, 2: 기본, 3: 공손, 4: 격식
-  final List<String> toneLabels = ['친구', '지인', '기본', '공손', '격식'];
+  double selectedToneLevel = 1.0; // 0: 친함, 1: 기본, 2: 공손, 3: 격식
+  final List<String> toneLabels = ['친구', '기본', '공손', '격식'];
 
   // 번역 관련 변수들
   final TextEditingController _inputController = TextEditingController();
@@ -77,16 +77,13 @@ class TranslationScreenState extends State<TranslationScreen> {
         case 0: // 친구
           toneInstruction = '친근하고 편안한 톤으로 번역해주세요. 반말로 친구 사이에 사용하는 표현을 사용해주세요.';
           break;
-        case 1: // 지인
-          toneInstruction = '일상 대화에 적합한 자연스러운 톤으로 번역해주세요.';
+        case 1: // 기본
+          toneInstruction = '기본적이고 중립적인 톤으로 존대말로 번역해주세요.';
           break;
-        case 2: // 기본
-          toneInstruction = '기본적이고 중립적인 톤으로 번역해주세요.';
-          break;
-        case 3: // 공손
+        case 2: // 공손
           toneInstruction = '공손하고 예의 바른 톤으로 번역해주세요.';
           break;
-        case 4: // 격식
+        case 3: // 격식
           toneInstruction = '격식 있고 공식적인 톤으로 번역해주세요.';
           break;
       }
@@ -316,8 +313,8 @@ class TranslationScreenState extends State<TranslationScreen> {
             child: Slider(
               value: selectedToneLevel,
               min: 0,
-              max: 4,
-              divisions: 4,
+              max: 3,
+              divisions: 3,
               onChanged: (value) {
                 setState(() {
                   selectedToneLevel = value;
