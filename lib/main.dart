@@ -4,6 +4,7 @@ import 'dart:async';
 import 'search_result_screen.dart';
 import 'search_history_screen.dart';
 import 'profile_screen.dart';
+import 'translation_screen.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'services/auth_service.dart';
@@ -132,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _widgetOptions = <Widget>[
       const _HomeTab(),
       SearchHistoryScreen(key: _historyScreenKey),
+      const TranslationScreen(),
       const ProfileScreen(),
     ];
   }
@@ -157,6 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.translate), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
         selectedItemColor: BeigeColors.text,

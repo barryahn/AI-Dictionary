@@ -177,4 +177,58 @@ class OpenAIService {
       return '죄송합니다. 현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해주세요.';
     }
   }
+
+  static Future<String> translateText(
+    String text,
+    String fromLanguage,
+    String toLanguage,
+    String toneInstruction,
+  ) async {
+    try {
+      await initialize();
+
+      final prompt =
+          '''
+다음 텍스트를 $fromLanguage에서 $toLanguage로 번역해주세요.
+$toneInstruction
+
+번역할 텍스트: "$text"
+
+번역 결과만 출력하고 다른 설명은 포함하지 마세요.
+''';
+
+      final systemMessage = OpenAIChatCompletionChoiceMessageModel(
+        content: [
+          OpenAIChatCompletionChoiceMessageContentItemModel.text(
+            "You are a professional translator. Translate the given text accurately according to the specified tone and style. Respond only with the translated text without any additional comments or explanations.",
+          ),
+        ],
+        role: OpenAIChatMessageRole.system,
+      );
+
+      final userMessage = OpenAIChatCompletionChoiceMessageModel(
+        content: [
+          OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt),
+        ],
+        role: OpenAIChatMessageRole.user,
+      );
+
+      final requestMessages = [systemMessage, userMessage];
+
+      OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat
+          .create(
+            model: "gpt-4o-mini",
+            messages: requestMessages,
+            temperature: 0.3,
+            maxTokens: 1000,
+          );
+
+      return chatCompletion.choices.first.message.haveContent
+          ? chatCompletion.choices.first.message.content![0].text.toString()
+          : '번역을 생성할 수 없습니다.';
+    } catch (e) {
+      print('OpenAI API 호출 오류: $e');
+      return '죄송합니다. 현재 번역 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해주세요.';
+    }
+  }
 }
