@@ -275,7 +275,7 @@ class TranslationScreenState extends State<TranslationScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -305,7 +305,7 @@ class TranslationScreenState extends State<TranslationScreen> {
               activeTrackColor: BeigeColors.primary,
               inactiveTrackColor: BeigeColors.light,
               thumbColor: BeigeColors.primary,
-              overlayColor: BeigeColors.primary.withOpacity(0.2),
+              overlayColor: BeigeColors.primary.withValues(alpha: 0.2),
               trackHeight: 4,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
@@ -331,32 +331,39 @@ class TranslationScreenState extends State<TranslationScreen> {
               String label = entry.value;
               bool isSelected = selectedToneLevel.round() == index;
 
-              return Column(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? BeigeColors.primary
-                          : Colors.grey.withOpacity(0.3),
-                      shape: BoxShape.circle,
+              return InkWell(
+                onTap: () {
+                  setState(() {
+                    selectedToneLevel = index.toDouble();
+                  });
+                },
+                child: Column(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? BeigeColors.primary
+                            : Colors.grey.withValues(alpha: 0.3),
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.w500,
-                      color: isSelected
-                          ? BeigeColors.primary
-                          : BeigeColors.textLight,
+                    const SizedBox(height: 4),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                        color: isSelected
+                            ? BeigeColors.primary
+                            : BeigeColors.textLight,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }).toList(),
           ),
@@ -387,12 +394,12 @@ class TranslationScreenState extends State<TranslationScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,13 +455,16 @@ class TranslationScreenState extends State<TranslationScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [BeigeColors.primary, BeigeColors.primary.withOpacity(0.8)],
+          colors: [
+            BeigeColors.primary,
+            BeigeColors.primary.withValues(alpha: 0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: BeigeColors.primary.withOpacity(0.3),
+            color: BeigeColors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -506,12 +516,12 @@ class TranslationScreenState extends State<TranslationScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
