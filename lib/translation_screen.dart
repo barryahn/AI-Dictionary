@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class TranslationScreen extends StatefulWidget {
   const TranslationScreen({super.key});
@@ -60,6 +62,19 @@ class TranslationScreenState extends State<TranslationScreen> {
     });
     // LanguageService에 저장
     LanguageService.setTranslationLanguages(fromLang, toLang);
+  }
+
+  // 텍스트 복사 함수
+  void _copyToClipboard(String text, String message) {
+    Clipboard.setData(ClipboardData(text: text));
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: BeigeColors.primary,
+      textColor: Colors.white,
+    );
   }
 
   Future<void> _translateText() async {
@@ -407,15 +422,46 @@ class TranslationScreenState extends State<TranslationScreen> {
           Container(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.edit, color: BeigeColors.primary, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  '입력 텍스트',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: BeigeColors.textLight,
+                Row(
+                  children: [
+                    Icon(Icons.edit, color: BeigeColors.primary, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      '입력 텍스트',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: BeigeColors.textLight,
+                      ),
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    if (_inputController.text.isNotEmpty) {
+                      _copyToClipboard(
+                        _inputController.text,
+                        '입력 텍스트가 복사되었습니다.',
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: _inputController.text.isNotEmpty
+                          ? BeigeColors.primary.withValues(alpha: 0.1)
+                          : Colors.grey.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Icon(
+                      Icons.copy,
+                      size: 16,
+                      color: _inputController.text.isNotEmpty
+                          ? BeigeColors.text
+                          : Colors.grey,
+                    ),
                   ),
                 ),
               ],
@@ -529,38 +575,71 @@ class TranslationScreenState extends State<TranslationScreen> {
           Container(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  Icons.translate,
-                  color: _translatedText.isEmpty
-                      ? BeigeColors.textLight
-                      : BeigeColors.primary,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '번역 결과',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _translatedText.isEmpty
-                        ? BeigeColors.textLight
-                        : BeigeColors.text,
-                  ),
-                ),
-                if (_isLoading) ...[
-                  const SizedBox(width: 8),
-                  const SizedBox(
-                    width: 12,
-                    height: 12,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        BeigeColors.primary,
+                Row(
+                  children: [
+                    Icon(
+                      Icons.translate,
+                      color: _translatedText.isEmpty
+                          ? BeigeColors.textLight
+                          : BeigeColors.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '번역 결과',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: _translatedText.isEmpty
+                            ? BeigeColors.textLight
+                            : BeigeColors.text,
                       ),
                     ),
+                    if (_isLoading) ...[
+                      const SizedBox(width: 8),
+                      const SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            BeigeColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    if (_translatedText.isNotEmpty &&
+                        _translatedText != '번역 결과가 여기에 표시됩니다.') {
+                      _copyToClipboard(_translatedText, '번역 결과가 복사되었습니다.');
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color:
+                          (_translatedText.isNotEmpty &&
+                              _translatedText != '번역 결과가 여기에 표시됩니다.')
+                          ? BeigeColors.primary.withValues(alpha: 0.1)
+                          : Colors.grey.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Icon(
+                      Icons.copy,
+                      size: 16,
+                      color:
+                          (_translatedText.isNotEmpty &&
+                              _translatedText != '번역 결과가 여기에 표시됩니다.')
+                          ? BeigeColors.text
+                          : Colors.grey,
+                    ),
                   ),
-                ],
+                ),
               ],
             ),
           ),
