@@ -10,7 +10,7 @@ class LanguageService {
   static const String korean = 'ko';
   static const String english = 'en';
   static const String chinese = 'zh';
-  static const String taiwanese = 'zh-tw';
+  static const String taiwanese = 'zh-TW';
   static const String french = 'fr';
   static const String spanish = 'es';
 
@@ -98,7 +98,7 @@ class LanguageService {
       case '중국어':
         return 'zh';
       case '대만어':
-        return 'zh-tw';
+        return 'zh-TW';
       case '프랑스어':
         return 'fr';
       case '스페인어':
@@ -130,8 +130,8 @@ class LanguageService {
 
   // 로케일 생성 헬퍼 메서드
   static Locale createLocale(String languageCode) {
-    if (languageCode == 'zh-tw') {
-      return const Locale('zh', 'tw');
+    if (languageCode == 'zh-TW') {
+      return const Locale('zh', 'TW');
     }
     return Locale(languageCode);
   }

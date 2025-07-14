@@ -100,7 +100,8 @@ class TranslationScreenState extends State<TranslationScreen> {
 
     final temp = langdetect.detect(_inputController.text.trim());
 
-    final detectedLanguageByLangDetect = temp == 'zh-ch' ? 'zh' : temp;
+    String detectedLanguageByLangDetect = temp == 'zh-ch' ? 'zh' : temp;
+    detectedLanguageByLangDetect = temp == 'zh-tw' ? 'zh-TW' : temp;
 
     final selectedLanguageCode = LanguageService.getLanguageCode(
       selectedFromLanguage,
