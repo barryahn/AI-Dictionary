@@ -201,8 +201,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 subtitle: loc.get('app_version'),
                 onTap: () => _showAppInfo(loc),
               ),
-              _buildDivider(),
-              if (authService.isLoggedIn)
+              if (authService.isLoggedIn) ...[
+                _buildDivider(),
                 _buildMenuItem(
                   icon: Icons.logout,
                   title: loc.get('logout'),
@@ -210,6 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () => _showLogoutDialog(loc),
                   textColor: Colors.red[400],
                 ),
+              ],
             ],
           ),
         );

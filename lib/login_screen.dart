@@ -251,11 +251,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildModeToggleButton(AppLocalizations loc) {
     return TextButton(
-      onPressed: () {
-        setState(() {
-          _isLoginMode = !_isLoginMode;
-        });
-      },
+      onPressed: _isLoading
+          ? null
+          : () {
+              setState(() {
+                _isLoginMode = !_isLoginMode;
+              });
+            },
       child: Text(
         _isLoginMode
             ? loc.get('no_account_register')
