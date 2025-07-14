@@ -158,6 +158,27 @@ class AppLocalizations {
       // 검색 기록 관련
       'and_others': '외',
       'items': '개',
+
+      // 번역 관련
+      'translation': '번역',
+      'translation_tone': '번역 분위기',
+      'input_text': '입력 텍스트',
+      'translation_result': '번역 결과',
+      'translate_button': '번역하기',
+      'input_text_hint': '번역할 텍스트를 입력하세요.',
+      'translation_result_hint': '번역 결과가 여기에 표시됩니다.',
+      'input_text_copied': '입력 텍스트가 복사되었습니다.',
+      'translation_result_copied': '번역 결과가 복사되었습니다.',
+      'translation_error': '번역 중 오류가 발생했습니다.',
+      'language_change': '언어 변경',
+      'selected_input_language': '선택한 입력 언어: ',
+      'is_this_language_correct': '이 언어가 맞나요?',
+      'yes': '네',
+      'no': '아니요',
+      'friendly': '친구',
+      'basic': '기본',
+      'polite': '공손',
+      'formal': '격식',
     },
     'en': {
       // App Title
@@ -305,6 +326,27 @@ class AppLocalizations {
       // Search History Related
       'and_others': 'and',
       'items': ' more',
+
+      // Translation Related
+      'translation': 'Translation',
+      'translation_tone': 'Translation Tone',
+      'input_text': 'Input Text',
+      'translation_result': 'Translation Result',
+      'translate_button': 'Translate',
+      'input_text_hint': 'Enter text to translate.',
+      'translation_result_hint': 'Translation result will appear here.',
+      'input_text_copied': 'Input text copied.',
+      'translation_result_copied': 'Translation result copied.',
+      'translation_error': 'An error occurred during translation.',
+      'language_change': 'Language Change',
+      'selected_input_language': 'Selected input language: ',
+      'is_this_language_correct': 'Is this language correct?',
+      'yes': 'Yes',
+      'no': 'No',
+      'friendly': 'Friendly',
+      'basic': 'Basic',
+      'polite': 'Polite',
+      'formal': 'Formal',
     },
     'zh': {
       // 应用标题
@@ -450,8 +492,29 @@ class AppLocalizations {
       // 搜索历史相关
       'and_others': '和另外',
       'items': '个',
+
+      // 翻译相关
+      'translation': '翻译',
+      'translation_tone': '翻译语气',
+      'input_text': '输入文本',
+      'translation_result': '翻译结果',
+      'translate_button': '翻译',
+      'input_text_hint': '请输入要翻译的文本。',
+      'translation_result_hint': '翻译结果将显示在这里。',
+      'input_text_copied': '输入文本已复制。',
+      'translation_result_copied': '翻译结果已复制。',
+      'translation_error': '翻译过程中发生错误。',
+      'language_change': '语言更改',
+      'selected_input_language': '选择的输入语言：',
+      'is_this_language_correct': '这个语言正确吗？',
+      'yes': '是',
+      'no': '否',
+      'friendly': '友好',
+      'basic': '基本',
+      'polite': '礼貌',
+      'formal': '正式',
     },
-    'zh-tw': {
+    'zh-TW': {
       // 應用標題
       'app_title': appName,
 
@@ -595,6 +658,27 @@ class AppLocalizations {
       // 搜尋歷史相關
       'and_others': '和另外',
       'items': '個',
+
+      // 翻譯相關
+      'translation': '翻譯',
+      'translation_tone': '翻譯語氣',
+      'input_text': '輸入文字',
+      'translation_result': '翻譯結果',
+      'translate_button': '翻譯',
+      'input_text_hint': '請輸入要翻譯的文字。',
+      'translation_result_hint': '翻譯結果將顯示在這裡。',
+      'input_text_copied': '輸入文字已複製。',
+      'translation_result_copied': '翻譯結果已複製。',
+      'translation_error': '翻譯過程中發生錯誤。',
+      'language_change': '語言更改',
+      'selected_input_language': '選擇的輸入語言：',
+      'is_this_language_correct': '這個語言正確嗎？',
+      'yes': '是',
+      'no': '否',
+      'friendly': '友好',
+      'basic': '基本',
+      'polite': '禮貌',
+      'formal': '正式',
     },
     'fr': {
       // Titre de l'application
@@ -747,6 +831,27 @@ class AppLocalizations {
       // Historique de recherche
       'and_others': 'et',
       'items': ' autres',
+
+      // Traduction
+      'translation': 'Traduction',
+      'translation_tone': 'Ton de traduction',
+      'input_text': 'Texte d\'entrée',
+      'translation_result': 'Résultat de traduction',
+      'translate_button': 'Traduire',
+      'input_text_hint': 'Entrez le texte à traduire.',
+      'translation_result_hint': 'Le résultat de traduction apparaîtra ici.',
+      'input_text_copied': 'Texte d\'entrée copié.',
+      'translation_result_copied': 'Résultat de traduction copié.',
+      'translation_error': 'Une erreur s\'est produite lors de la traduction.',
+      'language_change': 'Changement de langue',
+      'selected_input_language': 'Langue d\'entrée sélectionnée : ',
+      'is_this_language_correct': 'Cette langue est-elle correcte ?',
+      'yes': 'Oui',
+      'no': 'Non',
+      'friendly': 'Amical',
+      'basic': 'Basique',
+      'polite': 'Poli',
+      'formal': 'Formel',
     },
     'es': {
       // Título de la aplicación
@@ -896,14 +1001,35 @@ class AppLocalizations {
       // Historial de búsqueda
       'and_others': 'y',
       'items': ' más',
+
+      // Traducción
+      'translation': 'Traducción',
+      'translation_tone': 'Tono de traducción',
+      'input_text': 'Texto de entrada',
+      'translation_result': 'Resultado de traducción',
+      'translate_button': 'Traducir',
+      'input_text_hint': 'Ingresa el texto a traducir.',
+      'translation_result_hint': 'El resultado de traducción aparecerá aquí.',
+      'input_text_copied': 'Texto de entrada copiado.',
+      'translation_result_copied': 'Resultado de traducción copiado.',
+      'translation_error': 'Ocurrió un error durante la traducción.',
+      'language_change': 'Cambio de idioma',
+      'selected_input_language': 'Idioma de entrada seleccionado: ',
+      'is_this_language_correct': '¿Es correcto este idioma?',
+      'yes': 'Sí',
+      'no': 'No',
+      'friendly': 'Amigable',
+      'basic': 'Básico',
+      'polite': 'Educado',
+      'formal': 'Formal',
     },
   };
 
   String get(String key) {
-    // zh-tw와 같은 복합 로케일 처리
+    // zh-TW와 같은 복합 로케일 처리
     String languageCode;
-    if (locale.languageCode == 'zh' && locale.countryCode == 'tw') {
-      languageCode = 'zh-tw';
+    if (locale.languageCode == 'zh' && locale.countryCode == 'TW') {
+      languageCode = 'zh-TW';
     } else {
       languageCode = locale.languageCode;
     }
@@ -972,6 +1098,27 @@ class AppLocalizations {
   // 검색 기록 관련
   String get and_others => get('and_others');
   String get items => get('items');
+
+  // 번역 관련
+  String get translation => get('translation');
+  String get translation_tone => get('translation_tone');
+  String get input_text => get('input_text');
+  String get translation_result => get('translation_result');
+  String get translate_button => get('translate_button');
+  String get input_text_hint => get('input_text_hint');
+  String get translation_result_hint => get('translation_result_hint');
+  String get input_text_copied => get('input_text_copied');
+  String get translation_result_copied => get('translation_result_copied');
+  String get translation_error => get('translation_error');
+  String get language_change => get('language_change');
+  String get selected_input_language => get('selected_input_language');
+  String get is_this_language_correct => get('is_this_language_correct');
+  String get yes => get('yes');
+  String get no => get('no');
+  String get friendly => get('friendly');
+  String get basic => get('basic');
+  String get polite => get('polite');
+  String get formal => get('formal');
 }
 
 /// 로컬라이제이션 델리게이트
@@ -980,8 +1127,8 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   bool isSupported(Locale locale) {
-    // zh-tw와 같은 복합 로케일을 제대로 처리
-    if (locale.languageCode == 'zh' && locale.countryCode == 'tw') {
+    // zh-TW와 같은 복합 로케일을 제대로 처리
+    if (locale.languageCode == 'zh' && locale.countryCode == 'TW') {
       return true;
     }
 

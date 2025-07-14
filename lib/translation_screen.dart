@@ -24,7 +24,12 @@ class TranslationScreenState extends State<TranslationScreen> {
 
   // 번역 분위기 설정
   double selectedToneLevel = 1.0; // 0: 친함, 1: 기본, 2: 공손, 3: 격식
-  final List<String> toneLabels = ['친구', '기본', '공손', '격식'];
+  List<String> get toneLabels => [
+    AppLocalizations.of(context).friendly,
+    AppLocalizations.of(context).basic,
+    AppLocalizations.of(context).polite,
+    AppLocalizations.of(context).formal,
+  ];
   bool isTonePickerExpanded = false;
 
   // 번역 관련 변수들
@@ -110,7 +115,7 @@ class TranslationScreenState extends State<TranslationScreen> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: '선택한 입력 언어: ',
+                  text: AppLocalizations.of(context).selected_input_language,
                   style: TextStyle(
                     fontSize: 16,
                     color: BeigeColors.text,
@@ -128,15 +133,18 @@ class TranslationScreenState extends State<TranslationScreen> {
               ],
             ),
           ),
-          content: Text('이 언어가 맞나요?', style: TextStyle(fontSize: 14)),
+          content: Text(
+            AppLocalizations.of(context).is_this_language_correct,
+            style: TextStyle(fontSize: 14),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('아니요'),
+              child: Text(AppLocalizations.of(context).no),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('네'),
+              child: Text(AppLocalizations.of(context).yes),
             ),
           ],
         ),
@@ -183,7 +191,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       });
     } catch (e) {
       setState(() {
-        _translatedText = '번역 중 오류가 발생했습니다.';
+        _translatedText = AppLocalizations.of(context).translation_error;
       });
     } finally {
       setState(() {
@@ -198,7 +206,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       backgroundColor: BeigeColors.background,
       appBar: AppBar(
         title: Text(
-          '번역',
+          AppLocalizations.of(context).translation,
           style: TextStyle(
             color: BeigeColors.text,
             fontWeight: FontWeight.bold,
@@ -383,7 +391,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                       Icon(Icons.tune, color: BeigeColors.primary, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        '번역 분위기',
+                        AppLocalizations.of(context).translation_tone,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -568,7 +576,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                     Icon(Icons.edit, color: BeigeColors.primary, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      '입력 텍스트',
+                      AppLocalizations.of(context).input_text,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -582,7 +590,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                     if (_inputController.text.isNotEmpty) {
                       _copyToClipboard(
                         _inputController.text,
-                        '입력 텍스트가 복사되었습니다.',
+                        AppLocalizations.of(context).input_text_copied,
                       );
                     }
                   },
@@ -612,7 +620,7 @@ class TranslationScreenState extends State<TranslationScreen> {
               maxLines: null,
               expands: true,
               decoration: InputDecoration(
-                hintText: '번역할 텍스트를 입력하세요.',
+                hintText: AppLocalizations.of(context).input_text_hint,
                 hintStyle: TextStyle(
                   color: BeigeColors.textLight,
                   fontSize: 16,
@@ -675,8 +683,8 @@ class TranslationScreenState extends State<TranslationScreen> {
                     children: [
                       Icon(Icons.translate, color: Colors.white, size: 20),
                       const SizedBox(width: 8),
-                      const Text(
-                        '번역하기',
+                      Text(
+                        AppLocalizations.of(context).translate_button,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -727,7 +735,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '번역 결과',
+                      AppLocalizations.of(context).translation_result,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -754,8 +762,14 @@ class TranslationScreenState extends State<TranslationScreen> {
                 GestureDetector(
                   onTap: () {
                     if (_translatedText.isNotEmpty &&
-                        _translatedText != '번역 결과가 여기에 표시됩니다.') {
-                      _copyToClipboard(_translatedText, '번역 결과가 복사되었습니다.');
+                        _translatedText !=
+                            AppLocalizations.of(
+                              context,
+                            ).translation_result_hint) {
+                      _copyToClipboard(
+                        _translatedText,
+                        AppLocalizations.of(context).translation_result_copied,
+                      );
                     }
                   },
                   child: Container(
@@ -763,7 +777,10 @@ class TranslationScreenState extends State<TranslationScreen> {
                     decoration: BoxDecoration(
                       color:
                           (_translatedText.isNotEmpty &&
-                              _translatedText != '번역 결과가 여기에 표시됩니다.')
+                              _translatedText !=
+                                  AppLocalizations.of(
+                                    context,
+                                  ).translation_result_hint)
                           ? BeigeColors.primary.withValues(alpha: 0.1)
                           : Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -773,7 +790,10 @@ class TranslationScreenState extends State<TranslationScreen> {
                       size: 16,
                       color:
                           (_translatedText.isNotEmpty &&
-                              _translatedText != '번역 결과가 여기에 표시됩니다.')
+                              _translatedText !=
+                                  AppLocalizations.of(
+                                    context,
+                                  ).translation_result_hint)
                           ? BeigeColors.text
                           : Colors.grey,
                     ),
@@ -788,7 +808,7 @@ class TranslationScreenState extends State<TranslationScreen> {
               child: SingleChildScrollView(
                 child: Text(
                   _translatedText.isEmpty
-                      ? '번역 결과가 여기에 표시됩니다.'
+                      ? AppLocalizations.of(context).translation_result_hint
                       : _translatedText,
                   style: TextStyle(
                     color: _translatedText.isEmpty
