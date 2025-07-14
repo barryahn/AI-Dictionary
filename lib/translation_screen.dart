@@ -82,7 +82,7 @@ class TranslationScreenState extends State<TranslationScreen> {
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
       backgroundColor: BeigeColors.primary,
       textColor: Colors.white,
@@ -105,8 +105,29 @@ class TranslationScreenState extends State<TranslationScreen> {
       bool? shouldContinue = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('언어 변경'),
-          content: Text('입력 언어가 $selectedFromLanguage가 맞나요?'),
+          title: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '선택한 입력 언어: ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: BeigeColors.text,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                TextSpan(
+                  text: selectedFromLanguage,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: BeigeColors.error,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          content: Text('이 언어가 맞나요?', style: TextStyle(fontSize: 14)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
