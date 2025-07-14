@@ -92,18 +92,22 @@ class TranslationScreenState extends State<TranslationScreen> {
   Future<void> _translateText() async {
     if (_inputController.text.trim().isEmpty) return;
 
-    final detectedLanguage = LanguageService.getLanguageCode(
-      langdetect.detect(_inputController.text.trim()),
+    final temp = langdetect.detect(_inputController.text.trim());
+
+    final detectedLanguageByLangDetect = temp == 'zh-ch' ? 'zh' : temp;
+
+    final selectedLanguageCode = LanguageService.getLanguageCode(
+      selectedFromLanguage,
     );
 
-    if (detectedLanguage != selectedFromLanguage) {
+    if (detectedLanguageByLangDetect != selectedLanguageCode) {
       // 언어 변경 팝업 띄우기
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('언어 변경'),
           content: Text(
-            '입력 언어가 변경되었습니다. $detectedLanguage와 $selectedFromLanguage 중 하나를 선택해주세요. 확인 버튼을 누르면 자동으로 변경됩니다.',
+            '입력 언어가 변경되었습니다. $detectedLanguageByLangDetect와 $selectedLanguageCode 중 하나를 선택해주세요. 확인 버튼을 누르면 자동으로 변경됩니다.',
           ),
           actions: [
             TextButton(
