@@ -101,22 +101,29 @@ class TranslationScreenState extends State<TranslationScreen> {
     );
 
     if (detectedLanguageByLangDetect != selectedLanguageCode) {
-      // 언어 변경 팝업 띄우기
-      showDialog(
+      // 언어 확인 팝업 띄우기
+      bool? shouldContinue = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('언어 변경'),
-          content: Text(
-            '입력 언어가 변경되었습니다. $detectedLanguageByLangDetect와 $selectedLanguageCode 중 하나를 선택해주세요. 확인 버튼을 누르면 자동으로 변경됩니다.',
-          ),
+          content: Text('입력 언어가 $selectedFromLanguage가 맞나요?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('확인'),
+              onPressed: () => Navigator.pop(context, false),
+              child: Text('아니요'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text('네'),
             ),
           ],
         ),
       );
+
+      // '아니요'를 선택했거나 다이얼로그를 닫았으면 번역 취소
+      if (shouldContinue != true) {
+        return;
+      }
     }
 
     setState(() {
