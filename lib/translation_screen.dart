@@ -92,7 +92,10 @@ class TranslationScreenState extends State<TranslationScreen> {
   Future<void> _translateText() async {
     if (_inputController.text.trim().isEmpty) return;
 
-    final detectedLanguage = langdetect.detect(_inputController.text.trim());
+    final detectedLanguage = LanguageService.getLanguageCode(
+      langdetect.detect(_inputController.text.trim()),
+    );
+
     if (detectedLanguage != selectedFromLanguage) {
       // 언어 변경 팝업 띄우기
       showDialog(
