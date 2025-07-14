@@ -7,6 +7,7 @@ import 'services/openai_service.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_langdetect/flutter_langdetect.dart' as langdetect;
 
 class TranslationScreen extends StatefulWidget {
   const TranslationScreen({super.key});
@@ -45,6 +46,9 @@ class TranslationScreenState extends State<TranslationScreen> {
         selectedToLanguage = languages['toLanguage']!;
       });
     });
+
+    // Language Detector 초기화
+    initLanguageDetector();
   }
 
   @override
@@ -53,6 +57,14 @@ class TranslationScreenState extends State<TranslationScreen> {
     _inputController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> initLanguageDetector() async {
+    try {
+      await langdetect.initLangDetect();
+    } catch (e) {
+      print(e);
+    }
   }
 
   void _updateLanguages(String fromLang, String toLang) {
@@ -79,6 +91,26 @@ class TranslationScreenState extends State<TranslationScreen> {
 
   Future<void> _translateText() async {
     if (_inputController.text.trim().isEmpty) return;
+
+    final detectedLanguage = langdetect.detect(_inputController.text.trim());
+    if (detectedLanguage != selectedFromLanguage) {
+      // 언어 변경 팝업 띄우기
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('언어 변경'),
+          content: Text(
+            '입력 언어가 변경되었습니다. $detectedLanguage와 $selectedFromLanguage 중 하나를 선택해주세요. 확인 버튼을 누르면 자동으로 변경됩니다.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('확인'),
+            ),
+          ],
+        ),
+      );
+    }
 
     setState(() {
       _isLoading = true;
