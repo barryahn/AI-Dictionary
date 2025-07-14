@@ -352,7 +352,6 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 번역 분위기 설정 슬라이더
   Widget _buildTonePicker() {
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -367,141 +366,161 @@ class TranslationScreenState extends State<TranslationScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              setState(() {
+                isTonePickerExpanded = !isTonePickerExpanded;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.tune, color: BeigeColors.primary, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    '번역 분위기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: BeigeColors.text,
-                    ),
-                  ),
-                  if (!isTonePickerExpanded) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            toneLabels[selectedToneLevel.round()],
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: BeigeColors.textLight,
-                            ),
-                          ),
-                          const SizedBox(width: 2),
-                          Container(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Icon(
-                              Icons.check_circle,
-                              color: BeigeColors.primary,
-                              size: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isTonePickerExpanded = !isTonePickerExpanded;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  child: Icon(
-                    isTonePickerExpanded
-                        ? Icons.expand_less
-                        : Icons.expand_more,
-                    color: BeigeColors.text,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          if (isTonePickerExpanded) ...[
-            const SizedBox(height: 20),
-            // 슬라이더
-            SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                activeTrackColor: BeigeColors.primary,
-                inactiveTrackColor: BeigeColors.light,
-                thumbColor: BeigeColors.primary,
-                overlayColor: BeigeColors.primary.withValues(alpha: 0.2),
-                trackHeight: 4,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-              ),
-              child: Slider(
-                value: selectedToneLevel,
-                min: 0,
-                max: 3,
-                divisions: 3,
-                onChanged: (value) {
-                  setState(() {
-                    selectedToneLevel = value;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-            // 라벨 표시
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: toneLabels.asMap().entries.map((entry) {
-                int index = entry.key;
-                String label = entry.value;
-                bool isSelected = selectedToneLevel.round() == index;
-
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      selectedToneLevel = index.toDouble();
-                    });
-                  },
-                  child: Column(
+                  Row(
                     children: [
-                      Container(
-                        width: 48,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? BeigeColors.primary
-                              : Colors.grey.withValues(alpha: 0.3),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+                      Icon(Icons.tune, color: BeigeColors.primary, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        label,
+                        '번역 분위기',
                         style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.w500,
-                          color: isSelected
-                              ? BeigeColors.primary
-                              : BeigeColors.textLight,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: BeigeColors.text,
                         ),
                       ),
+                      if (!isTonePickerExpanded) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                toneLabels[selectedToneLevel.round()],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: BeigeColors.textLight,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                              Container(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Icon(
+                                  Icons.check_circle,
+                                  color: BeigeColors.primary,
+                                  size: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                );
-              }).toList(),
+
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isTonePickerExpanded = !isTonePickerExpanded;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        isTonePickerExpanded
+                            ? Icons.expand_less
+                            : Icons.expand_more,
+                        color: BeigeColors.text,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
+          if (isTonePickerExpanded)
+            Container(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+              child: Column(
+                children: [
+                  // 슬라이더
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: BeigeColors.primary,
+                      inactiveTrackColor: BeigeColors.light,
+                      thumbColor: BeigeColors.primary,
+                      overlayColor: BeigeColors.primary.withValues(alpha: 0.2),
+                      trackHeight: 4,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 8,
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 16,
+                      ),
+                    ),
+                    child: Slider(
+                      value: selectedToneLevel,
+                      min: 0,
+                      max: 3,
+                      divisions: 3,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedToneLevel = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // 라벨 표시
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: toneLabels.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      String label = entry.value;
+                      bool isSelected = selectedToneLevel.round() == index;
+
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedToneLevel = index.toDouble();
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? BeigeColors.primary
+                                    : Colors.grey.withValues(alpha: 0.3),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              label,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
+                                color: isSelected
+                                    ? BeigeColors.primary
+                                    : BeigeColors.textLight,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
