@@ -25,6 +25,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 번역 분위기 설정
   double selectedToneLevel = 1.0; // 0: 친함, 1: 기본, 2: 공손, 3: 격식
   final List<String> toneLabels = ['친구', '기본', '공손', '격식'];
+  bool isTonePickerExpanded = false;
 
   // 번역 관련 변수들
   final TextEditingController _inputController = TextEditingController();
@@ -367,88 +368,140 @@ class TranslationScreenState extends State<TranslationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(Icons.tune, color: BeigeColors.primary, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                '번역 분위기',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: BeigeColors.text,
+              Row(
+                children: [
+                  Icon(Icons.tune, color: BeigeColors.primary, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    '번역 분위기',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: BeigeColors.text,
+                    ),
+                  ),
+                  if (!isTonePickerExpanded) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            toneLabels[selectedToneLevel.round()],
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: BeigeColors.textLight,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Container(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Icon(
+                              Icons.check_circle,
+                              color: BeigeColors.primary,
+                              size: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isTonePickerExpanded = !isTonePickerExpanded;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    isTonePickerExpanded
+                        ? Icons.expand_less
+                        : Icons.expand_more,
+                    color: BeigeColors.text,
+                    size: 20,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          // 슬라이더
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: BeigeColors.primary,
-              inactiveTrackColor: BeigeColors.light,
-              thumbColor: BeigeColors.primary,
-              overlayColor: BeigeColors.primary.withValues(alpha: 0.2),
-              trackHeight: 4,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-            ),
-            child: Slider(
-              value: selectedToneLevel,
-              min: 0,
-              max: 3,
-              divisions: 3,
-              onChanged: (value) {
-                setState(() {
-                  selectedToneLevel = value;
-                });
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          // 라벨 표시
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: toneLabels.asMap().entries.map((entry) {
-              int index = entry.key;
-              String label = entry.value;
-              bool isSelected = selectedToneLevel.round() == index;
-
-              return InkWell(
-                onTap: () {
+          if (isTonePickerExpanded) ...[
+            const SizedBox(height: 20),
+            // 슬라이더
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: BeigeColors.primary,
+                inactiveTrackColor: BeigeColors.light,
+                thumbColor: BeigeColors.primary,
+                overlayColor: BeigeColors.primary.withValues(alpha: 0.2),
+                trackHeight: 4,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+              ),
+              child: Slider(
+                value: selectedToneLevel,
+                min: 0,
+                max: 3,
+                divisions: 3,
+                onChanged: (value) {
                   setState(() {
-                    selectedToneLevel = index.toDouble();
+                    selectedToneLevel = value;
                   });
                 },
-                child: Column(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? BeigeColors.primary
-                            : Colors.grey.withValues(alpha: 0.3),
-                        shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(height: 16),
+            // 라벨 표시
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: toneLabels.asMap().entries.map((entry) {
+                int index = entry.key;
+                String label = entry.value;
+                bool isSelected = selectedToneLevel.round() == index;
+
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedToneLevel = index.toDouble();
+                    });
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? BeigeColors.primary
+                              : Colors.grey.withValues(alpha: 0.3),
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                        color: isSelected
-                            ? BeigeColors.primary
-                            : BeigeColors.textLight,
+                      const SizedBox(height: 4),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          color: isSelected
+                              ? BeigeColors.primary
+                              : BeigeColors.textLight,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
         ],
       ),
     );
