@@ -10,7 +10,7 @@ class LanguageService {
   static const String korean = 'ko';
   static const String english = 'en';
   static const String chinese = 'zh';
-  static const String taiwanese = 'zh-TW';
+  static const String taiwanese = 'zh-tw';
   static const String french = 'fr';
   static const String spanish = 'es';
 
@@ -88,6 +88,26 @@ class LanguageService {
     });
   }
 
+  // 언어 코드 가져오기
+  static String getLanguageCode(String languageName) {
+    switch (languageName) {
+      case '한국어':
+        return 'ko';
+      case '영어':
+        return 'en';
+      case '중국어':
+        return 'zh';
+      case '대만어':
+        return 'zh-tw';
+      case '프랑스어':
+        return 'fr';
+      case '스페인어':
+        return 'es';
+      default:
+        return 'null';
+    }
+  }
+
   // 언어 이름 가져오기
   static String getLanguageName(String languageCode) {
     switch (languageCode) {
@@ -110,8 +130,8 @@ class LanguageService {
 
   // 로케일 생성 헬퍼 메서드
   static Locale createLocale(String languageCode) {
-    if (languageCode == 'zh-TW') {
-      return const Locale('zh', 'TW');
+    if (languageCode == 'zh-tw') {
+      return const Locale('zh', 'tw');
     }
     return Locale(languageCode);
   }

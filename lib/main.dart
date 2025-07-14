@@ -51,8 +51,8 @@ class _MyAppState extends State<MyApp> {
 
   // 로케일 생성 헬퍼 메서드
   static Locale _createLocale(String languageCode) {
-    if (languageCode == 'zh-TW') {
-      return const Locale('zh', 'TW');
+    if (languageCode == 'zh-tw') {
+      return const Locale('zh', 'tw');
     }
     return Locale(languageCode);
   }
@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
           Locale('ko'),
           Locale('en'),
           Locale('zh'),
-          Locale('zh', 'TW'),
+          Locale('zh', 'tw'),
           Locale('fr'),
           Locale('es'),
         ],

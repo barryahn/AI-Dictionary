@@ -451,7 +451,7 @@ class AppLocalizations {
       'and_others': '和另外',
       'items': '个',
     },
-    'zh-TW': {
+    'zh-tw': {
       // 應用標題
       'app_title': appName,
 
@@ -900,10 +900,10 @@ class AppLocalizations {
   };
 
   String get(String key) {
-    // zh-TW와 같은 복합 로케일 처리
+    // zh-tw와 같은 복합 로케일 처리
     String languageCode;
-    if (locale.languageCode == 'zh' && locale.countryCode == 'TW') {
-      languageCode = 'zh-TW';
+    if (locale.languageCode == 'zh' && locale.countryCode == 'tw') {
+      languageCode = 'zh-tw';
     } else {
       languageCode = locale.languageCode;
     }
@@ -980,8 +980,8 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   bool isSupported(Locale locale) {
-    // zh-TW와 같은 복합 로케일을 제대로 처리
-    if (locale.languageCode == 'zh' && locale.countryCode == 'TW') {
+    // zh-tw와 같은 복합 로케일을 제대로 처리
+    if (locale.languageCode == 'zh' && locale.countryCode == 'tw') {
       return true;
     }
 
