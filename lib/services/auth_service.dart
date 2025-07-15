@@ -19,11 +19,13 @@ class AuthService extends ChangeNotifier {
   String? _userEmail;
   String? _userName;
   String? _accessToken;
+  String? _userPhotoUrl;
 
   bool get isLoggedIn => _isLoggedIn;
   String? get userEmail => _userEmail;
   String? get userName => _userName;
   String? get accessToken => _accessToken;
+  String? get userPhotoUrl => _userPhotoUrl;
 
   // 초기화
   Future<void> initialize() async {
@@ -35,6 +37,7 @@ class AuthService extends ChangeNotifier {
       _isLoggedIn = true;
       _userEmail = currentUser.email;
       _userName = currentUser.displayName;
+      _userPhotoUrl = currentUser.photoURL;
       _accessToken = await currentUser.getIdToken();
       await _saveUserData();
     } else {
@@ -50,6 +53,7 @@ class AuthService extends ChangeNotifier {
       _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
       _userEmail = prefs.getString('userEmail');
       _userName = prefs.getString('userName');
+      _userPhotoUrl = prefs.getString('userPhotoUrl');
       _accessToken = prefs.getString('accessToken');
     } catch (e) {
       if (kDebugMode) {
@@ -77,6 +81,7 @@ class AuthService extends ChangeNotifier {
         _isLoggedIn = true;
         _userEmail = user.email;
         _userName = user.displayName;
+        _userPhotoUrl = user.photoURL;
         _accessToken = await user.getIdToken();
 
         // Firestore에 user email이 없을 때만 데이터 저장
@@ -88,6 +93,7 @@ class AuthService extends ChangeNotifier {
           await _firestore.collection('users').doc(user.uid).set({
             'email': user.email,
             'name': user.displayName,
+            'photoUrl': user.photoURL,
             'createdAt': FieldValue.serverTimestamp(),
           });
         }
@@ -122,6 +128,7 @@ class AuthService extends ChangeNotifier {
         final doc = await _firestore.collection('users').doc(user.uid).get();
         _userName =
             doc.data()?['name'] ?? user.displayName ?? email.split('@')[0];
+        _userPhotoUrl = doc.data()?['photoUrl'] ?? user.photoURL;
         _accessToken = await user.getIdToken();
 
         await _saveUserData();
@@ -156,6 +163,7 @@ class AuthService extends ChangeNotifier {
         _isLoggedIn = true;
         _userEmail = user.email;
         _userName = name;
+        _userPhotoUrl = user.photoURL;
         _accessToken = await user.getIdToken();
 
         await _saveUserData();
@@ -179,6 +187,7 @@ class AuthService extends ChangeNotifier {
       _isLoggedIn = false;
       _userEmail = null;
       _userName = null;
+      _userPhotoUrl = null;
       _accessToken = null;
 
       await _clearUserData();
@@ -197,6 +206,7 @@ class AuthService extends ChangeNotifier {
       await prefs.setBool('isLoggedIn', _isLoggedIn);
       await prefs.setString('userEmail', _userEmail ?? '');
       await prefs.setString('userName', _userName ?? '');
+      await prefs.setString('userPhotoUrl', _userPhotoUrl ?? '');
       await prefs.setString('accessToken', _accessToken ?? '');
     } catch (e) {
       if (kDebugMode) {
@@ -212,6 +222,7 @@ class AuthService extends ChangeNotifier {
       await prefs.remove('isLoggedIn');
       await prefs.remove('userEmail');
       await prefs.remove('userName');
+      await prefs.remove('userPhotoUrl');
       await prefs.remove('accessToken');
     } catch (e) {
       if (kDebugMode) {

@@ -83,7 +83,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: BeigeColors.accent,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.person, size: 40, color: BeigeColors.text),
+                child:
+                    authService.userPhotoUrl != null &&
+                        authService.userPhotoUrl!.isNotEmpty
+                    ? ClipOval(
+                        child: Image.network(
+                          authService.userPhotoUrl!,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.person,
+                              size: 40,
+                              color: BeigeColors.text,
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                    : null,
+                                color: BeigeColors.text,
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : Icon(Icons.person, size: 40, color: BeigeColors.text),
               ),
               const SizedBox(height: 16),
               // 사용자 이름
