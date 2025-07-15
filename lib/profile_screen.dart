@@ -71,10 +71,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, authService, child) {
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
           decoration: BoxDecoration(color: BeigeColors.background),
           child: Column(
             children: [
+              const SizedBox(height: 20),
               // 프로필 이미지
               Container(
                 width: 80,
@@ -136,7 +137,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     : loc.get('guest_description'),
                 style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
               ),
-              const SizedBox(height: 16),
+              /*
+              const SizedBox(height: 16)
               // 로그인/편집 버튼
               if (authService.isLoggedIn)
                 OutlinedButton(
@@ -165,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   child: Text(loc.get('login')),
-                ),
+                ), */
             ],
           ),
         );
@@ -177,55 +179,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
         return Container(
-          margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          decoration: BoxDecoration(
-            color: BeigeColors.light,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: BeigeColors.dark.withValues(alpha: 0.1),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+          margin: const EdgeInsets.only(bottom: 20),
           child: Column(
             children: [
+              _buildMenuHeader(title: "시스템"),
+
               _buildMenuItem(
                 icon: Icons.language,
                 title: loc.get('app_language_setting'),
                 subtitle: LanguageService.currentLanguageName,
                 onTap: () => _showLanguageSettings(loc),
               ),
-              _buildDivider(),
-              _buildMenuItem(
-                icon: Icons.notifications,
-                title: loc.get('notification_setting'),
-                subtitle: loc.get('notification_description'),
-                onTap: () => _showNotificationSettings(loc),
-              ),
-              _buildDivider(),
+
               _buildMenuItem(
                 icon: Icons.dark_mode,
                 title: loc.get('dark_mode'),
                 subtitle: loc.get('dark_mode_description'),
                 onTap: () => _toggleDarkMode(loc),
               ),
-              _buildDivider(),
+
               _buildMenuItem(
                 icon: Icons.storage,
                 title: loc.get('storage'),
                 subtitle: loc.get('storage_description'),
                 onTap: () => _showStorageSettings(loc),
               ),
-              _buildDivider(),
+
+              _buildMenuHeader(title: "정보"),
+
               _buildMenuItem(
                 icon: Icons.help,
                 title: loc.get('help'),
                 subtitle: loc.get('help_description'),
                 onTap: () => _showHelp(loc),
               ),
-              _buildDivider(),
+
               _buildMenuItem(
                 icon: Icons.info,
                 title: loc.get('app_info'),
@@ -233,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () => _showAppInfo(loc),
               ),
               if (authService.isLoggedIn) ...[
-                _buildDivider(),
+                const SizedBox(height: 20),
                 _buildMenuItem(
                   icon: Icons.logout,
                   title: loc.get('logout'),
@@ -249,6 +237,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildMenuHeader({required String title}) {
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.only(left: 24, top: 40, bottom: 10),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: BeigeColors.textLight,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
+
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
@@ -257,7 +260,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Color? textColor,
   }) {
     return ListTile(
-      leading: Icon(icon, color: textColor ?? BeigeColors.text),
+      leading: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Icon(icon, color: textColor ?? BeigeColors.text),
+      ),
       title: Text(
         title,
         style: TextStyle(
