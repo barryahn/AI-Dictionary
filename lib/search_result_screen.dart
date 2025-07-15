@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'services/search_history_service.dart';
 import 'services/openai_service.dart';
-import 'database/database_helper.dart';
+import 'models/unified_search_session.dart';
 import 'services/language_service.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
@@ -12,7 +12,7 @@ import 'l10n/app_localizations.dart';
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
   final String? initialQuery;
-  final SearchSession? searchSession;
+  final UnifiedSearchSession? searchSession;
   final String fromLanguage;
   final String toLanguage;
 
@@ -64,7 +64,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     });
   }
 
-  void _populateWithSessionData(SearchSession session) {
+  void _populateWithSessionData(UnifiedSearchSession session) {
     setState(() {
       _isSearching = true;
       _isSessionStarted = true;

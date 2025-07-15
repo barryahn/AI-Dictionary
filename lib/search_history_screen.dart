@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'services/search_history_service.dart';
-import 'database/database_helper.dart';
+import 'models/unified_search_session.dart';
 import 'search_result_screen.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
@@ -14,7 +14,7 @@ class SearchHistoryScreen extends StatefulWidget {
 
 class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   final SearchHistoryService _searchHistoryService = SearchHistoryService();
-  List<SearchSession> _searchSessions = [];
+  List<UnifiedSearchSession> _searchSessions = [];
   bool _isLoading = true;
 
   @override
