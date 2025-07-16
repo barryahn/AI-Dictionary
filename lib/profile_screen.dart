@@ -137,6 +137,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     : loc.get('guest_description'),
                 style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
               ),
+              if (!authService.isLoggedIn) ...[
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    _showLoginDialog(loc);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: BeigeColors.accent,
+                    foregroundColor: BeigeColors.text,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(loc.get('login')),
+                ),
+              ],
               /*
               const SizedBox(height: 16)
               // 로그인/편집 버튼
@@ -191,13 +207,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () => _showLanguageSettings(loc),
               ),
 
-              _buildMenuItem(
+              /* _buildMenuItem(
                 icon: Icons.dark_mode,
                 title: loc.get('dark_mode'),
                 subtitle: loc.get('dark_mode_description'),
                 onTap: () => _toggleDarkMode(loc),
-              ),
-
+              ), */
               _buildMenuItem(
                 icon: Icons.storage,
                 title: loc.get('data'), // 'storage' -> 'data'로 변경
