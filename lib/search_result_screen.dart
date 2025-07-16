@@ -39,7 +39,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _isSessionStarted = false;
   bool _isSearching = false;
   bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
-  int? _currentSessionId; // 현재 세션 ID를 저장
+  String? _currentSessionId; // 현재 세션 ID를 저장
 
   // 언어 선택을 위한 상태 변수들
   late String _fromLanguage = LanguageService.fromLanguage;
@@ -48,6 +48,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
     super.initState();
+
+    // 백그라운드에서 캐시 초기화
+    _initializeBackgroundCache();
 
     Future.delayed(const Duration(milliseconds: 50), () {
       if (widget.searchSession != null) {
@@ -60,6 +63,19 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(_focusNode);
         });
+      }
+    });
+  }
+
+  // 백그라운드 캐시 초기화
+  void _initializeBackgroundCache() {
+    // 백그라운드에서 캐시 초기화 (UI 블로킹 방지)
+    Future.microtask(() async {
+      try {
+        await _searchHistoryService.initializeCache();
+        print('백그라운드 캐시 초기화 완료');
+      } catch (e) {
+        print('백그라운드 캐시 초기화 실패: $e');
       }
     });
   }
@@ -258,6 +274,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void dispose() {
     _searchHistoryService.completeCurrentSession();
+    _searchHistoryService.disposeCache();
     _searchController.dispose();
     _focusNode.dispose();
     _scrollController.dispose();
@@ -680,8 +697,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     try {
       parsedData = jsonDecode(aiResponse);
       print('=== JSON 파싱 성공 (인덱스: $index) ===');
-      print('파싱된 데이터: $parsedData');
-      print('=====================================');
 
       // 파싱된 데이터가 Map인지 확인
       if (parsedData is! Map<String, dynamic>) {

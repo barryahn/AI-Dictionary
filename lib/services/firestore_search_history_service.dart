@@ -1,13 +1,186 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart';
+import 'dart:async';
 
 class FirestoreSearchHistoryService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // 캐시 관련 변수들
+  List<Map<String, dynamic>> _cachedSessions = [];
+  bool _isCacheInitialized = false;
+  StreamSubscription<QuerySnapshot>? _sessionsListener;
+  final Map<String, StreamSubscription<QuerySnapshot>> _cardsListeners = {};
+
   // 현재 로그인된 사용자 ID 가져오기
   String? get _currentUserId => _auth.currentUser?.uid;
+
+  // 캐시 초기화 및 실시간 리스너 시작
+  Future<void> initializeCache() async {
+    if (_isCacheInitialized) return;
+
+    final userId = _currentUserId;
+    if (userId == null) return;
+
+    try {
+      // 기존 리스너들 정리
+      _disposeAllListeners();
+
+      // 세션 리스너 시작
+      _sessionsListener = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .orderBy('createdAt', descending: true)
+          .snapshots()
+          .listen(_onSessionsChanged);
+
+      _isCacheInitialized = true;
+      print('Firestore 캐시 초기화 완료');
+    } catch (e) {
+      print('Firestore 캐시 초기화 실패: $e');
+    }
+  }
+
+  // 세션 변경 감지
+  void _onSessionsChanged(QuerySnapshot snapshot) async {
+    final userId = _currentUserId;
+    if (userId == null) return;
+
+    try {
+      List<Map<String, dynamic>> sessions = [];
+
+      for (var doc in snapshot.docs) {
+        final sessionData = doc.data() as Map<String, dynamic>;
+        sessionData['id'] = doc.id;
+
+        // 각 세션의 카드들 가져오기 (캐시된 데이터 사용)
+        final cards = await _getCachedCardsForSession(doc.id);
+        sessionData['cards'] = cards;
+        sessions.add(sessionData);
+
+        // 카드 리스너 시작 (아직 시작되지 않은 경우)
+        if (!_cardsListeners.containsKey(doc.id)) {
+          _startCardsListener(doc.id);
+        }
+      }
+
+      _cachedSessions = sessions;
+      print('세션 캐시 업데이트 완료: ${sessions.length}개 세션');
+    } catch (e) {
+      print('세션 캐시 업데이트 실패: $e');
+    }
+  }
+
+  // 특정 세션의 카드 리스너 시작
+  void _startCardsListener(String sessionId) {
+    final userId = _currentUserId;
+    if (userId == null) return;
+
+    _cardsListeners[sessionId] = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('search_sessions')
+        .doc(sessionId)
+        .collection('search_cards')
+        .snapshots()
+        .listen((snapshot) => _onCardsChanged(sessionId, snapshot));
+  }
+
+  // 카드 변경 감지
+  void _onCardsChanged(String sessionId, QuerySnapshot snapshot) {
+    final cards = snapshot.docs.map((cardDoc) {
+      final cardData = cardDoc.data() as Map<String, dynamic>;
+      cardData['id'] = cardDoc.id;
+      return cardData;
+    }).toList();
+
+    // createdAt 순서대로 정렬 (오름차순)
+    cards.sort((a, b) {
+      final aCreatedAt = a['createdAt'] as Timestamp?;
+      final bCreatedAt = b['createdAt'] as Timestamp?;
+
+      if (aCreatedAt == null && bCreatedAt == null) return 0;
+      if (aCreatedAt == null) return -1;
+      if (bCreatedAt == null) return 1;
+
+      return aCreatedAt.compareTo(bCreatedAt);
+    });
+
+    // 캐시된 세션에서 해당 세션의 카드 업데이트
+    final sessionIndex = _cachedSessions.indexWhere(
+      (session) => session['id'] == sessionId,
+    );
+    if (sessionIndex != -1) {
+      _cachedSessions[sessionIndex]['cards'] = cards;
+      print('카드 캐시 업데이트 완료: 세션 $sessionId, ${cards.length}개 카드 (정렬됨)');
+    }
+  }
+
+  // 캐시된 카드 데이터 가져오기
+  Future<List<Map<String, dynamic>>> _getCachedCardsForSession(
+    String sessionId,
+  ) async {
+    final userId = _currentUserId;
+    if (userId == null) return [];
+
+    try {
+      final cardsSnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .doc(sessionId)
+          .collection('search_cards')
+          .get();
+
+      final cards = cardsSnapshot.docs.map((cardDoc) {
+        final cardData = cardDoc.data();
+        cardData['id'] = cardDoc.id;
+        return cardData;
+      }).toList();
+
+      // createdAt 순서대로 정렬 (오름차순)
+      cards.sort((a, b) {
+        final aCreatedAt = a['createdAt'] as Timestamp?;
+        final bCreatedAt = b['createdAt'] as Timestamp?;
+
+        if (aCreatedAt == null && bCreatedAt == null) return 0;
+        if (aCreatedAt == null) return -1;
+        if (bCreatedAt == null) return 1;
+
+        return aCreatedAt.compareTo(bCreatedAt);
+      });
+
+      return cards;
+    } catch (e) {
+      print('카드 데이터 가져오기 실패: $e');
+      return [];
+    }
+  }
+
+  // 모든 리스너 정리
+  void _disposeAllListeners() {
+    _sessionsListener?.cancel();
+    _sessionsListener = null;
+
+    for (var listener in _cardsListeners.values) {
+      listener.cancel();
+    }
+    _cardsListeners.clear();
+  }
+
+  // 캐시 정리
+  void dispose() {
+    _disposeAllListeners();
+    _cachedSessions.clear();
+    _isCacheInitialized = false;
+  }
+
+  // 캐시된 데이터 가져오기
+  List<Map<String, dynamic>> getCachedSessions() {
+    return List.from(_cachedSessions);
+  }
 
   // 새로운 검색 세션 시작
   Future<String?> startNewSession(String sessionName) async {
@@ -96,8 +269,20 @@ class FirestoreSearchHistoryService {
     }
   }
 
-  // 모든 검색 세션 가져오기
+  // 모든 검색 세션 가져오기 (캐시 우선)
   Future<List<Map<String, dynamic>>> getAllSearchSessions() async {
+    // 캐시가 초기화되지 않았다면 초기화
+    if (!_isCacheInitialized) {
+      await initializeCache();
+    }
+
+    // 캐시된 데이터가 있으면 반환
+    if (_cachedSessions.isNotEmpty) {
+      print('캐시된 데이터 반환: ${_cachedSessions.length}개 세션');
+      return List.from(_cachedSessions);
+    }
+
+    // 캐시가 비어있으면 기존 방식으로 가져오기
     final userId = _currentUserId;
     if (userId == null) return [];
 
@@ -214,6 +399,19 @@ class FirestoreSearchHistoryService {
   Future<List<Map<String, dynamic>>> getRecentSearchSessions({
     int limit = 10,
   }) async {
+    // 캐시가 초기화되지 않았다면 초기화
+    if (!_isCacheInitialized) {
+      await initializeCache();
+    }
+
+    // 캐시된 데이터에서 최근 세션 반환
+    if (_cachedSessions.isNotEmpty) {
+      final recentSessions = _cachedSessions.take(limit).toList();
+      print('캐시된 최근 세션 반환: ${recentSessions.length}개 세션');
+      return recentSessions;
+    }
+
+    // 캐시가 비어있으면 기존 방식으로 가져오기
     final userId = _currentUserId;
     if (userId == null) return [];
 

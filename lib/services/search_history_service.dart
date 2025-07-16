@@ -12,6 +12,20 @@ class SearchHistoryService {
   int? _currentSessionId;
   String? _currentFirestoreSessionId;
 
+  // 캐시 초기화 (백그라운드에서 호출)
+  Future<void> initializeCache() async {
+    if (_authService.isLoggedIn) {
+      await _firestoreService.initializeCache();
+    }
+  }
+
+  // 캐시 정리
+  void disposeCache() {
+    if (_authService.isLoggedIn) {
+      _firestoreService.dispose();
+    }
+  }
+
   // 새로운 검색 세션 시작
   Future<void> startNewSession(String sessionName) async {
     if (_authService.isLoggedIn) {
