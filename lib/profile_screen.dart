@@ -182,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           margin: const EdgeInsets.only(bottom: 20),
           child: Column(
             children: [
-              _buildMenuHeader(title: "시스템"),
+              _buildMenuHeader(title: loc.get('system')),
 
               _buildMenuItem(
                 icon: Icons.language,
@@ -205,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () => _showStorageSettings(loc),
               ),
 
-              _buildMenuHeader(title: "정보"),
+              _buildMenuHeader(title: loc.get('information')),
 
               _buildMenuItem(
                 icon: Icons.help,

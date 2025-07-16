@@ -85,6 +85,8 @@ class AppLocalizations {
       'logout_description': '계정에서 로그아웃',
       'logout_confirm': '정말 로그아웃하시겠습니까?',
       'logout_success': '로그아웃되었습니다.',
+      'system': '시스템',
+      'information': '정보',
 
       // 게스트 사용자
       'guest_user': '게스트 사용자',
@@ -251,6 +253,8 @@ class AppLocalizations {
       'logout_description': 'Logout from account',
       'logout_confirm': 'Are you sure you want to logout?',
       'logout_success': 'Logged out successfully.',
+      'system': 'System',
+      'information': 'Information',
 
       // Guest User
       'guest_user': 'Guest User',
@@ -419,6 +423,8 @@ class AppLocalizations {
       'logout_description': '从账户退出',
       'logout_confirm': '确定要退出登录吗？',
       'logout_success': '已成功退出登录。',
+      'system': '系统',
+      'information': '信息',
 
       // 访客用户
       'guest_user': '访客用户',
@@ -585,6 +591,8 @@ class AppLocalizations {
       'logout_description': '從帳戶登出',
       'logout_confirm': '確定要登出嗎？',
       'logout_success': '已成功登出。',
+      'system': '系統',
+      'information': '資訊',
 
       // 訪客使用者
       'guest_user': '訪客使用者',
@@ -751,6 +759,8 @@ class AppLocalizations {
       'logout_description': 'Se déconnecter du compte',
       'logout_confirm': 'Êtes-vous sûr de vouloir vous déconnecter ?',
       'logout_success': 'Déconnexion réussie.',
+      'system': 'Système',
+      'information': 'Information',
 
       // Utilisateur invité
       'guest_user': 'Utilisateur invité',
@@ -924,6 +934,8 @@ class AppLocalizations {
       'logout_description': 'Cerrar sesión de la cuenta',
       'logout_confirm': '¿Estás seguro de que quieres cerrar sesión?',
       'logout_success': 'Cierre de sesión exitoso.',
+      'system': 'Sistema',
+      'information': 'Información',
 
       // Usuario invitado
       'guest_user': 'Usuario invitado',
