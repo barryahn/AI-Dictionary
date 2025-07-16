@@ -6,6 +6,7 @@ import 'services/auth_service.dart';
 import 'login_screen.dart';
 import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
+import 'search_history_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -558,7 +559,10 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
               });
             },
           ),
-          _buildMenuItem(title: loc.get('delete_all_history'), onTap: () => {}),
+          _buildMenuItem(
+            title: loc.get('delete_all_history'),
+            onTap: () => SearchHistoryScreen.clearAllHistory(context),
+          ),
           _buildMenuItem(title: loc.get('delete_account'), onTap: () => {}),
         ],
       ),

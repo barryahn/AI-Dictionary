@@ -8,6 +8,47 @@ import 'l10n/app_localizations.dart';
 class SearchHistoryScreen extends StatefulWidget {
   const SearchHistoryScreen({super.key});
 
+  static Future<void> clearAllHistory(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).clear_all_history),
+        content: Text(AppLocalizations.of(context).clear_all_confirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(AppLocalizations.of(context).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              AppLocalizations.of(context).delete,
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        final searchHistoryService = SearchHistoryService();
+        await searchHistoryService.clearAllSearchHistory();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context).all_history_deleted),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   SearchHistoryScreenState createState() => SearchHistoryScreenState();
 }
@@ -66,44 +107,8 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   }
 
   Future<void> _clearAllHistory() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).clear_all_history),
-        content: Text(AppLocalizations.of(context).clear_all_confirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(AppLocalizations.of(context).cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
-              AppLocalizations.of(context).delete,
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      try {
-        await _searchHistoryService.clearAllSearchHistory();
-        await refresh(); // 전체 삭제 후 새로고침
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).all_history_deleted),
-          ),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
-          ),
-        );
-      }
-    }
+    await SearchHistoryScreen.clearAllHistory(context);
+    await refresh(); // 전체 삭제 후 새로고침
   }
 
   String _formatDateTime(DateTime dateTime) {
