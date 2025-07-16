@@ -200,9 +200,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               _buildMenuItem(
                 icon: Icons.storage,
-                title: loc.get('storage'),
-                subtitle: loc.get('storage_description'),
-                onTap: () => _showStorageSettings(loc),
+                title: loc.get('data'), // 'storage' -> 'data'로 변경
+                subtitle: loc.get('data_description'),
+                onTap: () => _openDataSettingsScreen(loc), // 새 창으로 이동
               ),
 
               _buildMenuHeader(title: loc.get('information')),
@@ -218,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icons.info,
                 title: loc.get('app_info'),
                 subtitle: loc.get('app_version'),
-                onTap: () => _showAppInfo(loc),
+                onTap: () {},
               ),
               if (authService.isLoggedIn) ...[
                 const SizedBox(height: 20),
@@ -393,19 +393,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showStorageSettings(AppLocalizations loc) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(loc.get('storage')),
-        content: Text(loc.get('feature_coming_soon')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(loc.get('confirm')),
-          ),
-        ],
-      ),
+  // 기존 _showStorageSettings 제거 및 아래 함수 추가
+  void _openDataSettingsScreen(AppLocalizations loc) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DataSettingsScreen(loc: loc)),
     );
   }
 
@@ -425,7 +417,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showAppInfo(AppLocalizations loc) {
+  /* void _showAppInfo(AppLocalizations loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -449,7 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
-  }
+  } */
 
   void _showLogoutDialog(AppLocalizations loc) {
     showDialog(
@@ -496,6 +488,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+}
+
+class DataSettingsScreen extends StatelessWidget {
+  final AppLocalizations loc;
+  const DataSettingsScreen({super.key, required this.loc});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(loc.get('data')),
+        backgroundColor: BeigeColors.background,
+        iconTheme: const IconThemeData(color: BeigeColors.text),
+        elevation: 0,
+      ),
+      backgroundColor: BeigeColors.background,
+      body: Column(
+        children: [
+          ListTile(
+            title: Text(
+              loc.get('pause_search_history'),
+              style: TextStyle(
+                color: BeigeColors.text,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            subtitle: Text(
+              loc.get('pause_search_history_description'),
+              style: TextStyle(color: BeigeColors.text, fontSize: 12),
+            ),
+            onTap: () => {},
+          ),
+          _buildMenuItem(title: loc.get('delete_all_history'), onTap: () => {}),
+          _buildMenuItem(title: loc.get('delete_account'), onTap: () => {}),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({required String title, required VoidCallback onTap}) {
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(color: BeigeColors.error, fontWeight: FontWeight.w500),
+      ),
+      onTap: onTap,
     );
   }
 }
