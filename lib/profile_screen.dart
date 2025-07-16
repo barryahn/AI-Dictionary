@@ -492,12 +492,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-class DataSettingsScreen extends StatelessWidget {
+class DataSettingsScreen extends StatefulWidget {
   final AppLocalizations loc;
   const DataSettingsScreen({super.key, required this.loc});
 
   @override
+  State<DataSettingsScreen> createState() => _DataSettingsScreenState();
+}
+
+class _DataSettingsScreenState extends State<DataSettingsScreen> {
+  bool _isPauseHistoryEnabled = false;
+
+  @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.get('data')),
@@ -520,7 +528,20 @@ class DataSettingsScreen extends StatelessWidget {
               loc.get('pause_search_history_description'),
               style: TextStyle(color: BeigeColors.text, fontSize: 12),
             ),
-            onTap: () => {},
+            trailing: Switch(
+              value: _isPauseHistoryEnabled,
+              onChanged: (value) {
+                setState(() {
+                  _isPauseHistoryEnabled = value;
+                });
+              },
+              activeColor: BeigeColors.text,
+            ),
+            onTap: () {
+              setState(() {
+                _isPauseHistoryEnabled = !_isPauseHistoryEnabled;
+              });
+            },
           ),
           _buildMenuItem(title: loc.get('delete_all_history'), onTap: () => {}),
           _buildMenuItem(title: loc.get('delete_account'), onTap: () => {}),
