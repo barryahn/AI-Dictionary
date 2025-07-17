@@ -344,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 await LanguageService.setLanguage(language['code']!);
                 setState(() {}); // UI 업데이트
                 Navigator.pop(context);
-                _showLanguageChangedDialog(loc, language['name']!);
+                _showLanguageChangedDialog(language['name']!);
               },
             );
           }).toList(),
@@ -359,18 +359,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showLanguageChangedDialog(AppLocalizations loc, String languageName) {
+  void _showLanguageChangedDialog(String languageName) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          loc.get('language_changed').replaceAll('{language}', languageName),
+          AppLocalizations.of(
+            context,
+          ).get('language_changed').replaceAll('{language}', languageName),
           style: const TextStyle(fontSize: 16),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(loc.get('confirm')),
+            child: Text(AppLocalizations.of(context).get('confirm')),
           ),
         ],
       ),
@@ -561,7 +563,7 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
           ),
           _buildMenuItem(
             title: loc.get('delete_all_history'),
-            onTap: () => SearchHistoryScreen.clearAllHistory(context),
+            onTap: () => {SearchHistoryScreen.clearAllHistory(context)},
           ),
           _buildMenuItem(title: loc.get('delete_account'), onTap: () => {}),
         ],
