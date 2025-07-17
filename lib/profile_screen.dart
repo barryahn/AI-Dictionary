@@ -522,6 +522,44 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
   bool _isPauseHistoryEnabled = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadPauseHistoryState();
+  }
+
+  // 검색 기록 일시 중지 상태 로드
+  Future<void> _loadPauseHistoryState() async {
+    final isEnabled = await SearchHistoryService.isPauseHistoryEnabled();
+    setState(() {
+      _isPauseHistoryEnabled = isEnabled;
+    });
+  }
+
+  // 검색 기록 일시 중지 상태 변경
+  Future<void> _setPauseHistoryState(bool enabled) async {
+    await SearchHistoryService.setPauseHistoryEnabled(enabled);
+    setState(() {
+      _isPauseHistoryEnabled = enabled;
+    });
+
+    // 사용자에게 변경 사항 알림
+    if (mounted) {
+      final loc = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            enabled
+                ? loc.get('search_history_paused')
+                : loc.get('search_history_resumed'),
+          ),
+          backgroundColor: enabled ? BeigeColors.error : Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     return Scaffold(
@@ -548,17 +586,11 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
             ),
             trailing: Switch(
               value: _isPauseHistoryEnabled,
-              onChanged: (value) {
-                setState(() {
-                  _isPauseHistoryEnabled = value;
-                });
-              },
+              onChanged: _setPauseHistoryState,
               activeColor: BeigeColors.text,
             ),
             onTap: () {
-              setState(() {
-                _isPauseHistoryEnabled = !_isPauseHistoryEnabled;
-              });
+              _setPauseHistoryState(!_isPauseHistoryEnabled);
             },
           ),
           _buildMenuItem(

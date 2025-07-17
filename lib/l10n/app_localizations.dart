@@ -80,6 +80,8 @@ class AppLocalizations {
       'data_description': '데이터 관리',
       'pause_search_history': '검색 기록 저장 일시중지',
       'pause_search_history_description': '활성화하면 검색 기록 저장이 중지됩니다.',
+      'search_history_paused': '검색 기록 저장이 일시중지되었습니다.',
+      'search_history_resumed': '검색 기록 저장이 재개되었습니다.',
       'delete_all_history': '모든 검색 기록 삭제',
       'delete_account': '계정 삭제',
       'help': '도움말',
@@ -255,6 +257,8 @@ class AppLocalizations {
       'pause_search_history': 'Pause search history',
       'pause_search_history_description':
           'When activated, search history saving will be paused.',
+      'search_history_paused': 'Search history saving has been paused.',
+      'search_history_resumed': 'Search history saving has been resumed.',
       'delete_all_history': 'Delete all search history',
       'delete_account': 'Delete account',
       'help': 'Help',
@@ -430,6 +434,8 @@ class AppLocalizations {
       'data_description': '数据管理',
       'pause_search_history': '暂停搜索历史记录',
       'pause_search_history_description': '激活后，搜索历史记录保存将被暂停。',
+      'search_history_paused': '搜索历史记录保存已暂停。',
+      'search_history_resumed': '搜索历史记录保存已恢复。',
       'delete_all_history': '删除所有搜索历史记录',
       'delete_account': '删除账户',
       'help': '帮助',
@@ -603,6 +609,8 @@ class AppLocalizations {
       'data_description': '資料管理',
       'pause_search_history': '暫停搜尋歷史記錄',
       'pause_search_history_description': '啟用後，搜尋歷史記錄儲存將被暫停。',
+      'search_history_paused': '搜尋歷史記錄儲存已暫停。',
+      'search_history_resumed': '搜尋歷史記錄儲存已恢復。',
       'delete_all_history': '刪除所有搜尋歷史記錄',
       'delete_account': '刪除帳戶',
       'help': '幫助',
@@ -778,6 +786,10 @@ class AppLocalizations {
       'pause_search_history': 'Pause de l\'historique de recherche',
       'pause_search_history_description':
           'Lorsqu\'activé, la sauvegarde de l\'historique de recherche sera mise en pause.',
+      'search_history_paused':
+          'La sauvegarde de l\'historique de recherche a été mise en pause.',
+      'search_history_resumed':
+          'La sauvegarde de l\'historique de recherche a été reprise.',
       'delete_all_history': 'Supprimer tout l\'historique de recherche',
       'delete_account': 'Supprimer le compte',
       'help': 'Aide',
@@ -960,6 +972,10 @@ class AppLocalizations {
       'pause_search_history': 'Pausar historial de búsqueda',
       'pause_search_history_description':
           'Cuando se active, se pausará el guardado del historial de búsqueda.',
+      'search_history_paused':
+          'El guardado del historial de búsqueda ha sido pausado.',
+      'search_history_resumed':
+          'El guardado del historial de búsqueda ha sido reanudado.',
       'delete_all_history': 'Eliminar todo el historial de búsqueda',
       'delete_account': 'Eliminar cuenta',
       'help': 'Ayuda',

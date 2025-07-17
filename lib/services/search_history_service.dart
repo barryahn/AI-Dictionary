@@ -2,6 +2,7 @@ import '../database/database_helper.dart';
 import 'auth_service.dart';
 import 'firestore_search_history_service.dart';
 import '../models/unified_search_session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchHistoryService {
   final DatabaseHelper _databaseHelper = DatabaseHelper();
@@ -11,6 +12,21 @@ class SearchHistoryService {
 
   int? _currentSessionId;
   String? _currentFirestoreSessionId;
+
+  // 검색 기록 일시 중지 관련 상수
+  static const String _pauseHistoryKey = 'pause_search_history';
+
+  // 검색 기록 일시 중지 상태 가져오기
+  static Future<bool> isPauseHistoryEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_pauseHistoryKey) ?? false;
+  }
+
+  // 검색 기록 일시 중지 상태 설정
+  static Future<void> setPauseHistoryEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_pauseHistoryKey, enabled);
+  }
 
   // 캐시 초기화 (백그라운드에서 호출)
   Future<void> initializeCache() async {
@@ -49,6 +65,12 @@ class SearchHistoryService {
     String result,
     bool isLoading,
   ) async {
+    // 검색 기록이 일시 중지된 경우 저장하지 않음
+    if (await isPauseHistoryEnabled()) {
+      print('검색 기록이 일시 중지되어 카드를 저장하지 않습니다.');
+      return;
+    }
+
     if (_authService.isLoggedIn) {
       // 로그인된 경우 Firestore에 저장
       if (_currentFirestoreSessionId == null) {
@@ -84,6 +106,12 @@ class SearchHistoryService {
     String result,
     bool isLoading,
   ) async {
+    // 검색 기록이 일시 중지된 경우 저장하지 않음
+    if (await isPauseHistoryEnabled()) {
+      print('검색 기록이 일시 중지되어 기존 세션에 카드를 저장하지 않습니다.');
+      return;
+    }
+
     if (_authService.isLoggedIn) {
       // 로그인된 경우 Firestore에 저장
       await _firestoreService.addSearchCard(
