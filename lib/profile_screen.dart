@@ -221,6 +221,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () => _openDataSettingsScreen(loc), // 새 창으로 이동
               ),
 
+              _buildMenuHeader(title: loc.get('theme')),
+
+              _buildThemeItems(loc),
+
               _buildMenuHeader(title: loc.get('information')),
 
               _buildMenuItem(
@@ -296,6 +300,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       trailing: Icon(Icons.chevron_right, color: BeigeColors.textLight),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildThemeItems(AppLocalizations loc) {
+    return Container(
+      padding: const EdgeInsets.only(left: 24, right: 24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: _buildThemeItem(
+              loc,
+              Icons.light_mode,
+              loc.get('recommended_theme'),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildThemeItem(
+              loc,
+              Icons.light_mode,
+              loc.get('light_theme'),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildThemeItem(loc, Icons.dark_mode, loc.get('dark_theme')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeItem(AppLocalizations loc, IconData icon, String title) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 10,
+            bottom: 10,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: BeigeColors.primary, width: 2),
+          ),
+          child: Icon(icon, color: BeigeColors.text, size: 24),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: TextStyle(
+            color: BeigeColors.text,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 
