@@ -541,22 +541,6 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
     setState(() {
       _isPauseHistoryEnabled = enabled;
     });
-
-    // 사용자에게 변경 사항 알림
-    if (mounted) {
-      final loc = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            enabled
-                ? loc.get('search_history_paused')
-                : loc.get('search_history_resumed'),
-          ),
-          backgroundColor: enabled ? BeigeColors.error : Colors.green,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
   }
 
   @override
