@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'search_result_screen.dart';
-import 'theme/beige_colors.dart';
+import 'theme/BeigeColors.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});

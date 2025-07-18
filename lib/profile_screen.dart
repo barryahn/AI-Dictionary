@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
 import 'services/language_service.dart';
 import 'services/auth_service.dart';
+import 'services/theme_service.dart';
 import 'login_screen.dart';
-import 'theme/beige_colors.dart';
+import 'theme/app_colors.dart';
 import 'l10n/app_localizations.dart';
 import 'search_history_screen.dart';
 
@@ -18,7 +19,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final SearchHistoryService _searchHistoryService = SearchHistoryService();
   bool _isLoading = true;
-  String _selectedTheme = 'recommended_theme'; // 기본값은 recommended_theme
 
   @override
   void initState() {
@@ -36,158 +36,154 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    return Scaffold(
-      backgroundColor: BeigeColors.background,
-      appBar: AppBar(
-        backgroundColor: BeigeColors.background,
-        elevation: 0,
-        title: Text(
-          loc.get('profile_title'),
-          style: const TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: BeigeColors.text),
-      ),
-      body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(color: BeigeColors.textLight),
-            )
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // 프로필 헤더
-                  _buildProfileHeader(loc),
-                  const SizedBox(height: 20),
-                  // 설정 메뉴
-                  _buildSettingsMenu(loc),
-                ],
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return Scaffold(
+          backgroundColor: currentTheme.background,
+          appBar: AppBar(
+            backgroundColor: currentTheme.background,
+            elevation: 0,
+            title: Text(
+              loc.get('profile_title'),
+              style: TextStyle(
+                color: currentTheme.text,
+                fontWeight: FontWeight.bold,
               ),
             ),
+            iconTheme: IconThemeData(color: currentTheme.text),
+          ),
+          body: _isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: currentTheme.textLight,
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // 프로필 헤더
+                      _buildProfileHeader(loc),
+                      const SizedBox(height: 20),
+                      // 설정 메뉴
+                      _buildSettingsMenu(loc),
+                    ],
+                  ),
+                ),
+        );
+      },
     );
   }
 
   Widget _buildProfileHeader(AppLocalizations loc) {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-          decoration: BoxDecoration(color: BeigeColors.background),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              // 프로필 이미지
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: BeigeColors.accent,
-                  shape: BoxShape.circle,
-                ),
-                child:
-                    authService.userPhotoUrl != null &&
-                        authService.userPhotoUrl!.isNotEmpty
-                    ? ClipOval(
-                        child: Image.network(
-                          authService.userPhotoUrl!,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.person,
-                              size: 40,
-                              color: BeigeColors.text,
-                            );
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                    : null,
-                                color: BeigeColors.text,
-                              ),
-                            );
-                          },
+        return Consumer<ThemeService>(
+          builder: (context, themeService, child) {
+            final currentTheme = themeService.currentTheme;
+
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+              decoration: BoxDecoration(color: currentTheme.background),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  // 프로필 이미지
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: currentTheme.accent,
+                      shape: BoxShape.circle,
+                    ),
+                    child:
+                        authService.userPhotoUrl != null &&
+                            authService.userPhotoUrl!.isNotEmpty
+                        ? ClipOval(
+                            child: Image.network(
+                              authService.userPhotoUrl!,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: currentTheme.text,
+                                );
+                              },
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value:
+                                            loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                            : null,
+                                        color: currentTheme.text,
+                                      ),
+                                    );
+                                  },
+                            ),
+                          )
+                        : Icon(
+                            Icons.person,
+                            size: 40,
+                            color: currentTheme.text,
+                          ),
+                  ),
+                  const SizedBox(height: 16),
+                  // 사용자 이름
+                  Text(
+                    authService.isLoggedIn
+                        ? (authService.userName ??
+                              loc.get('ai_dictionary_user'))
+                        : loc.get('guest_user'),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: currentTheme.text,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // 사용자 이메일
+                  Text(
+                    authService.isLoggedIn
+                        ? (authService.userEmail ?? 'user@example.com')
+                        : loc.get('guest_description'),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: currentTheme.textLight,
+                    ),
+                  ),
+                  if (!authService.isLoggedIn) ...[
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        _showLoginDialog(loc);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: currentTheme.accent,
+                        foregroundColor: currentTheme.text,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      )
-                    : Icon(Icons.person, size: 40, color: BeigeColors.text),
-              ),
-              const SizedBox(height: 16),
-              // 사용자 이름
-              Text(
-                authService.isLoggedIn
-                    ? (authService.userName ?? loc.get('ai_dictionary_user'))
-                    : loc.get('guest_user'),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: BeigeColors.text,
-                ),
-              ),
-              const SizedBox(height: 4),
-              // 사용자 이메일
-              Text(
-                authService.isLoggedIn
-                    ? (authService.userEmail ?? 'user@example.com')
-                    : loc.get('guest_description'),
-                style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
-              ),
-              if (!authService.isLoggedIn) ...[
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    _showLoginDialog(loc);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: BeigeColors.accent,
-                    foregroundColor: BeigeColors.text,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(loc.get('login')),
                     ),
-                  ),
-                  child: Text(loc.get('login')),
-                ),
-              ],
-              /*
-              const SizedBox(height: 16)
-              // 로그인/편집 버튼
-              if (authService.isLoggedIn)
-                OutlinedButton(
-                  onPressed: () {
-                    _showEditProfileDialog(loc);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: BeigeColors.text,
-                    side: BorderSide(color: BeigeColors.dark),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Text(loc.get('edit_profile')),
-                )
-              else
-                ElevatedButton(
-                  onPressed: () {
-                    _showLoginDialog(loc);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: BeigeColors.accent,
-                    foregroundColor: BeigeColors.text,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: Text(loc.get('login')),
-                ), */
-            ],
-          ),
+                  ],
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -196,80 +192,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildSettingsMenu(AppLocalizations loc) {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
-        return Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          child: Column(
-            children: [
-              _buildMenuHeader(title: loc.get('system')),
+        return Consumer<ThemeService>(
+          builder: (context, themeService, child) {
+            final currentTheme = themeService.currentTheme;
 
-              _buildMenuItem(
-                icon: Icons.language,
-                title: loc.get('app_language_setting'),
-                subtitle: LanguageService.currentLanguageName,
-                onTap: () => _showLanguageSettings(loc),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                children: [
+                  _buildMenuHeader(title: loc.get('system')),
+
+                  _buildMenuItem(
+                    icon: Icons.language,
+                    title: loc.get('app_language_setting'),
+                    subtitle: LanguageService.currentLanguageName,
+                    onTap: () => _showLanguageSettings(loc),
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.storage,
+                    title: loc.get('data'),
+                    subtitle: loc.get('data_description'),
+                    onTap: () => _openDataSettingsScreen(loc),
+                  ),
+
+                  _buildMenuHeader(title: loc.get('theme')),
+
+                  _buildThemeItems(loc),
+
+                  _buildMenuHeader(title: loc.get('information')),
+
+                  _buildMenuItem(
+                    icon: Icons.help,
+                    title: loc.get('help'),
+                    subtitle: loc.get('help_description'),
+                    onTap: () => _showHelp(loc),
+                  ),
+
+                  _buildMenuItem(
+                    icon: Icons.info,
+                    title: loc.get('app_info'),
+                    subtitle: loc.get('app_version'),
+                    onTap: () {},
+                  ),
+                  if (authService.isLoggedIn) ...[
+                    const SizedBox(height: 20),
+                    _buildMenuItem(
+                      icon: Icons.logout,
+                      title: loc.get('logout'),
+                      subtitle: loc.get('logout_description'),
+                      onTap: () => _showLogoutDialog(loc),
+                      textColor: Colors.red[400],
+                    ),
+                  ],
+                ],
               ),
-
-              /* _buildMenuItem(
-                icon: Icons.dark_mode,
-                title: loc.get('dark_mode'),
-                subtitle: loc.get('dark_mode_description'),
-                onTap: () => _toggleDarkMode(loc),
-              ), */
-              _buildMenuItem(
-                icon: Icons.storage,
-                title: loc.get('data'), // 'storage' -> 'data'로 변경
-                subtitle: loc.get('data_description'),
-                onTap: () => _openDataSettingsScreen(loc), // 새 창으로 이동
-              ),
-
-              _buildMenuHeader(title: loc.get('theme')),
-
-              _buildThemeItems(loc),
-
-              _buildMenuHeader(title: loc.get('information')),
-
-              _buildMenuItem(
-                icon: Icons.help,
-                title: loc.get('help'),
-                subtitle: loc.get('help_description'),
-                onTap: () => _showHelp(loc),
-              ),
-
-              _buildMenuItem(
-                icon: Icons.info,
-                title: loc.get('app_info'),
-                subtitle: loc.get('app_version'),
-                onTap: () {},
-              ),
-              if (authService.isLoggedIn) ...[
-                const SizedBox(height: 20),
-                _buildMenuItem(
-                  icon: Icons.logout,
-                  title: loc.get('logout'),
-                  subtitle: loc.get('logout_description'),
-                  onTap: () => _showLogoutDialog(loc),
-                  textColor: Colors.red[400],
-                ),
-              ],
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
   Widget _buildMenuHeader({required String title}) {
-    return Container(
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.only(left: 24, top: 40, bottom: 10),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: BeigeColors.textLight,
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.left,
-      ),
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 24, top: 40, bottom: 10),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: currentTheme.textLight,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        );
+      },
     );
   }
 
@@ -280,64 +282,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required VoidCallback onTap,
     Color? textColor,
   }) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Icon(icon, color: textColor ?? BeigeColors.text),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: textColor ?? BeigeColors.text,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          color: textColor?.withValues(alpha: 0.7) ?? BeigeColors.text,
-          fontSize: 12,
-        ),
-      ),
-      trailing: Icon(Icons.chevron_right, color: BeigeColors.textLight),
-      onTap: onTap,
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return ListTile(
+          leading: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Icon(icon, color: textColor ?? currentTheme.text),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: textColor ?? currentTheme.text,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              color: textColor?.withOpacity(0.7) ?? currentTheme.text,
+              fontSize: 12,
+            ),
+          ),
+          trailing: Icon(Icons.chevron_right, color: currentTheme.textLight),
+          onTap: onTap,
+        );
+      },
     );
   }
 
   Widget _buildThemeItems(AppLocalizations loc) {
-    return Container(
-      padding: const EdgeInsets.only(left: 24, right: 24, top: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: _buildThemeItem(
-              loc,
-              Icons.favorite,
-              loc.get('recommended_theme'),
-              'recommended_theme',
-            ),
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+        final currentThemeKey = themeService.currentThemeKey;
+
+        return Container(
+          padding: const EdgeInsets.only(left: 24, right: 24, top: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _buildThemeItem(
+                  loc,
+                  Icons.favorite,
+                  loc.get('recommended_theme'),
+                  'recommended_theme',
+                  currentThemeKey == 'recommended_theme',
+                  () => themeService.setRecommendedTheme(),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildThemeItem(
+                  loc,
+                  Icons.light_mode,
+                  loc.get('light_theme'),
+                  'light_theme',
+                  currentThemeKey == 'light_theme',
+                  () => themeService.setLightTheme(),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildThemeItem(
+                  loc,
+                  Icons.dark_mode,
+                  loc.get('dark_theme'),
+                  'dark_theme',
+                  currentThemeKey == 'dark_theme',
+                  () => themeService.setDarkTheme(),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildThemeItem(
-              loc,
-              Icons.light_mode,
-              loc.get('light_theme'),
-              'light_theme',
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildThemeItem(
-              loc,
-              Icons.dark_mode,
-              loc.get('dark_theme'),
-              'dark_theme',
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -346,44 +367,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
     IconData icon,
     String title,
     String themeKey,
+    bool isSelected,
+    VoidCallback onTap,
   ) {
-    final isSelected = _selectedTheme == themeKey;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedTheme = themeKey),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: isSelected ? BeigeColors.accent : BeigeColors.primary,
-                width: isSelected ? 2 : 1,
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return GestureDetector(
+          onTap: onTap,
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isSelected
+                        ? currentTheme.accent
+                        : currentTheme.primary,
+                    width: isSelected ? 2 : 1,
+                  ),
+                  color: isSelected ? Colors.white : Colors.transparent,
+                ),
+                child: Icon(icon, color: currentTheme.text, size: 24),
               ),
-              color: isSelected ? Colors.white : Colors.transparent,
-            ),
-            child: Icon(icon, color: BeigeColors.text, size: 24),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  color: currentTheme.text,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              color: BeigeColors.text,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildDivider() {
-    return Divider(
-      height: 1,
-      indent: 56,
-      endIndent: 20,
-      color: BeigeColors.dark.withValues(alpha: 0.4),
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return Divider(
+          height: 1,
+          indent: 56,
+          endIndent: 20,
+          color: currentTheme.dark.withOpacity(0.4),
+        );
+      },
     );
   }
 
@@ -514,32 +550,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  /* void _showAppInfo(AppLocalizations loc) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(loc.get('app_info')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(loc.get('app_name')),
-            const SizedBox(height: 8),
-            Text('${loc.get('version')}: 1.0.0'),
-            const SizedBox(height: 8),
-            Text('${loc.get('developer')}: ${loc.get('ai_dictionary_team')}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(loc.get('confirm')),
-          ),
-        ],
-      ),
-    );
-  } */
-
   void _showLogoutDialog(AppLocalizations loc) {
     showDialog(
       context: context,
@@ -625,54 +635,69 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.get('data')),
-        backgroundColor: BeigeColors.background,
-        iconTheme: const IconThemeData(color: BeigeColors.text),
-        elevation: 0,
-      ),
-      backgroundColor: BeigeColors.background,
-      body: Column(
-        children: [
-          ListTile(
-            title: Text(
-              loc.get('pause_search_history'),
-              style: TextStyle(
-                color: BeigeColors.text,
-                fontWeight: FontWeight.w500,
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(loc.get('data')),
+            backgroundColor: currentTheme.background,
+            iconTheme: IconThemeData(color: currentTheme.text),
+            elevation: 0,
+          ),
+          backgroundColor: currentTheme.background,
+          body: Column(
+            children: [
+              ListTile(
+                title: Text(
+                  loc.get('pause_search_history'),
+                  style: TextStyle(
+                    color: currentTheme.text,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                subtitle: Text(
+                  loc.get('pause_search_history_description'),
+                  style: TextStyle(color: currentTheme.text, fontSize: 12),
+                ),
+                trailing: Switch(
+                  value: _isPauseHistoryEnabled,
+                  onChanged: _setPauseHistoryState,
+                  activeColor: currentTheme.text,
+                ),
+                onTap: () {
+                  _setPauseHistoryState(!_isPauseHistoryEnabled);
+                },
               ),
-            ),
-            subtitle: Text(
-              loc.get('pause_search_history_description'),
-              style: TextStyle(color: BeigeColors.text, fontSize: 12),
-            ),
-            trailing: Switch(
-              value: _isPauseHistoryEnabled,
-              onChanged: _setPauseHistoryState,
-              activeColor: BeigeColors.text,
-            ),
-            onTap: () {
-              _setPauseHistoryState(!_isPauseHistoryEnabled);
-            },
+              _buildMenuItem(
+                title: loc.get('delete_all_history'),
+                onTap: () => {SearchHistoryScreen.clearAllHistory(context)},
+              ),
+              _buildMenuItem(title: loc.get('delete_account'), onTap: () => {}),
+            ],
           ),
-          _buildMenuItem(
-            title: loc.get('delete_all_history'),
-            onTap: () => {SearchHistoryScreen.clearAllHistory(context)},
-          ),
-          _buildMenuItem(title: loc.get('delete_account'), onTap: () => {}),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildMenuItem({required String title, required VoidCallback onTap}) {
-    return ListTile(
-      title: Text(
-        title,
-        style: TextStyle(color: BeigeColors.error, fontWeight: FontWeight.w500),
-      ),
-      onTap: onTap,
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return ListTile(
+          title: Text(
+            title,
+            style: TextStyle(
+              color: currentTheme.error,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: onTap,
+        );
+      },
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'services/auth_service.dart';
-import 'theme/beige_colors.dart';
+import 'theme/BeigeColors.dart';
 import 'l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -8,9 +8,9 @@ import 'translation_screen.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'services/auth_service.dart';
+import 'services/theme_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,12 +23,19 @@ void main() async {
   await LanguageService.initialize(); // 언어 서비스 초기화
   await OpenAIService.initialize(); // OpenAI 서비스 초기화
   await AuthService().initialize(); // 인증 서비스 초기화
-  runApp(const MyApp());
+
+  // ThemeService 초기화
+  final themeService = ThemeService();
+  await themeService.initialize();
+
+  runApp(MyApp(themeService: themeService));
 }
 
 // 앱의 기본 설정을 정의하는 StatefulWidget
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final ThemeService themeService;
+
+  const MyApp({super.key, required this.themeService});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -59,52 +66,63 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AuthService(),
-      child: MaterialApp(
-        title: 'AI Dictionary',
-        locale: _locale,
-        supportedLocales: const [
-          Locale('ko'),
-          Locale('en'),
-          Locale('zh'),
-          Locale('zh', 'TW'),
-          Locale('fr'),
-          Locale('es'),
-        ],
-        localizationsDelegates: [
-          const AppLocalizationsDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: BeigeColors.primary,
-            brightness: Brightness.light,
-          ),
-          scaffoldBackgroundColor: BeigeColors.background,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: BeigeColors.background,
-            foregroundColor: BeigeColors.text,
-            elevation: 0,
-            titleTextStyle: TextStyle(
-              color: BeigeColors.text,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: widget.themeService),
+        ChangeNotifierProvider(create: (context) => AuthService()),
+      ],
+      child: Consumer<ThemeService>(
+        builder: (context, themeService, child) {
+          final currentTheme = themeService.currentTheme;
+
+          return MaterialApp(
+            title: 'AI Dictionary',
+            locale: _locale,
+            supportedLocales: const [
+              Locale('ko'),
+              Locale('en'),
+              Locale('zh'),
+              Locale('zh', 'TW'),
+              Locale('fr'),
+              Locale('es'),
+            ],
+            localizationsDelegates: [
+              const AppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: currentTheme.primary,
+                brightness: themeService.isDarkTheme
+                    ? Brightness.dark
+                    : Brightness.light,
+              ),
+              scaffoldBackgroundColor: currentTheme.background,
+              appBarTheme: AppBarTheme(
+                backgroundColor: currentTheme.background,
+                foregroundColor: currentTheme.text,
+                elevation: 0,
+                titleTextStyle: TextStyle(
+                  color: currentTheme.text,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                backgroundColor: currentTheme.background,
+                selectedItemColor: currentTheme.text,
+                unselectedItemColor: currentTheme.textLight,
+              ),
+              textTheme: TextTheme(
+                bodyLarge: TextStyle(color: currentTheme.text),
+                bodyMedium: TextStyle(color: currentTheme.text),
+              ),
             ),
-          ),
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: BeigeColors.background,
-            selectedItemColor: BeigeColors.text,
-            unselectedItemColor: BeigeColors.textLight,
-          ),
-          textTheme: const TextTheme(
-            bodyLarge: TextStyle(color: BeigeColors.text),
-            bodyMedium: TextStyle(color: BeigeColors.text),
-          ),
-        ),
-        home: const AuthWrapper(),
+            home: const AuthWrapper(),
+          );
+        },
       ),
     );
   }
@@ -150,25 +168,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: BeigeColors.background,
-      body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.translate), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-        ],
-        selectedItemColor: BeigeColors.text,
-        unselectedItemColor: BeigeColors.textLight,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: BeigeColors.background,
-      ),
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return Scaffold(
+          backgroundColor: currentTheme.background,
+          body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+              BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
+              BottomNavigationBarItem(icon: Icon(Icons.translate), label: ''),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
+            ],
+            selectedItemColor: currentTheme.text,
+            unselectedItemColor: currentTheme.textLight,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: currentTheme.background,
+          ),
+        );
+      },
     );
   }
 }
@@ -219,184 +243,202 @@ class _HomeTabState extends State<_HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: BeigeColors.background,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context).get('app_title'),
-          style: TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: BeigeColors.background,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // 언어 선택 영역
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // 출발 언어 선택 드롭다운
-                SizedBox(
-                  width: 140,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        'Select Item',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).hintColor,
-                        ),
-                      ),
-                      items:
-                          LanguageService.getLocalizedTranslationLanguages(
-                                AppLocalizations.of(context),
-                              )
-                              .map(
-                                (Map<String, String> item) =>
-                                    DropdownMenuItem<String>(
-                                      value: item['code']!,
-                                      child: Text(
-                                        item['name']!,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          color: BeigeColors.text,
-                                        ),
-                                      ),
-                                    ),
-                              )
-                              .toList(),
-                      value: selectedFromLanguage,
-                      onChanged: (String? newValue) {
-                        if (newValue == null) return;
-                        _updateLanguages(newValue, selectedToLanguage);
-                      },
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        height: 40,
-                        width: 140,
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(height: 40),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          color: BeigeColors.light,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                GestureDetector(
-                  onTap: () {
-                    _updateLanguages(selectedToLanguage, selectedFromLanguage);
-                  },
-                  child: Icon(Icons.arrow_forward_ios, color: BeigeColors.text),
-                ),
-                const SizedBox(width: 20),
-                // 도착 언어 선택 드롭다운
-                SizedBox(
-                  width: 140,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        'Select Item',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).hintColor,
-                        ),
-                      ),
-                      items:
-                          LanguageService.getLocalizedTranslationLanguages(
-                                AppLocalizations.of(context),
-                              )
-                              // .where((item) => item != selectedFromLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
-                              .map(
-                                (Map<String, String> item) =>
-                                    DropdownMenuItem<String>(
-                                      value: item['code']!,
-                                      child: Text(
-                                        item['name']!,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          color: BeigeColors.text,
-                                        ),
-                                      ),
-                                    ),
-                              )
-                              .toList(),
-                      value: selectedToLanguage,
-                      onChanged: (String? newValue) {
-                        if (newValue == null) return;
-                        _updateLanguages(selectedFromLanguage, newValue);
-                      },
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        height: 40,
-                        width: 140,
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(height: 40),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          color: BeigeColors.light,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // 검색창 영역 수정
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchResultScreen(
-                      fromLanguage: selectedFromLanguage,
-                      toLanguage: selectedToLanguage,
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: BeigeColors.light,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 4,
-                ),
-                child: IgnorePointer(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.search, color: BeigeColors.text),
-                      hintText: AppLocalizations.of(context).main_search_hint,
-                      hintStyle: TextStyle(
-                        color: BeigeColors.text,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return Scaffold(
+          backgroundColor: currentTheme.background,
+          appBar: AppBar(
+            title: Text(
+              AppLocalizations.of(context).get('app_title'),
+              style: TextStyle(
+                color: currentTheme.text,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 80),
-          ],
-        ),
-      ),
+            backgroundColor: currentTheme.background,
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // 언어 선택 영역
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    // 출발 언어 선택 드롭다운
+                    SizedBox(
+                      width: 140,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Select Item',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          items:
+                              LanguageService.getLocalizedTranslationLanguages(
+                                    AppLocalizations.of(context),
+                                  )
+                                  .map(
+                                    (Map<String, String> item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item['code']!,
+                                          child: Text(
+                                            item['name']!,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color: currentTheme.text,
+                                            ),
+                                          ),
+                                        ),
+                                  )
+                                  .toList(),
+                          value: selectedFromLanguage,
+                          onChanged: (String? newValue) {
+                            if (newValue == null) return;
+                            _updateLanguages(newValue, selectedToLanguage);
+                          },
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            height: 40,
+                            width: 140,
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              color: currentTheme.light,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        _updateLanguages(
+                          selectedToLanguage,
+                          selectedFromLanguage,
+                        );
+                      },
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: currentTheme.text,
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    // 도착 언어 선택 드롭다운
+                    SizedBox(
+                      width: 140,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Select Item',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          items:
+                              LanguageService.getLocalizedTranslationLanguages(
+                                    AppLocalizations.of(context),
+                                  )
+                                  // .where((item) => item != selectedFromLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
+                                  .map(
+                                    (Map<String, String> item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item['code']!,
+                                          child: Text(
+                                            item['name']!,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color: currentTheme.text,
+                                            ),
+                                          ),
+                                        ),
+                                  )
+                                  .toList(),
+                          value: selectedToLanguage,
+                          onChanged: (String? newValue) {
+                            if (newValue == null) return;
+                            _updateLanguages(selectedFromLanguage, newValue);
+                          },
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            height: 40,
+                            width: 140,
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              color: currentTheme.light,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // 검색창 영역 수정
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SearchResultScreen(
+                          fromLanguage: selectedFromLanguage,
+                          toLanguage: selectedToLanguage,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: currentTheme.light,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 4,
+                    ),
+                    child: IgnorePointer(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.search, color: currentTheme.text),
+                          hintText: AppLocalizations.of(
+                            context,
+                          ).main_search_hint,
+                          hintStyle: TextStyle(
+                            color: currentTheme.text,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 80),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

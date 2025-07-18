@@ -1,3 +1,4 @@
+import 'theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'dart:convert';
@@ -6,8 +7,9 @@ import 'services/search_history_service.dart';
 import 'services/openai_service.dart';
 import 'models/unified_search_session.dart';
 import 'services/language_service.dart';
-import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
+import 'services/theme_service.dart';
+import 'package:provider/provider.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -283,7 +285,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   // --- UI Builder Methods ---
 
-  Widget _buildInitialView() {
+  Widget _buildInitialView(AppColors currentTheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -292,24 +294,24 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           TextField(
             controller: _searchController,
             focusNode: _focusNode,
-            style: const TextStyle(fontSize: 28, color: BeigeColors.text),
+            style: TextStyle(fontSize: 28, color: currentTheme.text),
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context).search_hint,
               hintStyle: TextStyle(
-                color: BeigeColors.textLight,
+                color: currentTheme.textLight,
                 fontWeight: FontWeight.w400,
               ),
               border: InputBorder.none,
             ),
             onSubmitted: (_) => _startSearch(),
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
+          Divider(thickness: 1, color: currentTheme.dark),
         ],
       ),
     );
   }
 
-  Widget _buildResultView() {
+  Widget _buildResultView(AppColors currentTheme) {
     return ListView(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -328,366 +330,417 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     Widget bottomBar;
     if (!_isSearching) {
       // 초기 검색 화면의 하단 바
-      bottomBar = BottomAppBar(
-        color: BeigeColors.light,
-        height: 64,
-        child: Row(
-          children: [
-            const Spacer(),
-            ElevatedButton(
-              onPressed: _startSearch,
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(2),
-                backgroundColor: BeigeColors.background,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 2),
-                child: Icon(Icons.send, color: BeigeColors.text, size: 24),
-              ),
+      bottomBar = Consumer<ThemeService>(
+        builder: (context, themeService, child) {
+          final currentTheme = themeService.currentTheme;
+          return BottomAppBar(
+            color: currentTheme.light,
+            height: 64,
+            child: Row(
+              children: [
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: _startSearch,
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(2),
+                    backgroundColor: currentTheme.background,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Icon(Icons.send, color: currentTheme.text, size: 24),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       );
     } else if (_isFetching) {
       // 검색 중일 때의 "중단" 버튼
       print('검색 중 하단 바 표시');
-      bottomBar = BottomAppBar(
-        child: Center(
-          child: ElevatedButton.icon(
-            icon: const Icon(Icons.stop_circle_outlined),
-            label: Text(AppLocalizations.of(context).stop_search),
-            onPressed: _stopFetching,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red[300],
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
+      bottomBar = Consumer<ThemeService>(
+        builder: (context, themeService, child) {
+          final currentTheme = themeService.currentTheme;
+          return BottomAppBar(
+            child: Center(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.stop_circle_outlined),
+                label: Text(AppLocalizations.of(context).stop_search),
+                onPressed: _stopFetching,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[300],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-          ),
-        ),
+          );
+        },
       );
     } else {
       // 검색 완료 후의 "추가 검색하기" 창
       print('검색 완료 후 하단 바 표시');
-      bottomBar = SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Container(
-            decoration: BoxDecoration(
-              color: BeigeColors.light,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: BeigeColors.dark),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController..clear(),
-                    focusNode: _focusNode,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context).additional_search,
-                      hintStyle: TextStyle(
-                        color: BeigeColors.text,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                      ),
-                      border: InputBorder.none,
-                      icon: Icon(Icons.search, color: BeigeColors.text),
-                    ),
-                    onSubmitted: (value) {
-                      final newQuery = value.trim();
-                      if (newQuery.isNotEmpty) {
-                        _addSearchResult(newQuery);
-                        _searchController.clear();
-                        FocusScope.of(context).unfocus();
-                      }
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send, color: BeigeColors.text),
-                  onPressed: () {
-                    final newQuery = _searchController.text.trim();
-                    if (newQuery.isNotEmpty) {
-                      _addSearchResult(newQuery);
-                      _searchController.clear();
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: BeigeColors.background,
-      appBar: AppBar(
-        foregroundColor: BeigeColors.text,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: BeigeColors.text),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 출발 언어 드롭다운
-            SizedBox(
-              width: 108,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: Text(
-                    AppLocalizations.of(context).language,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: BeigeColors.textLight,
-                    ),
-                  ),
-                  items:
-                      LanguageService.getLocalizedTranslationLanguages(
-                            AppLocalizations.of(context),
-                          )
-                          .map(
-                            (Map<String, String> item) =>
-                                DropdownMenuItem<String>(
-                                  value: item['code']!,
-                                  child: Text(
-                                    item['name']!,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: BeigeColors.text,
-                                    ),
-                                  ),
-                                ),
-                          )
-                          .toList(),
-                  value: _fromLanguage,
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
-                      if (newValue == _toLanguage) {
-                        _updateLanguages(_toLanguage, _fromLanguage);
-                      } else {
-                        _updateLanguages(newValue, _toLanguage);
-                      }
-                    }
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    padding: const EdgeInsets.only(left: 12, right: 6),
-                    height: 36,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: BeigeColors.extraLight,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: BeigeColors.dark, width: 1),
-                    ),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(height: 48),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      color: BeigeColors.background,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 4),
-            // 화살표 버튼 (언어 위치 바꾸기)
-            GestureDetector(
-              onTap: () {
-                _updateLanguages(_toLanguage, _fromLanguage);
-              },
+      bottomBar = Consumer<ThemeService>(
+        builder: (context, themeService, child) {
+          final currentTheme = themeService.currentTheme;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Container(
-                padding: const EdgeInsets.only(left: 10, right: 10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
+                  color: currentTheme.light,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: currentTheme.dark),
                 ),
-                child: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: BeigeColors.text,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            // 도착 언어 드롭다운
-            SizedBox(
-              width: 108,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: Text(
-                    AppLocalizations.of(context).language,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: BeigeColors.textLight,
-                    ),
-                  ),
-                  items:
-                      LanguageService.getLocalizedTranslationLanguages(
-                            AppLocalizations.of(context),
-                          )
-                          .map(
-                            (Map<String, String> item) =>
-                                DropdownMenuItem<String>(
-                                  value: item['code']!,
-                                  child: Text(
-                                    item['name']!,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: BeigeColors.text,
-                                    ),
-                                  ),
-                                ),
-                          )
-                          .toList(),
-                  value: _toLanguage,
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
-                      if (newValue == _fromLanguage) {
-                        _updateLanguages(_toLanguage, _fromLanguage);
-                      } else {
-                        _updateLanguages(_fromLanguage, newValue);
-                      }
-                    }
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    padding: const EdgeInsets.only(left: 12, right: 6),
-                    height: 36,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: BeigeColors.extraLight,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: BeigeColors.dark, width: 1),
-                    ),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(height: 48),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      color: BeigeColors.background,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        elevation: 0,
-      ),
-      body: _isSearching ? _buildResultView() : _buildInitialView(),
-      bottomNavigationBar: Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: bottomBar,
-      ),
-    );
-  }
-
-  Widget _buildLoadingSection(String query, int index) {
-    return AutoScrollTag(
-      key: Key(index.toString()),
-      controller: _scrollController,
-      index: index,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height - 200, // 화면 높이에서 상단 여백 제외
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            // 검색 입력창(읽기 전용)
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: TextEditingController(text: query),
-                    style: const TextStyle(
-                      fontSize: 28,
-                      color: BeigeColors.text,
-                    ),
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    readOnly: true,
-                  ),
-                ),
-              ],
-            ),
-            Divider(thickness: 1, color: BeigeColors.dark),
-            // 로딩 인디케이터 - 남은 공간을 모두 차지
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
                   children: [
-                    CircularProgressIndicator(color: BeigeColors.textLight),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context).searching,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: BeigeColors.textLight,
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController..clear(),
+                        focusNode: _focusNode,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(
+                            context,
+                          ).additional_search,
+                          hintStyle: TextStyle(
+                            color: currentTheme.text,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                          border: InputBorder.none,
+                          icon: Icon(Icons.search, color: currentTheme.text),
+                        ),
+                        onSubmitted: (value) {
+                          final newQuery = value.trim();
+                          if (newQuery.isNotEmpty) {
+                            _addSearchResult(newQuery);
+                            _searchController.clear();
+                            FocusScope.of(context).unfocus();
+                          }
+                        },
                       ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.send, color: currentTheme.text),
+                      onPressed: () {
+                        final newQuery = _searchController.text.trim();
+                        if (newQuery.isNotEmpty) {
+                          _addSearchResult(newQuery);
+                          _searchController.clear();
+                          FocusScope.of(context).unfocus();
+                        }
+                      },
                     ),
                   ],
                 ),
               ),
             ),
-            const Divider(thickness: 2, color: BeigeColors.divider),
-          ],
-        ),
-      ),
+          );
+        },
+      );
+    }
+
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+
+        return Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: currentTheme.background,
+          appBar: AppBar(
+            foregroundColor: currentTheme.text,
+            leading: IconButton(
+              icon: Icon(Icons.close, color: currentTheme.text),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 출발 언어 드롭다운
+                SizedBox(
+                  width: 108,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        AppLocalizations.of(context).language,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: currentTheme.textLight,
+                        ),
+                      ),
+                      items:
+                          LanguageService.getLocalizedTranslationLanguages(
+                                AppLocalizations.of(context),
+                              )
+                              .map(
+                                (Map<String, String> item) =>
+                                    DropdownMenuItem<String>(
+                                      value: item['code']!,
+                                      child: Text(
+                                        item['name']!,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          color: currentTheme.text,
+                                        ),
+                                      ),
+                                    ),
+                              )
+                              .toList(),
+                      value: _fromLanguage,
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+                          if (newValue == _toLanguage) {
+                            _updateLanguages(_toLanguage, _fromLanguage);
+                          } else {
+                            _updateLanguages(newValue, _toLanguage);
+                          }
+                        }
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        padding: const EdgeInsets.only(left: 12, right: 6),
+                        height: 36,
+                        width: 80,
+                        decoration: BoxDecoration(
+                          color: currentTheme.extraLight,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: currentTheme.dark,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(height: 48),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          color: currentTheme.background,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                // 화살표 버튼 (언어 위치 바꾸기)
+                GestureDetector(
+                  onTap: () {
+                    _updateLanguages(_toLanguage, _fromLanguage);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12,
+                      color: currentTheme.text,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                // 도착 언어 드롭다운
+                SizedBox(
+                  width: 108,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        AppLocalizations.of(context).language,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: currentTheme.textLight,
+                        ),
+                      ),
+                      items:
+                          LanguageService.getLocalizedTranslationLanguages(
+                                AppLocalizations.of(context),
+                              )
+                              .map(
+                                (Map<String, String> item) =>
+                                    DropdownMenuItem<String>(
+                                      value: item['code']!,
+                                      child: Text(
+                                        item['name']!,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          color: currentTheme.text,
+                                        ),
+                                      ),
+                                    ),
+                              )
+                              .toList(),
+                      value: _toLanguage,
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+                          if (newValue == _fromLanguage) {
+                            _updateLanguages(_toLanguage, _fromLanguage);
+                          } else {
+                            _updateLanguages(_fromLanguage, newValue);
+                          }
+                        }
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        padding: const EdgeInsets.only(left: 12, right: 6),
+                        height: 36,
+                        width: 80,
+                        decoration: BoxDecoration(
+                          color: currentTheme.extraLight,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: currentTheme.dark,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(height: 48),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          color: currentTheme.background,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            elevation: 0,
+          ),
+          body: _isSearching
+              ? _buildResultView(currentTheme)
+              : _buildInitialView(currentTheme),
+          bottomNavigationBar: Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: bottomBar,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingSection(String query, int index) {
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+        return AutoScrollTag(
+          key: Key(index.toString()),
+          controller: _scrollController,
+          index: index,
+          child: SizedBox(
+            height:
+                MediaQuery.of(context).size.height - 200, // 화면 높이에서 상단 여백 제외
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                // 검색 입력창(읽기 전용)
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: TextEditingController(text: query),
+                        style: TextStyle(
+                          fontSize: 28,
+                          color: currentTheme.text,
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        readOnly: true,
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(thickness: 1, color: currentTheme.dark),
+                // 로딩 인디케이터 - 남은 공간을 모두 차지
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          color: currentTheme.textLight,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          AppLocalizations.of(context).searching,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: currentTheme.textLight,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(thickness: 2, color: currentTheme.divider),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildErrorSection(String query, int index, {String? message}) {
     final errorMessage = message ?? AppLocalizations.of(context).search_failed;
-    return AutoScrollTag(
-      key: Key(index.toString()),
-      controller: _scrollController,
-      index: index,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          // 검색 입력창(읽기 전용)
-          Row(
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+        return AutoScrollTag(
+          key: Key(index.toString()),
+          controller: _scrollController,
+          index: index,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  readOnly: true,
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: TextStyle(fontSize: 28, color: currentTheme.text),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: currentTheme.dark),
+              // 에러 메시지
+              Center(
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.red[400],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
+              const SizedBox(height: 16),
+              Divider(thickness: 2, color: currentTheme.divider),
             ],
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
-          // 에러 메시지
-          Center(
-            child: Text(
-              errorMessage,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.red[400],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Divider(thickness: 2, color: BeigeColors.divider),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -712,92 +765,117 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       return _buildFallbackResultSection(query, aiResponse, index);
     }
 
-    return AutoScrollTag(
-      key: Key(index.toString()),
-      controller: _scrollController,
-      index: index,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          // 검색 입력창(읽기 전용)
-          Row(
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+        return AutoScrollTag(
+          key: Key(index.toString()),
+          controller: _scrollController,
+          index: index,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  readOnly: true,
-                ),
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: TextStyle(fontSize: 28, color: currentTheme.text),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
               ),
+              Divider(thickness: 1, color: currentTheme.dark),
+
+              // 검색어(큰 글씨) - JSON에서 단어 필드 사용
+              if (parsedData?['단어'] != null) ...[
+                Text(
+                  parsedData?['단어']?.toString() ?? '',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: currentTheme.text,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 사전적 뜻
+              if (parsedData?['사전적_뜻'] != null &&
+                  parsedData?['사전적_뜻'] is List) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).dictionary_meaning,
+                  currentTheme,
+                ),
+                const SizedBox(height: 12),
+                _buildDictionaryMeanings(
+                  parsedData?['사전적_뜻'] as List<dynamic>,
+                  currentTheme,
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 뉘앙스
+              if (parsedData?['뉘앙스'] != null) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).nuance,
+                  currentTheme,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  parsedData?['뉘앙스']?.toString() ?? '',
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                    color: currentTheme.text,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 대화 예시
+              if (parsedData?['대화_예시'] != null &&
+                  parsedData?['대화_예시'] is List) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).conversation_examples,
+                  currentTheme,
+                ),
+                const SizedBox(height: 12),
+                _buildConversationExamples(
+                  parsedData?['대화_예시'] as List<dynamic>,
+                  _fromLanguage,
+                  _toLanguage,
+                  currentTheme,
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 비슷한 표현
+              if (parsedData?['비슷한_표현'] != null &&
+                  parsedData?['비슷한_표현'] is List) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).similar_expressions,
+                  currentTheme,
+                ),
+                const SizedBox(height: 12),
+                _buildSimilarExpressions(
+                  parsedData?['비슷한_표현'] as List<dynamic>,
+                  currentTheme,
+                ),
+                const SizedBox(height: 16),
+              ],
+
+              Divider(thickness: 2, color: currentTheme.divider),
             ],
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
-
-          // 검색어(큰 글씨) - JSON에서 단어 필드 사용
-          if (parsedData['단어'] != null) ...[
-            Text(
-              parsedData['단어'].toString(),
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: BeigeColors.text,
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // 사전적 뜻
-          if (parsedData['사전적_뜻'] != null && parsedData['사전적_뜻'] is List) ...[
-            _buildSectionTitle(AppLocalizations.of(context).dictionary_meaning),
-            const SizedBox(height: 12),
-            _buildDictionaryMeanings(parsedData['사전적_뜻'] as List<dynamic>),
-            const SizedBox(height: 24),
-          ],
-
-          // 뉘앙스
-          if (parsedData['뉘앙스'] != null) ...[
-            _buildSectionTitle(AppLocalizations.of(context).nuance),
-            const SizedBox(height: 8),
-            Text(
-              parsedData['뉘앙스'].toString(),
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: BeigeColors.text,
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // 대화 예시
-          if (parsedData['대화_예시'] != null && parsedData['대화_예시'] is List) ...[
-            _buildSectionTitle(
-              AppLocalizations.of(context).conversation_examples,
-            ),
-            const SizedBox(height: 12),
-            _buildConversationExamples(
-              parsedData['대화_예시'] as List<dynamic>,
-              _fromLanguage,
-              _toLanguage,
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // 비슷한 표현
-          if (parsedData['비슷한_표현'] != null && parsedData['비슷한_표현'] is List) ...[
-            _buildSectionTitle(
-              AppLocalizations.of(context).similar_expressions,
-            ),
-            const SizedBox(height: 12),
-            _buildSimilarExpressions(parsedData['비슷한_표현'] as List<dynamic>),
-            const SizedBox(height: 16),
-          ],
-
-          Divider(thickness: 2, color: BeigeColors.divider),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -806,63 +884,73 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     String aiResponse,
     int index,
   ) {
-    return AutoScrollTag(
-      key: Key(index.toString()),
-      controller: _scrollController,
-      index: index,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          Row(
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        final currentTheme = themeService.currentTheme;
+        return AutoScrollTag(
+          key: Key(index.toString()),
+          controller: _scrollController,
+          index: index,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  readOnly: true,
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: TextStyle(fontSize: 28, color: currentTheme.text),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: currentTheme.dark),
+              Text(
+                query,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: currentTheme.text,
                 ),
               ),
+              const SizedBox(height: 20),
+              Text(
+                aiResponse,
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.5,
+                  color: currentTheme.text,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Divider(thickness: 2, color: currentTheme.divider),
             ],
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
-          Text(
-            query,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: BeigeColors.text,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            aiResponse,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.5,
-              color: BeigeColors.text,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Divider(thickness: 2, color: BeigeColors.divider),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, AppColors currentTheme) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: BeigeColors.text,
+        color: currentTheme.text,
       ),
     );
   }
 
-  Widget _buildDictionaryMeanings(List<dynamic> meanings) {
+  Widget _buildDictionaryMeanings(
+    List<dynamic> meanings,
+    AppColors currentTheme,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: meanings.map<Widget>((meaning) {
@@ -892,7 +980,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: BeigeColors.highlight,
+                  color: currentTheme.highlight,
                 ),
               ),
               const SizedBox(height: 8),
@@ -904,15 +992,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     children: [
                       Text(
                         '• ',
-                        style: TextStyle(fontSize: 16, color: BeigeColors.text),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: currentTheme.text,
+                        ),
                       ),
                       Expanded(
                         child: Text(
                           def.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             height: 1.4,
-                            color: BeigeColors.text,
+                            color: currentTheme.text,
                           ),
                         ),
                       ),
@@ -931,6 +1022,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     List<dynamic> examples,
     String fromLanguage,
     String toLanguage,
+    AppColors currentTheme,
   ) {
     return Column(
       children: examples.asMap().entries.map<Widget>((entry) {
@@ -985,16 +1077,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: BeigeColors.highlight,
+                  color: currentTheme.highlight,
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: BeigeColors.background,
+                  color: currentTheme.background,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: BeigeColors.dark),
+                  border: Border.all(color: currentTheme.dark),
                 ),
                 child: Column(
                   children: [
@@ -1028,7 +1120,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: BeigeColors.text,
+                                    color: currentTheme.text,
                                   ),
                                 ),
                               ),
@@ -1036,9 +1128,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               Expanded(
                                 child: Text(
                                   text,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
-                                    color: BeigeColors.text,
+                                    color: currentTheme.text,
                                   ),
                                 ),
                               ),
@@ -1046,7 +1138,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           ),
                         );
                       }),
-                      Divider(height: 16, color: BeigeColors.dark),
+                      Divider(height: 16, color: currentTheme.dark),
                     ],
                     // L1 언어 대화 (예: 영어)
                     if (l1Lines.isNotEmpty) ...[
@@ -1078,7 +1170,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: BeigeColors.text,
+                                    color: currentTheme.text,
                                   ),
                                 ),
                               ),
@@ -1088,7 +1180,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   text,
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: BeigeColors.text,
+                                    color: currentTheme.text,
                                     fontStyle: FontStyle.italic,
                                   ),
                                 ),
@@ -1108,7 +1200,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildSimilarExpressions(List<dynamic> expressions) {
+  Widget _buildSimilarExpressions(
+    List<dynamic> expressions,
+    AppColors currentTheme,
+  ) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -1124,24 +1219,24 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: BeigeColors.background,
+            color: currentTheme.background,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: BeigeColors.dark),
+            border: Border.all(color: currentTheme.dark),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 word,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: BeigeColors.text,
+                  color: currentTheme.text,
                 ),
               ),
               Text(
                 meaning,
-                style: const TextStyle(fontSize: 12, color: BeigeColors.text),
+                style: TextStyle(fontSize: 12, color: currentTheme.text),
               ),
             ],
           ),
