@@ -18,6 +18,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final SearchHistoryService _searchHistoryService = SearchHistoryService();
   bool _isLoading = true;
+  String _selectedTheme = 'recommended_theme'; // 기본값은 recommended_theme
 
   @override
   void initState() {
@@ -305,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildThemeItems(AppLocalizations loc) {
     return Container(
-      padding: const EdgeInsets.only(left: 24, right: 24),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -314,6 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               loc,
               Icons.light_mode,
               loc.get('recommended_theme'),
+              'recommended_theme',
             ),
           ),
           const SizedBox(width: 16),
@@ -322,42 +324,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
               loc,
               Icons.light_mode,
               loc.get('light_theme'),
+              'light_theme',
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: _buildThemeItem(loc, Icons.dark_mode, loc.get('dark_theme')),
+            child: _buildThemeItem(
+              loc,
+              Icons.dark_mode,
+              loc.get('dark_theme'),
+              'dark_theme',
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildThemeItem(AppLocalizations loc, IconData icon, String title) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 10,
-            bottom: 10,
+  Widget _buildThemeItem(
+    AppLocalizations loc,
+    IconData icon,
+    String title,
+    String themeKey,
+  ) {
+    final isSelected = _selectedTheme == themeKey;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedTheme = themeKey;
+        });
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 10,
+              bottom: 10,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: isSelected ? BeigeColors.accent : BeigeColors.primary,
+                width: 2,
+              ),
+              color: isSelected
+                  ? BeigeColors.accent.withValues(alpha: 0.1)
+                  : Colors.transparent,
+            ),
+            child: Icon(
+              icon,
+              color: isSelected ? BeigeColors.accent : BeigeColors.text,
+              size: 24,
+            ),
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: BeigeColors.primary, width: 2),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              color: isSelected ? BeigeColors.accent : BeigeColors.text,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            ),
           ),
-          child: Icon(icon, color: BeigeColors.text, size: 24),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
