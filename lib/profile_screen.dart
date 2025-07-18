@@ -313,7 +313,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: _buildThemeItem(
               loc,
-              Icons.light_mode,
+              Icons.favorite,
               loc.get('recommended_theme'),
               'recommended_theme',
             ),
@@ -349,42 +349,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ) {
     final isSelected = _selectedTheme == themeKey;
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedTheme = themeKey;
-        });
-      },
+      onTap: () => setState(() => _selectedTheme = themeKey),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: 10,
-              bottom: 10,
-            ),
+            padding: const EdgeInsets.only(left: 30, right: 30),
+            height: 48,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: isSelected ? BeigeColors.accent : BeigeColors.primary,
-                width: 2,
+                width: isSelected ? 2 : 1,
               ),
-              color: isSelected
-                  ? BeigeColors.accent.withValues(alpha: 0.1)
-                  : Colors.transparent,
+              color: isSelected ? Colors.white : Colors.transparent,
             ),
-            child: Icon(
-              icon,
-              color: isSelected ? BeigeColors.accent : BeigeColors.text,
-              size: 24,
-            ),
+            child: Icon(icon, color: BeigeColors.text, size: 24),
           ),
           const SizedBox(height: 8),
           Text(
             title,
             style: TextStyle(
-              color: isSelected ? BeigeColors.accent : BeigeColors.text,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: BeigeColors.text,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
