@@ -40,6 +40,12 @@ class TranslationScreenState extends State<TranslationScreen> {
   bool _isLoading = false;
   final _scrollController = ScrollController();
 
+  // 동적 높이 관리를 위한 변수들
+  double _inputFieldHeight = 200.0;
+  double _resultFieldHeight = 200.0;
+  static const double _minFieldHeight = 200.0;
+  static const double _maxFieldHeight = 400.0;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +63,9 @@ class TranslationScreenState extends State<TranslationScreen> {
 
     // Language Detector 초기화
     initLanguageDetector();
+
+    // 텍스트 변경 리스너 추가
+    _inputController.addListener(_updateInputFieldHeight);
   }
 
   @override
@@ -73,6 +82,75 @@ class TranslationScreenState extends State<TranslationScreen> {
     } catch (e) {
       print(e);
     }
+  }
+
+  // 입력 필드 높이 업데이트 함수
+  void _updateInputFieldHeight() {
+    final text = _inputController.text;
+    if (text.isEmpty) {
+      setState(() {
+        _inputFieldHeight = 200.0;
+      });
+      return;
+    }
+
+    // 텍스트의 예상 높이 계산
+    final textStyle = TextStyle(fontSize: 16, height: 1.4);
+    final textSpan = TextSpan(text: text, style: textStyle);
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    );
+    textPainter.layout(
+      maxWidth: MediaQuery.of(context).size.width - 80,
+    ); // 패딩 고려
+
+    final textHeight = textPainter.height;
+    final headerHeight = 60.0; // 헤더 영역 높이
+    final padding = 32.0; // 상하 패딩
+    final totalRequiredHeight = textHeight + headerHeight + padding;
+
+    setState(() {
+      _inputFieldHeight = totalRequiredHeight.clamp(
+        _minFieldHeight,
+        _maxFieldHeight,
+      );
+    });
+  }
+
+  // 결과 필드 높이 업데이트 함수
+  void _updateResultFieldHeight() {
+    if (_translatedText.isEmpty) {
+      setState(() {
+        _resultFieldHeight = 200.0;
+      });
+      return;
+    }
+
+    // 텍스트의 예상 높이 계산
+    final textStyle = TextStyle(fontSize: 16, height: 1.4);
+    final textSpan = TextSpan(text: _translatedText, style: textStyle);
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    );
+    textPainter.layout(
+      maxWidth: MediaQuery.of(context).size.width - 80,
+    ); // 패딩 고려
+
+    final textHeight = textPainter.height;
+    final headerHeight = 60.0; // 헤더 영역 높이
+    final padding = 32.0; // 상하 패딩
+    final totalRequiredHeight = textHeight + headerHeight + padding;
+
+    setState(() {
+      _resultFieldHeight = totalRequiredHeight.clamp(
+        _minFieldHeight,
+        _maxFieldHeight,
+      );
+    });
   }
 
   void _updateLanguages(String fromLang, String toLang) {
@@ -197,6 +275,11 @@ class TranslationScreenState extends State<TranslationScreen> {
 
       setState(() {
         _translatedText = translatedText;
+      });
+
+      // 번역 결과가 업데이트되면 결과 필드 높이도 업데이트
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateResultFieldHeight();
       });
     } catch (e) {
       setState(() {
@@ -551,7 +634,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 입력창
   Widget _buildInputField(CustomColors colors) {
     return Container(
-      height: 200,
+      height: _inputFieldHeight,
       decoration: BoxDecoration(
         color: colors.light,
         borderRadius: BorderRadius.circular(16),
@@ -693,7 +776,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 번역 결과 영역
   Widget _buildResultField(CustomColors colors) {
     return Container(
-      height: 200,
+      height: _resultFieldHeight,
       width: double.infinity,
       decoration: BoxDecoration(
         color: colors.light,
