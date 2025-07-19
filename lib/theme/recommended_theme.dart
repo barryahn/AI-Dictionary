@@ -25,7 +25,7 @@ class RecommendedTheme extends AppTheme {
     // 상태 색상들
     success: Color(0xFF81B29A), // 성공/긍정 색상
     warning: Color(0xFFF2CC8F), // 경고 색상
-    error: Color(0xFFE07A5F), // 오류 색상
+    error: Color(0xFFE45141), // 오류 색상
     info: Color(0xFF81B29A), // 정보 색상
     conversation_A: Color(0xFFBBDEFB), // 대화 색상 A
     conversation_B: Color(0xFFC8E6C9), // 대화 색상 B
