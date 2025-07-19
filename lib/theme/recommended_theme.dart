@@ -74,14 +74,5 @@ class RecommendedTheme extends AppTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(foregroundColor: customColors.primary),
     ),
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderSide: BorderSide(color: customColors.dark),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: customColors.primary, width: 2),
-      ),
-      labelStyle: TextStyle(color: customColors.textLight),
-    ),
   );
 }

@@ -11,7 +11,6 @@ import 'services/auth_service.dart';
 import 'services/theme_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -368,6 +367,7 @@ class _HomeTabState extends State<_HomeTab> {
                   child: TextField(
                     decoration: InputDecoration(
                       icon: Icon(Icons.search, color: colors.text),
+                      fillColor: colors.light,
                       hintText: AppLocalizations.of(context).main_search_hint,
                       hintStyle: TextStyle(
                         color: colors.text,
