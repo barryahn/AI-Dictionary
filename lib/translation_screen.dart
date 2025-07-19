@@ -670,7 +670,13 @@ class TranslationScreenState extends State<TranslationScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.edit, color: colors.primary, size: 20),
+                    Icon(
+                      Icons.edit,
+                      color: _inputController.text.isNotEmpty
+                          ? colors.primary
+                          : colors.textLight,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       AppLocalizations.of(context).input_text,
