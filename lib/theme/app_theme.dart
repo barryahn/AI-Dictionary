@@ -26,6 +26,8 @@ class CustomColors {
   final Color info;
   final Color conversation_A;
   final Color conversation_B;
+  final Color google_login;
+  final Color snackbar_text;
 
   const CustomColors({
     required this.primary,
@@ -45,6 +47,8 @@ class CustomColors {
     required this.info,
     required this.conversation_A,
     required this.conversation_B,
+    required this.google_login,
+    required this.snackbar_text,
   });
 
   // 투명도가 적용된 색상들
@@ -79,6 +83,7 @@ class CustomColors {
     'info': info,
     'conversation_A': conversation_A,
     'conversation_B': conversation_B,
+    'google_login': google_login,
   };
 
   /// 색상 팔레트를 콘솔에 출력합니다. (디버깅용)

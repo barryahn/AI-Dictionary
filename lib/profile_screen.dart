@@ -249,8 +249,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icons.logout,
                   title: loc.get('logout'),
                   subtitle: loc.get('logout_description'),
-                  onTap: () => _showLogoutDialog(loc),
-                  textColor: Colors.red[400],
+                  onTap: () => _showLogoutDialog(loc, colors),
+                  textColor: colors.warning,
                   colors: colors,
                 ),
               ],
@@ -549,7 +549,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   } */
 
-  void _showLogoutDialog(AppLocalizations loc) {
+  void _showLogoutDialog(AppLocalizations loc, CustomColors colors) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -558,7 +558,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(loc.get('cancel')),
+            child: Text(
+              loc.get('cancel'),
+              style: TextStyle(color: colors.text),
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -574,15 +577,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(loc.get('logout_success')),
-                    backgroundColor: Colors.green,
+                    content: Text(
+                      loc.get('logout_success'),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: colors.snackbar_text,
+                      ),
+                    ),
+                    backgroundColor: colors.success,
                   ),
                 );
               }
             },
             child: Text(
               loc.get('logout'),
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: colors.warning),
             ),
           ),
         ],
@@ -667,7 +676,7 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
           ),
           _buildMenuItem(
             title: loc.get('delete_all_history'),
-            onTap: () => {SearchHistoryScreen.clearAllHistory(context)},
+            onTap: () => {SearchHistoryScreen.clearAllHistory(context, colors)},
             colors: colors,
           ),
           _buildMenuItem(

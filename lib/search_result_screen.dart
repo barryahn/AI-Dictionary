@@ -364,8 +364,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             label: Text(AppLocalizations.of(context).stop_search),
             onPressed: _stopFetching,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red[300],
-              foregroundColor: Colors.white,
+              backgroundColor: colors.warning,
+              foregroundColor: colors.text,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
@@ -678,7 +678,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               errorMessage,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.red[400],
+                color: colors.error,
                 fontWeight: FontWeight.w500,
               ),
             ),

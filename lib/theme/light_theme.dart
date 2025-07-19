@@ -12,7 +12,7 @@ class LightTheme extends AppTheme {
     extraLight: Color(0xFFF9FAFB), // 매우 밝은 회색
     light: Color(0xFFF3F4F6), // 밝은 회색
     dark: Color(0xFF4B5563), // 어두운 회색
-    accent: Color(0xFF9CA3AF), // 액센트 회색
+    accent: Color(0xFFC6C6C6), // 액센트 회색
     // 텍스트 색상들
     text: Color(0xFF1F2937), // 주요 텍스트 색상
     textLight: Color(0xFF6B7280), // 보조 텍스트 색상
@@ -23,12 +23,14 @@ class LightTheme extends AppTheme {
     divider: Color(0xFFE5E7EB), // 구분선 색상
     highlight: Color(0xFF3B82F6), // 하이라이트 색상 (파란색)
     // 상태 색상들
-    success: Color(0xFF10B981), // 성공/긍정 색상 (초록색)
-    warning: Color(0xFFF59E0B), // 경고 색상 (주황색)
+    success: Color(0xFF44916F), // 성공/긍정 색상 (초록색)
+    warning: Color(0xFFEF4444), // 경고 색상 (주황색)
     error: Color(0xFFEF4444), // 오류 색상 (빨간색)
     info: Color(0xFF3B82F6), // 정보 색상 (파란색)
     conversation_A: Color(0xFFBBDEFB), // 대화 색상 A
     conversation_B: Color(0xFFC8E6C9), // 대화 색상 B
+    google_login: Color(0xFFFFFFFF), // 구글 로그인 색상
+    snackbar_text: Color(0xFFFFFFFF), // 스낵바 텍스트 색상
   );
 
   @override

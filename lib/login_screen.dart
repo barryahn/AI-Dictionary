@@ -296,7 +296,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return OutlinedButton.icon(
       onPressed: _isLoading ? null : () => _handleGoogleLogin(loc),
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: colors.google_login,
         foregroundColor: colors.text,
         side: BorderSide(color: colors.dark),
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -337,7 +337,10 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(
             content: Text(
               loc.get('google_login_failed') ?? 'Google 로그인에 실패했습니다.',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
             ),
             backgroundColor: colors.error,
           ),
@@ -349,7 +352,10 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(
             content: Text(
               (loc.get('error_occurred') ?? '오류가 발생했습니다: ') + e.toString(),
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
             ),
             backgroundColor: colors.error,
           ),
@@ -403,7 +409,10 @@ class _LoginScreenState extends State<LoginScreen> {
               _isLoginMode
                   ? loc.get('login_failed')
                   : loc.get('register_failed'),
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
             ),
             backgroundColor: colors.error,
           ),
@@ -418,7 +427,10 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(
             content: Text(
               loc.get('error_occurred') + e.toString(),
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
             ),
             backgroundColor: colors.error,
           ),

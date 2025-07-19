@@ -23,12 +23,14 @@ class RecommendedTheme extends AppTheme {
     divider: Color(0xFFE07A5F), // 구분선 색상
     highlight: Color(0xFFE07A5F), // 하이라이트 색상
     // 상태 색상들
-    success: Color(0xFF81B29A), // 성공/긍정 색상
-    warning: Color(0xFFF2CC8F), // 경고 색상
+    success: Color(0xFF44916F), // 성공/긍정 색상
+    warning: Color(0xFFE45141), // 경고 색상
     error: Color(0xFFE45141), // 오류 색상
     info: Color(0xFF81B29A), // 정보 색상
     conversation_A: Color(0xFFBBDEFB), // 대화 색상 A
     conversation_B: Color(0xFFC8E6C9), // 대화 색상 B
+    google_login: Color(0xFFF3F4F6), // 구글 로그인 색상
+    snackbar_text: Color(0xFFFFFFFF), // 스낵바 텍스트 색상
   );
 
   @override

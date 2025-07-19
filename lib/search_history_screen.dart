@@ -10,7 +10,10 @@ import 'l10n/app_localizations.dart';
 class SearchHistoryScreen extends StatefulWidget {
   const SearchHistoryScreen({super.key});
 
-  static Future<void> clearAllHistory(BuildContext context) async {
+  static Future<void> clearAllHistory(
+    BuildContext context,
+    CustomColors colors,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -25,7 +28,7 @@ class SearchHistoryScreen extends StatefulWidget {
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
               AppLocalizations.of(context).delete,
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: colors.warning),
             ),
           ),
         ],
@@ -38,13 +41,25 @@ class SearchHistoryScreen extends StatefulWidget {
         await searchHistoryService.clearAllSearchHistory();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).all_history_deleted),
+            content: Text(
+              AppLocalizations.of(context).all_history_deleted,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
+            ),
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
+            content: Text(
+              '${AppLocalizations.of(context).delete_failed}: $e',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
+            ),
           ),
         );
       }
@@ -96,24 +111,38 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
     }
   }
 
-  Future<void> _deleteSession(int sessionId) async {
+  Future<void> _deleteSession(int sessionId, CustomColors colors) async {
     try {
       await _searchHistoryService.deleteSearchSession(sessionId);
       await refresh(); // 삭제 후 새로고침
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).delete_history)),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).delete_history,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: colors.snackbar_text,
+            ),
+          ),
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
+          content: Text(
+            '${AppLocalizations.of(context).delete_failed}: $e',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: colors.snackbar_text,
+            ),
+          ),
         ),
       );
     }
   }
 
-  Future<void> _clearAllHistory() async {
-    await SearchHistoryScreen.clearAllHistory(context);
+  Future<void> _clearAllHistory(CustomColors colors) async {
+    await SearchHistoryScreen.clearAllHistory(context, colors);
     await refresh(); // 전체 삭제 후 새로고침
   }
 
@@ -156,8 +185,8 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
         actions: [
           if (_searchSessions.isNotEmpty)
             IconButton(
-              icon: Icon(Icons.delete_sweep, color: Colors.red[400]),
-              onPressed: _clearAllHistory,
+              icon: Icon(Icons.delete_sweep, color: colors.warning),
+              onPressed: () => _clearAllHistory(colors),
             ),
         ],
       ),
@@ -310,10 +339,11 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                               IconButton(
                                 icon: Icon(
                                   Icons.delete,
-                                  color: Colors.red[400],
+                                  color: colors.warning,
                                   size: 20,
                                 ),
-                                onPressed: () => _deleteSession(session.id!),
+                                onPressed: () =>
+                                    _deleteSession(session.id!, colors),
                               ),
                             ],
                           ),
