@@ -8,9 +8,10 @@ import 'translation_screen.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'services/auth_service.dart';
+import 'services/theme_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'theme/beige_colors.dart';
+import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +24,7 @@ void main() async {
   await LanguageService.initialize(); // 언어 서비스 초기화
   await OpenAIService.initialize(); // OpenAI 서비스 초기화
   await AuthService().initialize(); // 인증 서비스 초기화
+  await ThemeService.initialize(); // 테마 서비스 초기화
   runApp(const MyApp());
 }
 
@@ -59,52 +61,34 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AuthService(),
-      child: MaterialApp(
-        title: 'AI Dictionary',
-        locale: _locale,
-        supportedLocales: const [
-          Locale('ko'),
-          Locale('en'),
-          Locale('zh'),
-          Locale('zh', 'TW'),
-          Locale('fr'),
-          Locale('es'),
-        ],
-        localizationsDelegates: [
-          const AppLocalizationsDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: BeigeColors.primary,
-            brightness: Brightness.light,
-          ),
-          scaffoldBackgroundColor: BeigeColors.background,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: BeigeColors.background,
-            foregroundColor: BeigeColors.text,
-            elevation: 0,
-            titleTextStyle: TextStyle(
-              color: BeigeColors.text,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: BeigeColors.background,
-            selectedItemColor: BeigeColors.text,
-            unselectedItemColor: BeigeColors.textLight,
-          ),
-          textTheme: const TextTheme(
-            bodyLarge: TextStyle(color: BeigeColors.text),
-            bodyMedium: TextStyle(color: BeigeColors.text),
-          ),
-        ),
-        home: const AuthWrapper(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthService()),
+        ChangeNotifierProvider.value(value: ThemeService.instance),
+      ],
+      child: Consumer<ThemeService>(
+        builder: (context, themeService, child) {
+          return MaterialApp(
+            title: 'AI Dictionary',
+            locale: _locale,
+            supportedLocales: const [
+              Locale('ko'),
+              Locale('en'),
+              Locale('zh'),
+              Locale('zh', 'TW'),
+              Locale('fr'),
+              Locale('es'),
+            ],
+            localizationsDelegates: [
+              const AppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            theme: themeService.themeData,
+            home: const AuthWrapper(),
+          );
+        },
       ),
     );
   }
@@ -150,8 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     return Scaffold(
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -162,12 +149,12 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.translate), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
-        selectedItemColor: BeigeColors.text,
-        unselectedItemColor: BeigeColors.textLight,
+        selectedItemColor: colors.text,
+        unselectedItemColor: colors.textLight,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: BeigeColors.background,
+        backgroundColor: colors.background,
       ),
     );
   }
@@ -219,17 +206,17 @@ class _HomeTabState extends State<_HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     return Scaffold(
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).get('app_title'),
-          style: TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: BeigeColors.background,
+        backgroundColor: colors.background,
         elevation: 0,
       ),
       body: Padding(
@@ -264,9 +251,9 @@ class _HomeTabState extends State<_HomeTab> {
                                       value: item['code']!,
                                       child: Text(
                                         item['name']!,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 20,
-                                          color: BeigeColors.text,
+                                          color: colors.text,
                                         ),
                                       ),
                                     ),
@@ -285,7 +272,7 @@ class _HomeTabState extends State<_HomeTab> {
                       menuItemStyleData: const MenuItemStyleData(height: 40),
                       dropdownStyleData: DropdownStyleData(
                         decoration: BoxDecoration(
-                          color: BeigeColors.light,
+                          color: colors.light,
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
@@ -297,7 +284,7 @@ class _HomeTabState extends State<_HomeTab> {
                   onTap: () {
                     _updateLanguages(selectedToLanguage, selectedFromLanguage);
                   },
-                  child: Icon(Icons.arrow_forward_ios, color: BeigeColors.text),
+                  child: Icon(Icons.arrow_forward_ios, color: colors.text),
                 ),
                 const SizedBox(width: 20),
                 // 도착 언어 선택 드롭다운
@@ -324,9 +311,9 @@ class _HomeTabState extends State<_HomeTab> {
                                       value: item['code']!,
                                       child: Text(
                                         item['name']!,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 20,
-                                          color: BeigeColors.text,
+                                          color: colors.text,
                                         ),
                                       ),
                                     ),
@@ -345,7 +332,7 @@ class _HomeTabState extends State<_HomeTab> {
                       menuItemStyleData: const MenuItemStyleData(height: 40),
                       dropdownStyleData: DropdownStyleData(
                         decoration: BoxDecoration(
-                          color: BeigeColors.light,
+                          color: colors.light,
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
@@ -370,7 +357,7 @@ class _HomeTabState extends State<_HomeTab> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: BeigeColors.light,
+                  color: colors.light,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -380,10 +367,10 @@ class _HomeTabState extends State<_HomeTab> {
                 child: IgnorePointer(
                   child: TextField(
                     decoration: InputDecoration(
-                      icon: Icon(Icons.search, color: BeigeColors.text),
+                      icon: Icon(Icons.search, color: colors.text),
                       hintText: AppLocalizations.of(context).main_search_hint,
                       hintStyle: TextStyle(
-                        color: BeigeColors.text,
+                        color: colors.text,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),

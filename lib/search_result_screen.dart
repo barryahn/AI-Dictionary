@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
 import 'services/openai_service.dart';
 import 'models/unified_search_session.dart';
 import 'services/language_service.dart';
-import 'theme/beige_colors.dart';
+import 'services/theme_service.dart';
+import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
@@ -283,7 +285,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   // --- UI Builder Methods ---
 
-  Widget _buildInitialView() {
+  Widget _buildInitialView(CustomColors colors) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -292,24 +294,24 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           TextField(
             controller: _searchController,
             focusNode: _focusNode,
-            style: const TextStyle(fontSize: 28, color: BeigeColors.text),
+            style: TextStyle(fontSize: 28, color: colors.text),
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context).search_hint,
               hintStyle: TextStyle(
-                color: BeigeColors.textLight,
+                color: colors.textLight,
                 fontWeight: FontWeight.w400,
               ),
               border: InputBorder.none,
             ),
             onSubmitted: (_) => _startSearch(),
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
+          Divider(thickness: 1, color: colors.dark),
         ],
       ),
     );
   }
 
-  Widget _buildResultView() {
+  Widget _buildResultView(CustomColors colors) {
     return ListView(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -324,12 +326,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     // 하단 바를 동적으로 변경
     Widget bottomBar;
     if (!_isSearching) {
       // 초기 검색 화면의 하단 바
       bottomBar = BottomAppBar(
-        color: BeigeColors.light,
+        color: colors.light,
         height: 64,
         child: Row(
           children: [
@@ -339,11 +344,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               style: ElevatedButton.styleFrom(
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(2),
-                backgroundColor: BeigeColors.background,
+                backgroundColor: colors.background,
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 2),
-                child: Icon(Icons.send, color: BeigeColors.text, size: 24),
+                child: Icon(Icons.send, color: colors.text, size: 24),
               ),
             ),
           ],
@@ -377,9 +382,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Container(
             decoration: BoxDecoration(
-              color: BeigeColors.light,
+              color: colors.light,
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: BeigeColors.dark),
+              border: Border.all(color: colors.dark),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -391,12 +396,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context).additional_search,
                       hintStyle: TextStyle(
-                        color: BeigeColors.text,
+                        color: colors.text,
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
                       ),
                       border: InputBorder.none,
-                      icon: Icon(Icons.search, color: BeigeColors.text),
+                      icon: Icon(Icons.search, color: colors.text),
                     ),
                     onSubmitted: (value) {
                       final newQuery = value.trim();
@@ -409,7 +414,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send, color: BeigeColors.text),
+                  icon: Icon(Icons.send, color: colors.text),
                   onPressed: () {
                     final newQuery = _searchController.text.trim();
                     if (newQuery.isNotEmpty) {
@@ -428,11 +433,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        foregroundColor: BeigeColors.text,
+        foregroundColor: colors.text,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: BeigeColors.text),
+          icon: Icon(Icons.close, color: colors.text),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -446,10 +451,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   isExpanded: true,
                   hint: Text(
                     AppLocalizations.of(context).language,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: BeigeColors.textLight,
-                    ),
+                    style: TextStyle(fontSize: 14, color: colors.textLight),
                   ),
                   items:
                       LanguageService.getLocalizedTranslationLanguages(
@@ -461,10 +463,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   value: item['code']!,
                                   child: Text(
                                     item['name']!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
-                                      color: BeigeColors.text,
+                                      color: colors.text,
                                     ),
                                   ),
                                 ),
@@ -486,15 +488,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     height: 36,
                     width: 80,
                     decoration: BoxDecoration(
-                      color: BeigeColors.extraLight,
+                      color: colors.extraLight,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: BeigeColors.dark, width: 1),
+                      border: Border.all(color: colors.dark, width: 1),
                     ),
                   ),
                   menuItemStyleData: const MenuItemStyleData(height: 48),
                   dropdownStyleData: DropdownStyleData(
                     decoration: BoxDecoration(
-                      color: BeigeColors.background,
+                      color: colors.background,
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -512,10 +514,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_forward_ios,
                   size: 12,
-                  color: BeigeColors.text,
+                  color: colors.text,
                 ),
               ),
             ),
@@ -528,10 +530,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   isExpanded: true,
                   hint: Text(
                     AppLocalizations.of(context).language,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: BeigeColors.textLight,
-                    ),
+                    style: TextStyle(fontSize: 14, color: colors.textLight),
                   ),
                   items:
                       LanguageService.getLocalizedTranslationLanguages(
@@ -543,10 +542,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   value: item['code']!,
                                   child: Text(
                                     item['name']!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
-                                      color: BeigeColors.text,
+                                      color: colors.text,
                                     ),
                                   ),
                                 ),
@@ -568,15 +567,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     height: 36,
                     width: 80,
                     decoration: BoxDecoration(
-                      color: BeigeColors.extraLight,
+                      color: colors.extraLight,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: BeigeColors.dark, width: 1),
+                      border: Border.all(color: colors.dark, width: 1),
                     ),
                   ),
                   menuItemStyleData: const MenuItemStyleData(height: 48),
                   dropdownStyleData: DropdownStyleData(
                     decoration: BoxDecoration(
-                      color: BeigeColors.background,
+                      color: colors.background,
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -587,7 +586,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         ),
         elevation: 0,
       ),
-      body: _isSearching ? _buildResultView() : _buildInitialView(),
+      body: _isSearching ? _buildResultView(colors) : _buildInitialView(colors),
       bottomNavigationBar: Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: bottomBar,
@@ -596,6 +595,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildLoadingSection(String query, int index) {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
+
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
@@ -612,37 +614,31 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 Expanded(
                   child: TextField(
                     controller: TextEditingController(text: query),
-                    style: const TextStyle(
-                      fontSize: 28,
-                      color: BeigeColors.text,
-                    ),
+                    style: TextStyle(fontSize: 28, color: colors.text),
                     decoration: const InputDecoration(border: InputBorder.none),
                     readOnly: true,
                   ),
                 ),
               ],
             ),
-            Divider(thickness: 1, color: BeigeColors.dark),
+            Divider(thickness: 1, color: colors.dark),
             // 로딩 인디케이터 - 남은 공간을 모두 차지
             Expanded(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: BeigeColors.textLight),
+                    CircularProgressIndicator(color: colors.textLight),
                     const SizedBox(height: 16),
                     Text(
                       AppLocalizations.of(context).searching,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: BeigeColors.textLight,
-                      ),
+                      style: TextStyle(fontSize: 18, color: colors.textLight),
                     ),
                   ],
                 ),
               ),
             ),
-            const Divider(thickness: 2, color: BeigeColors.divider),
+            Divider(thickness: 2, color: colors.divider),
           ],
         ),
       ),
@@ -650,7 +646,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildErrorSection(String query, int index, {String? message}) {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
     final errorMessage = message ?? AppLocalizations.of(context).search_failed;
+
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
@@ -665,14 +664,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
+                  style: TextStyle(fontSize: 28, color: colors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
               ),
             ],
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
+          Divider(thickness: 1, color: colors.dark),
           // 에러 메시지
           Center(
             child: Text(
@@ -685,13 +684,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          Divider(thickness: 2, color: BeigeColors.divider),
+          Divider(thickness: 2, color: colors.divider),
         ],
       ),
     );
   }
 
   Widget _buildResultSection(String query, String aiResponse, int index) {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
+
     // JSON 파싱 시도
     Map<String, dynamic>? parsedData;
     try {
@@ -726,23 +728,23 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
+                  style: TextStyle(fontSize: 28, color: colors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
               ),
             ],
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
+          Divider(thickness: 1, color: colors.dark),
 
           // 검색어(큰 글씨) - JSON에서 단어 필드 사용
           if (parsedData['단어'] != null) ...[
             Text(
               parsedData['단어'].toString(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: BeigeColors.text,
+                color: colors.text,
               ),
             ),
             const SizedBox(height: 24),
@@ -750,23 +752,25 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
           // 사전적 뜻
           if (parsedData['사전적_뜻'] != null && parsedData['사전적_뜻'] is List) ...[
-            _buildSectionTitle(AppLocalizations.of(context).dictionary_meaning),
+            _buildSectionTitle(
+              AppLocalizations.of(context).dictionary_meaning,
+              colors,
+            ),
             const SizedBox(height: 12),
-            _buildDictionaryMeanings(parsedData['사전적_뜻'] as List<dynamic>),
+            _buildDictionaryMeanings(
+              parsedData['사전적_뜻'] as List<dynamic>,
+              colors,
+            ),
             const SizedBox(height: 24),
           ],
 
           // 뉘앙스
           if (parsedData['뉘앙스'] != null) ...[
-            _buildSectionTitle(AppLocalizations.of(context).nuance),
+            _buildSectionTitle(AppLocalizations.of(context).nuance, colors),
             const SizedBox(height: 8),
             Text(
               parsedData['뉘앙스'].toString(),
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: BeigeColors.text,
-              ),
+              style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
             ),
             const SizedBox(height: 24),
           ],
@@ -775,12 +779,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           if (parsedData['대화_예시'] != null && parsedData['대화_예시'] is List) ...[
             _buildSectionTitle(
               AppLocalizations.of(context).conversation_examples,
+              colors,
             ),
             const SizedBox(height: 12),
             _buildConversationExamples(
               parsedData['대화_예시'] as List<dynamic>,
               _fromLanguage,
               _toLanguage,
+              colors,
             ),
             const SizedBox(height: 24),
           ],
@@ -789,13 +795,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           if (parsedData['비슷한_표현'] != null && parsedData['비슷한_표현'] is List) ...[
             _buildSectionTitle(
               AppLocalizations.of(context).similar_expressions,
+              colors,
             ),
             const SizedBox(height: 12),
-            _buildSimilarExpressions(parsedData['비슷한_표현'] as List<dynamic>),
+            _buildSimilarExpressions(
+              parsedData['비슷한_표현'] as List<dynamic>,
+              colors,
+            ),
             const SizedBox(height: 16),
           ],
 
-          Divider(thickness: 2, color: BeigeColors.divider),
+          Divider(thickness: 2, color: colors.divider),
         ],
       ),
     );
@@ -806,6 +816,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     String aiResponse,
     int index,
   ) {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
+
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
@@ -819,50 +832,46 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: const TextStyle(fontSize: 28, color: BeigeColors.text),
+                  style: TextStyle(fontSize: 28, color: colors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
               ),
             ],
           ),
-          Divider(thickness: 1, color: BeigeColors.dark),
+          Divider(thickness: 1, color: colors.dark),
           Text(
             query,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: BeigeColors.text,
+              color: colors.text,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             aiResponse,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.5,
-              color: BeigeColors.text,
-            ),
+            style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
           ),
           const SizedBox(height: 4),
-          Divider(thickness: 2, color: BeigeColors.divider),
+          Divider(thickness: 2, color: colors.divider),
         ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, CustomColors colors) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: BeigeColors.text,
+        color: colors.text,
       ),
     );
   }
 
-  Widget _buildDictionaryMeanings(List<dynamic> meanings) {
+  Widget _buildDictionaryMeanings(List<dynamic> meanings, CustomColors colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: meanings.map<Widget>((meaning) {
@@ -892,7 +901,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: BeigeColors.highlight,
+                  color: colors.highlight,
                 ),
               ),
               const SizedBox(height: 8),
@@ -904,15 +913,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     children: [
                       Text(
                         '• ',
-                        style: TextStyle(fontSize: 16, color: BeigeColors.text),
+                        style: TextStyle(fontSize: 16, color: colors.text),
                       ),
                       Expanded(
                         child: Text(
                           def.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             height: 1.4,
-                            color: BeigeColors.text,
+                            color: colors.text,
                           ),
                         ),
                       ),
@@ -931,6 +940,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     List<dynamic> examples,
     String fromLanguage,
     String toLanguage,
+    CustomColors colors,
   ) {
     return Column(
       children: examples.asMap().entries.map<Widget>((entry) {
@@ -985,16 +995,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: BeigeColors.highlight,
+                  color: colors.highlight,
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: BeigeColors.background,
+                  color: colors.background,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: BeigeColors.dark),
+                  border: Border.all(color: colors.dark),
                 ),
                 child: Column(
                   children: [
@@ -1028,7 +1038,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: BeigeColors.text,
+                                    color: colors.text,
                                   ),
                                 ),
                               ),
@@ -1036,9 +1046,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               Expanded(
                                 child: Text(
                                   text,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
-                                    color: BeigeColors.text,
+                                    color: colors.text,
                                   ),
                                 ),
                               ),
@@ -1046,7 +1056,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           ),
                         );
                       }),
-                      Divider(height: 16, color: BeigeColors.dark),
+                      Divider(height: 16, color: colors.dark),
                     ],
                     // L1 언어 대화 (예: 영어)
                     if (l1Lines.isNotEmpty) ...[
@@ -1078,7 +1088,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: BeigeColors.text,
+                                    color: colors.text,
                                   ),
                                 ),
                               ),
@@ -1088,7 +1098,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   text,
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: BeigeColors.text,
+                                    color: colors.text,
                                     fontStyle: FontStyle.italic,
                                   ),
                                 ),
@@ -1108,7 +1118,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildSimilarExpressions(List<dynamic> expressions) {
+  Widget _buildSimilarExpressions(
+    List<dynamic> expressions,
+    CustomColors colors,
+  ) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -1124,25 +1137,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: BeigeColors.background,
+            color: colors.background,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: BeigeColors.dark),
+            border: Border.all(color: colors.dark),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 word,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: BeigeColors.text,
+                  color: colors.text,
                 ),
               ),
-              Text(
-                meaning,
-                style: const TextStyle(fontSize: 12, color: BeigeColors.text),
-              ),
+              Text(meaning, style: TextStyle(fontSize: 12, color: colors.text)),
             ],
           ),
         );

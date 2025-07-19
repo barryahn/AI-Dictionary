@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'services/auth_service.dart';
-import 'theme/beige_colors.dart';
+import 'services/theme_service.dart';
+import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -48,13 +50,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     return Scaffold(
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: BeigeColors.background,
+        backgroundColor: colors.background,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: BeigeColors.text),
+          icon: Icon(Icons.arrow_back, color: colors.text),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -74,31 +79,31 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // 앱 로고/제목
-                _buildHeader(loc),
+                _buildHeader(loc, colors),
                 const SizedBox(height: 60),
 
                 // 이메일 입력 필드
-                _buildEmailField(loc),
+                _buildEmailField(loc, colors),
                 const SizedBox(height: 16),
 
                 // 비밀번호 입력 필드
-                _buildPasswordField(loc),
+                _buildPasswordField(loc, colors),
                 const SizedBox(height: 24),
 
                 // 로그인/회원가입 버튼
-                _buildSubmitButton(loc),
+                _buildSubmitButton(loc, colors),
                 const SizedBox(height: 16),
 
                 // 구분선
-                _buildDivider(loc),
+                _buildDivider(loc, colors),
                 const SizedBox(height: 16),
 
                 // Google 로그인 버튼
-                _buildGoogleLoginButton(loc),
+                _buildGoogleLoginButton(loc, colors),
                 const SizedBox(height: 16),
 
                 // 모드 전환 버튼
-                _buildModeToggleButton(loc),
+                _buildModeToggleButton(loc, colors),
               ],
             ),
           ),
@@ -107,17 +112,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildHeader(AppLocalizations loc) {
+  Widget _buildHeader(AppLocalizations loc, CustomColors colors) {
     return Column(
       children: [
         Container(
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: BeigeColors.accent,
+            color: colors.accent,
             shape: BoxShape.circle,
           ),
-          child: Icon(Icons.translate, size: 40, color: BeigeColors.text),
+          child: Icon(Icons.translate, size: 40, color: colors.text),
         ),
         const SizedBox(height: 16),
         Text(
@@ -125,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: BeigeColors.text,
+            color: colors.text,
           ),
         ),
         const SizedBox(height: 8),
@@ -133,14 +138,14 @@ class _LoginScreenState extends State<LoginScreen> {
           _isLoginMode
               ? loc.get('login_subtitle')
               : loc.get('register_subtitle'),
-          style: TextStyle(fontSize: 16, color: BeigeColors.textLight),
+          style: TextStyle(fontSize: 16, color: colors.textLight),
           textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildEmailField(AppLocalizations loc) {
+  Widget _buildEmailField(AppLocalizations loc, CustomColors colors) {
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
@@ -148,21 +153,21 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         labelText: loc.get('email'),
         hintText: loc.get('abc@gmail.com'),
-        prefixIcon: Icon(Icons.email, color: BeigeColors.text),
+        prefixIcon: Icon(Icons.email, color: colors.text),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: BeigeColors.dark),
+          borderSide: BorderSide(color: colors.dark),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: BeigeColors.dark),
+          borderSide: BorderSide(color: colors.dark),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: BeigeColors.accent, width: 2),
+          borderSide: BorderSide(color: colors.accent, width: 2),
         ),
         filled: true,
-        fillColor: BeigeColors.light,
+        fillColor: colors.light,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -176,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPasswordField(AppLocalizations loc) {
+  Widget _buildPasswordField(AppLocalizations loc, CustomColors colors) {
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscurePassword,
@@ -184,11 +189,11 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         labelText: loc.get('password'),
         hintText: loc.get(''),
-        prefixIcon: Icon(Icons.lock, color: BeigeColors.text),
+        prefixIcon: Icon(Icons.lock, color: colors.text),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility : Icons.visibility_off,
-            color: BeigeColors.text,
+            color: colors.text,
           ),
           onPressed: () {
             setState(() {
@@ -198,18 +203,18 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: BeigeColors.dark),
+          borderSide: BorderSide(color: colors.dark),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: BeigeColors.dark),
+          borderSide: BorderSide(color: colors.dark),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: BeigeColors.accent, width: 2),
+          borderSide: BorderSide(color: colors.accent, width: 2),
         ),
         filled: true,
-        fillColor: BeigeColors.light,
+        fillColor: colors.light,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -223,12 +228,12 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSubmitButton(AppLocalizations loc) {
+  Widget _buildSubmitButton(AppLocalizations loc, CustomColors colors) {
     return ElevatedButton(
       onPressed: _isLoading ? null : () => _handleSubmit(loc),
       style: ElevatedButton.styleFrom(
-        backgroundColor: BeigeColors.accent,
-        foregroundColor: BeigeColors.text,
+        backgroundColor: colors.accent,
+        foregroundColor: colors.text,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 2,
@@ -239,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
               width: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: BeigeColors.text,
+                color: colors.text,
               ),
             )
           : Text(
@@ -249,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildModeToggleButton(AppLocalizations loc) {
+  Widget _buildModeToggleButton(AppLocalizations loc, CustomColors colors) {
     return TextButton(
       onPressed: _isLoading
           ? null
@@ -262,44 +267,38 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoginMode
             ? loc.get('no_account_register')
             : loc.get('have_account_login'),
-        style: TextStyle(color: BeigeColors.text, fontSize: 14),
+        style: TextStyle(color: colors.text, fontSize: 14),
       ),
     );
   }
 
-  Widget _buildDivider(AppLocalizations loc) {
+  Widget _buildDivider(AppLocalizations loc, CustomColors colors) {
     return Row(
       children: [
         Expanded(
-          child: Divider(
-            color: BeigeColors.dark.withOpacity(0.3),
-            thickness: 1,
-          ),
+          child: Divider(color: colors.dark.withOpacity(0.3), thickness: 1),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             loc.get('or') ?? '또는',
-            style: TextStyle(color: BeigeColors.textLight, fontSize: 14),
+            style: TextStyle(color: colors.textLight, fontSize: 14),
           ),
         ),
         Expanded(
-          child: Divider(
-            color: BeigeColors.dark.withOpacity(0.3),
-            thickness: 1,
-          ),
+          child: Divider(color: colors.dark.withOpacity(0.3), thickness: 1),
         ),
       ],
     );
   }
 
-  Widget _buildGoogleLoginButton(AppLocalizations loc) {
+  Widget _buildGoogleLoginButton(AppLocalizations loc, CustomColors colors) {
     return OutlinedButton.icon(
       onPressed: _isLoading ? null : () => _handleGoogleLogin(loc),
       style: OutlinedButton.styleFrom(
         backgroundColor: Colors.white,
-        foregroundColor: BeigeColors.text,
-        side: BorderSide(color: BeigeColors.dark),
+        foregroundColor: colors.text,
+        side: BorderSide(color: colors.dark),
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -308,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
         height: 20,
         width: 20,
         errorBuilder: (context, error, stackTrace) {
-          return Icon(Icons.g_mobiledata, size: 20, color: BeigeColors.text);
+          return Icon(Icons.g_mobiledata, size: 20, color: colors.text);
         },
       ),
       label: Text(
@@ -319,6 +318,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleGoogleLogin(AppLocalizations loc) async {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
+
     setState(() {
       _isLoading = true;
     });
@@ -337,7 +339,7 @@ class _LoginScreenState extends State<LoginScreen> {
               loc.get('google_login_failed') ?? 'Google 로그인에 실패했습니다.',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            backgroundColor: BeigeColors.error,
+            backgroundColor: colors.error,
           ),
         );
       }
@@ -349,7 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
               (loc.get('error_occurred') ?? '오류가 발생했습니다: ') + e.toString(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            backgroundColor: BeigeColors.error,
+            backgroundColor: colors.error,
           ),
         );
         print(e);
@@ -364,6 +366,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleSubmit(AppLocalizations loc) async {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -400,7 +405,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   : loc.get('register_failed'),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            backgroundColor: BeigeColors.error,
+            backgroundColor: colors.error,
           ),
         );
 
@@ -415,7 +420,7 @@ class _LoginScreenState extends State<LoginScreen> {
               loc.get('error_occurred') + e.toString(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            backgroundColor: BeigeColors.error,
+            backgroundColor: colors.error,
           ),
         );
         print(e);

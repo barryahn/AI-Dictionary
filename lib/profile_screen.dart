@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
 import 'services/language_service.dart';
 import 'services/auth_service.dart';
+import 'services/theme_service.dart';
+import 'theme/app_theme.dart';
 import 'login_screen.dart';
-import 'theme/beige_colors.dart';
 import 'l10n/app_localizations.dart';
 import 'search_history_screen.dart';
 
@@ -18,7 +19,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final SearchHistoryService _searchHistoryService = SearchHistoryService();
   bool _isLoading = true;
-  String _selectedTheme = 'recommended_theme'; // 기본값은 recommended_theme
 
   @override
   void initState() {
@@ -36,45 +36,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     return Scaffold(
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: BeigeColors.background,
+        backgroundColor: colors.background,
         elevation: 0,
         title: Text(
           loc.get('profile_title'),
-          style: const TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
         ),
-        iconTheme: const IconThemeData(color: BeigeColors.text),
+        iconTheme: IconThemeData(color: colors.text),
       ),
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(color: BeigeColors.textLight),
-            )
+          ? Center(child: CircularProgressIndicator(color: colors.textLight))
           : SingleChildScrollView(
               child: Column(
                 children: [
                   // 프로필 헤더
-                  _buildProfileHeader(loc),
+                  _buildProfileHeader(loc, colors),
                   const SizedBox(height: 20),
                   // 설정 메뉴
-                  _buildSettingsMenu(loc),
+                  _buildSettingsMenu(loc, colors),
                 ],
               ),
             ),
     );
   }
 
-  Widget _buildProfileHeader(AppLocalizations loc) {
+  Widget _buildProfileHeader(AppLocalizations loc, CustomColors colors) {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-          decoration: BoxDecoration(color: BeigeColors.background),
+          decoration: BoxDecoration(color: colors.background),
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -83,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: BeigeColors.accent,
+                  color: colors.accent,
                   shape: BoxShape.circle,
                 ),
                 child:
@@ -99,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             return Icon(
                               Icons.person,
                               size: 40,
-                              color: BeigeColors.text,
+                              color: colors.text,
                             );
                           },
                           loadingBuilder: (context, child, loadingProgress) {
@@ -111,13 +109,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ? loadingProgress.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
                                     : null,
-                                color: BeigeColors.text,
+                                color: colors.text,
                               ),
                             );
                           },
                         ),
                       )
-                    : Icon(Icons.person, size: 40, color: BeigeColors.text),
+                    : Icon(Icons.person, size: 40, color: colors.text),
               ),
               const SizedBox(height: 16),
               // 사용자 이름
@@ -125,10 +123,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 authService.isLoggedIn
                     ? (authService.userName ?? loc.get('ai_dictionary_user'))
                     : loc.get('guest_user'),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: BeigeColors.text,
+                  color: colors.text,
                 ),
               ),
               const SizedBox(height: 4),
@@ -137,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 authService.isLoggedIn
                     ? (authService.userEmail ?? 'user@example.com')
                     : loc.get('guest_description'),
-                style: TextStyle(fontSize: 14, color: BeigeColors.textLight),
+                style: TextStyle(fontSize: 14, color: colors.textLight),
               ),
               if (!authService.isLoggedIn) ...[
                 const SizedBox(height: 16),
@@ -146,8 +144,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _showLoginDialog(loc);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: BeigeColors.accent,
-                    foregroundColor: BeigeColors.text,
+                    backgroundColor: colors.accent,
+                    foregroundColor: colors.text,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -164,8 +162,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _showEditProfileDialog(loc);
                   },
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: BeigeColors.text,
-                    side: BorderSide(color: BeigeColors.dark),
+                    foregroundColor: colors.text,
+                    side: BorderSide(color: colors.dark),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -178,8 +176,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _showLoginDialog(loc);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: BeigeColors.accent,
-                    foregroundColor: BeigeColors.text,
+                    backgroundColor: colors.accent,
+                    foregroundColor: colors.text,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -193,20 +191,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildSettingsMenu(AppLocalizations loc) {
+  Widget _buildSettingsMenu(AppLocalizations loc, CustomColors colors) {
     return Consumer<AuthService>(
       builder: (context, authService, child) {
         return Container(
           margin: const EdgeInsets.only(bottom: 20),
           child: Column(
             children: [
-              _buildMenuHeader(title: loc.get('system')),
+              _buildMenuHeader(title: loc.get('system'), colors: colors),
 
               _buildMenuItem(
                 icon: Icons.language,
                 title: loc.get('app_language_setting'),
                 subtitle: LanguageService.currentLanguageName,
                 onTap: () => _showLanguageSettings(loc),
+                colors: colors,
               ),
 
               /* _buildMenuItem(
@@ -220,19 +219,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: loc.get('data'), // 'storage' -> 'data'로 변경
                 subtitle: loc.get('data_description'),
                 onTap: () => _openDataSettingsScreen(loc), // 새 창으로 이동
+                colors: colors,
               ),
 
-              _buildMenuHeader(title: loc.get('theme')),
+              _buildMenuHeader(title: loc.get('theme'), colors: colors),
 
-              _buildThemeItems(loc),
+              _buildThemeItems(loc, colors),
 
-              _buildMenuHeader(title: loc.get('information')),
+              _buildMenuHeader(title: loc.get('information'), colors: colors),
 
               _buildMenuItem(
                 icon: Icons.help,
                 title: loc.get('help'),
                 subtitle: loc.get('help_description'),
                 onTap: () => _showHelp(loc),
+                colors: colors,
               ),
 
               _buildMenuItem(
@@ -240,6 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: loc.get('app_info'),
                 subtitle: loc.get('app_version'),
                 onTap: () {},
+                colors: colors,
               ),
               if (authService.isLoggedIn) ...[
                 const SizedBox(height: 20),
@@ -249,6 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   subtitle: loc.get('logout_description'),
                   onTap: () => _showLogoutDialog(loc),
                   textColor: Colors.red[400],
+                  colors: colors,
                 ),
               ],
             ],
@@ -258,16 +261,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildMenuHeader({required String title}) {
+  Widget _buildMenuHeader({
+    required String title,
+    required CustomColors colors,
+  }) {
     return Container(
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.only(left: 24, top: 40, bottom: 10),
       child: Text(
         title,
-        style: TextStyle(
-          color: BeigeColors.textLight,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: colors.textLight, fontWeight: FontWeight.bold),
         textAlign: TextAlign.left,
       ),
     );
@@ -279,32 +282,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String subtitle,
     required VoidCallback onTap,
     Color? textColor,
+    required CustomColors colors,
   }) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Icon(icon, color: textColor ?? BeigeColors.text),
+        child: Icon(icon, color: textColor ?? colors.text),
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: textColor ?? BeigeColors.text,
+          color: textColor ?? colors.text,
           fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         subtitle,
         style: TextStyle(
-          color: textColor?.withValues(alpha: 0.7) ?? BeigeColors.text,
+          color: textColor?.withValues(alpha: 0.7) ?? colors.text,
           fontSize: 12,
         ),
       ),
-      trailing: Icon(Icons.chevron_right, color: BeigeColors.textLight),
+      trailing: Icon(Icons.chevron_right, color: colors.textLight),
       onTap: onTap,
     );
   }
 
-  Widget _buildThemeItems(AppLocalizations loc) {
+  Widget _buildThemeItems(AppLocalizations loc, CustomColors colors) {
     return Container(
       padding: const EdgeInsets.only(left: 24, right: 24, top: 10),
       child: Row(
@@ -315,7 +319,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               loc,
               Icons.favorite,
               loc.get('recommended_theme'),
-              'recommended_theme',
+              'recommended',
+              colors,
             ),
           ),
           const SizedBox(width: 16),
@@ -324,7 +329,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               loc,
               Icons.light_mode,
               loc.get('light_theme'),
-              'light_theme',
+              'light',
+              colors,
             ),
           ),
           const SizedBox(width: 16),
@@ -333,7 +339,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               loc,
               Icons.dark_mode,
               loc.get('dark_theme'),
-              'dark_theme',
+              'dark',
+              colors,
             ),
           ),
         ],
@@ -346,10 +353,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     IconData icon,
     String title,
     String themeKey,
+    CustomColors colors,
   ) {
-    final isSelected = _selectedTheme == themeKey;
+    final themeService = context.watch<ThemeService>();
+    final isSelected = themeService.currentThemeId == themeKey;
     return GestureDetector(
-      onTap: () => setState(() => _selectedTheme = themeKey),
+      onTap: () async {
+        await themeService.setTheme(themeKey);
+        setState(() {});
+      },
       child: Column(
         children: [
           Container(
@@ -358,32 +370,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: isSelected ? BeigeColors.accent : BeigeColors.primary,
+                color: isSelected ? colors.accent : colors.primary,
                 width: isSelected ? 2 : 1,
               ),
               color: isSelected ? Colors.white : Colors.transparent,
             ),
-            child: Icon(icon, color: BeigeColors.text, size: 24),
+            child: Icon(icon, color: colors.text, size: 24),
           ),
           const SizedBox(height: 8),
           Text(
             title,
-            style: TextStyle(
-              color: BeigeColors.text,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(color: colors.text, fontWeight: FontWeight.w500),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(CustomColors colors) {
     return Divider(
       height: 1,
       indent: 56,
       endIndent: 20,
-      color: BeigeColors.dark.withValues(alpha: 0.4),
+      color: colors.dark.withValues(alpha: 0.4),
     );
   }
 
@@ -625,32 +634,32 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.get('data')),
-        backgroundColor: BeigeColors.background,
-        iconTheme: const IconThemeData(color: BeigeColors.text),
+        backgroundColor: colors.background,
+        iconTheme: IconThemeData(color: colors.text),
         elevation: 0,
       ),
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       body: Column(
         children: [
           ListTile(
             title: Text(
               loc.get('pause_search_history'),
-              style: TextStyle(
-                color: BeigeColors.text,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(color: colors.text, fontWeight: FontWeight.w500),
             ),
             subtitle: Text(
               loc.get('pause_search_history_description'),
-              style: TextStyle(color: BeigeColors.text, fontSize: 12),
+              style: TextStyle(color: colors.text, fontSize: 12),
             ),
             trailing: Switch(
               value: _isPauseHistoryEnabled,
               onChanged: _setPauseHistoryState,
-              activeColor: BeigeColors.text,
+              activeColor: colors.text,
             ),
             onTap: () {
               _setPauseHistoryState(!_isPauseHistoryEnabled);
@@ -659,18 +668,27 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
           _buildMenuItem(
             title: loc.get('delete_all_history'),
             onTap: () => {SearchHistoryScreen.clearAllHistory(context)},
+            colors: colors,
           ),
-          _buildMenuItem(title: loc.get('delete_account'), onTap: () => {}),
+          _buildMenuItem(
+            title: loc.get('delete_account'),
+            onTap: () => {},
+            colors: colors,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMenuItem({required String title, required VoidCallback onTap}) {
+  Widget _buildMenuItem({
+    required String title,
+    required VoidCallback onTap,
+    required CustomColors colors,
+  }) {
     return ListTile(
       title: Text(
         title,
-        style: TextStyle(color: BeigeColors.error, fontWeight: FontWeight.w500),
+        style: TextStyle(color: colors.error, fontWeight: FontWeight.w500),
       ),
       onTap: onTap,
     );

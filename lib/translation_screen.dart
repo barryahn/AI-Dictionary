@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
-import 'theme/beige_colors.dart';
+import 'services/theme_service.dart';
+import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_langdetect/flutter_langdetect.dart' as langdetect;
@@ -84,13 +86,16 @@ class TranslationScreenState extends State<TranslationScreen> {
 
   // 텍스트 복사 함수
   void _copyToClipboard(String text, String message) {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
+
     Clipboard.setData(ClipboardData(text: text));
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: BeigeColors.primary,
+      backgroundColor: colors.primary,
       textColor: Colors.white,
     );
   }
@@ -109,6 +114,9 @@ class TranslationScreenState extends State<TranslationScreen> {
 
     if (detectedLanguageByLangDetect != selectedLanguageCode) {
       // 언어 확인 팝업 띄우기
+      final themeService = context.read<ThemeService>();
+      final colors = themeService.colors;
+
       bool? shouldContinue = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -119,7 +127,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                   text: AppLocalizations.of(context).selected_input_language,
                   style: TextStyle(
                     fontSize: 16,
-                    color: BeigeColors.text,
+                    color: colors.text,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -127,7 +135,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                   text: selectedFromLanguage,
                   style: TextStyle(
                     fontSize: 16,
-                    color: BeigeColors.error,
+                    color: colors.error,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -203,17 +211,17 @@ class TranslationScreenState extends State<TranslationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     return Scaffold(
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).translation,
-          style: TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: BeigeColors.background,
+        backgroundColor: colors.background,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -222,11 +230,11 @@ class TranslationScreenState extends State<TranslationScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              _buildLanguageSelector(),
+              _buildLanguageSelector(colors),
               const SizedBox(height: 20),
-              _buildTonePicker(),
+              _buildTonePicker(colors),
               const SizedBox(height: 20),
-              _buildTranslationArea(),
+              _buildTranslationArea(colors),
             ],
           ),
         ),
@@ -235,21 +243,21 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 언어 선택 영역
-  Widget _buildLanguageSelector() {
+  Widget _buildLanguageSelector(CustomColors colors) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        _buildFromLanguageDropdown(),
+        _buildFromLanguageDropdown(colors),
         const SizedBox(width: 20),
-        _buildLanguageSwapButton(),
+        _buildLanguageSwapButton(colors),
         const SizedBox(width: 20),
-        _buildToLanguageDropdown(),
+        _buildToLanguageDropdown(colors),
       ],
     );
   }
 
   // 출발 언어 선택 드롭다운
-  Widget _buildFromLanguageDropdown() {
+  Widget _buildFromLanguageDropdown(CustomColors colors) {
     return SizedBox(
       width: 140,
       child: DropdownButtonHideUnderline(
@@ -268,10 +276,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                       value: item['code']!,
                       child: Text(
                         item['name']!,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: BeigeColors.text,
-                        ),
+                        style: TextStyle(fontSize: 20, color: colors.text),
                       ),
                     ),
                   )
@@ -289,7 +294,7 @@ class TranslationScreenState extends State<TranslationScreen> {
           menuItemStyleData: const MenuItemStyleData(height: 40),
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
-              color: BeigeColors.light,
+              color: colors.light,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -299,17 +304,17 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 언어 교환 버튼
-  Widget _buildLanguageSwapButton() {
+  Widget _buildLanguageSwapButton(CustomColors colors) {
     return GestureDetector(
       onTap: () {
         _updateLanguages(selectedToLanguage, selectedFromLanguage);
       },
-      child: Icon(Icons.arrow_forward_ios, color: BeigeColors.text),
+      child: Icon(Icons.arrow_forward_ios, color: colors.text),
     );
   }
 
   // 도착 언어 선택 드롭다운
-  Widget _buildToLanguageDropdown() {
+  Widget _buildToLanguageDropdown(CustomColors colors) {
     return SizedBox(
       width: 140,
       child: DropdownButtonHideUnderline(
@@ -328,10 +333,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                       value: item['code']!,
                       child: Text(
                         item['name']!,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: BeigeColors.text,
-                        ),
+                        style: TextStyle(fontSize: 20, color: colors.text),
                       ),
                     ),
                   )
@@ -349,7 +351,7 @@ class TranslationScreenState extends State<TranslationScreen> {
           menuItemStyleData: const MenuItemStyleData(height: 40),
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
-              color: BeigeColors.light,
+              color: colors.light,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -359,7 +361,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 번역 분위기 설정 슬라이더
-  Widget _buildTonePicker() {
+  Widget _buildTonePicker(CustomColors colors) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -389,14 +391,14 @@ class TranslationScreenState extends State<TranslationScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.tune, color: BeigeColors.primary, size: 20),
+                      Icon(Icons.tune, color: colors.primary, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         AppLocalizations.of(context).translation_tone,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: BeigeColors.text,
+                          color: colors.text,
                         ),
                       ),
                       if (!isTonePickerExpanded) ...[
@@ -410,7 +412,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: BeigeColors.textLight,
+                                  color: colors.textLight,
                                 ),
                               ),
                               const SizedBox(width: 2),
@@ -418,7 +420,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Icon(
                                   Icons.check_circle,
-                                  color: BeigeColors.primary,
+                                  color: colors.primary,
                                   size: 16,
                                 ),
                               ),
@@ -441,7 +443,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                         isTonePickerExpanded
                             ? Icons.expand_less
                             : Icons.expand_more,
-                        color: BeigeColors.text,
+                        color: colors.text,
                         size: 20,
                       ),
                     ),
@@ -458,10 +460,10 @@ class TranslationScreenState extends State<TranslationScreen> {
                   // 슬라이더
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      activeTrackColor: BeigeColors.primary,
-                      inactiveTrackColor: BeigeColors.light,
-                      thumbColor: BeigeColors.primary,
-                      overlayColor: BeigeColors.primary.withValues(alpha: 0.2),
+                      activeTrackColor: colors.primary,
+                      inactiveTrackColor: colors.light,
+                      thumbColor: colors.primary,
+                      overlayColor: colors.primary.withValues(alpha: 0.2),
                       trackHeight: 4,
                       thumbShape: const RoundSliderThumbShape(
                         enabledThumbRadius: 8,
@@ -504,7 +506,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                               height: 8,
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? BeigeColors.primary
+                                    ? colors.primary
                                     : Colors.grey.withValues(alpha: 0.3),
                                 shape: BoxShape.circle,
                               ),
@@ -518,8 +520,8 @@ class TranslationScreenState extends State<TranslationScreen> {
                                     ? FontWeight.bold
                                     : FontWeight.w500,
                                 color: isSelected
-                                    ? BeigeColors.primary
-                                    : BeigeColors.textLight,
+                                    ? colors.primary
+                                    : colors.textLight,
                               ),
                             ),
                           ],
@@ -536,20 +538,20 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 번역 영역 (입력창, 버튼, 결과창)
-  Widget _buildTranslationArea() {
+  Widget _buildTranslationArea(CustomColors colors) {
     return Column(
       children: [
-        _buildInputField(),
+        _buildInputField(colors),
         const SizedBox(height: 20),
-        _buildTranslateButton(),
+        _buildTranslateButton(colors),
         const SizedBox(height: 20),
-        _buildResultField(),
+        _buildResultField(colors),
       ],
     );
   }
 
   // 입력창
-  Widget _buildInputField() {
+  Widget _buildInputField(CustomColors colors) {
     return Container(
       height: 200,
       decoration: BoxDecoration(
@@ -574,14 +576,14 @@ class TranslationScreenState extends State<TranslationScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.edit, color: BeigeColors.primary, size: 20),
+                    Icon(Icons.edit, color: colors.primary, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       AppLocalizations.of(context).input_text,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: BeigeColors.textLight,
+                        color: colors.textLight,
                       ),
                     ),
                   ],
@@ -599,7 +601,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: _inputController.text.isNotEmpty
-                          ? BeigeColors.primary.withValues(alpha: 0.1)
+                          ? colors.primary.withValues(alpha: 0.1)
                           : Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -607,7 +609,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                       Icons.copy,
                       size: 16,
                       color: _inputController.text.isNotEmpty
-                          ? BeigeColors.text
+                          ? colors.text
                           : Colors.grey,
                     ),
                   ),
@@ -622,18 +624,11 @@ class TranslationScreenState extends State<TranslationScreen> {
               expands: true,
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context).input_text_hint,
-                hintStyle: TextStyle(
-                  color: BeigeColors.textLight,
-                  fontSize: 16,
-                ),
+                hintStyle: TextStyle(color: colors.textLight, fontSize: 16),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               ),
-              style: TextStyle(
-                color: BeigeColors.text,
-                fontSize: 16,
-                height: 1.4,
-              ),
+              style: TextStyle(color: colors.text, fontSize: 16, height: 1.4),
             ),
           ),
         ],
@@ -642,23 +637,20 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 번역 버튼
-  Widget _buildTranslateButton() {
+  Widget _buildTranslateButton(CustomColors colors) {
     return Container(
       width: double.infinity,
       height: 56,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [
-            BeigeColors.primary,
-            BeigeColors.primary.withValues(alpha: 0.8),
-          ],
+          colors: [colors.primary, colors.primary.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: BeigeColors.primary.withValues(alpha: 0.3),
+            color: colors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -701,7 +693,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 번역 결과 영역
-  Widget _buildResultField() {
+  Widget _buildResultField(CustomColors colors) {
     return Container(
       height: 200,
       width: double.infinity,
@@ -730,8 +722,8 @@ class TranslationScreenState extends State<TranslationScreen> {
                     Icon(
                       Icons.translate,
                       color: _translatedText.isEmpty
-                          ? BeigeColors.textLight
-                          : BeigeColors.primary,
+                          ? colors.textLight
+                          : colors.primary,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
@@ -741,19 +733,19 @@ class TranslationScreenState extends State<TranslationScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: _translatedText.isEmpty
-                            ? BeigeColors.textLight
-                            : BeigeColors.text,
+                            ? colors.textLight
+                            : colors.text,
                       ),
                     ),
                     if (_isLoading) ...[
                       const SizedBox(width: 8),
-                      const SizedBox(
+                      SizedBox(
                         width: 12,
                         height: 12,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            BeigeColors.primary,
+                            colors.primary,
                           ),
                         ),
                       ),
@@ -782,7 +774,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                   AppLocalizations.of(
                                     context,
                                   ).translation_result_hint)
-                          ? BeigeColors.primary.withValues(alpha: 0.1)
+                          ? colors.primary.withValues(alpha: 0.1)
                           : Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -795,7 +787,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                   AppLocalizations.of(
                                     context,
                                   ).translation_result_hint)
-                          ? BeigeColors.text
+                          ? colors.text
                           : Colors.grey,
                     ),
                   ),
@@ -813,8 +805,8 @@ class TranslationScreenState extends State<TranslationScreen> {
                       : _translatedText,
                   style: TextStyle(
                     color: _translatedText.isEmpty
-                        ? BeigeColors.textLight
-                        : BeigeColors.text,
+                        ? colors.textLight
+                        : colors.text,
                     fontSize: 16,
                     height: 1.4,
                   ),

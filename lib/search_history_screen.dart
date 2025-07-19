@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
+import 'services/theme_service.dart';
 import 'models/unified_search_session.dart';
 import 'search_result_screen.dart';
-import 'theme/beige_colors.dart';
+import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 
 class SearchHistoryScreen extends StatefulWidget {
@@ -138,18 +140,18 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
     return Scaffold(
-      backgroundColor: BeigeColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: BeigeColors.background,
+        backgroundColor: colors.background,
         elevation: 0,
-        iconTheme: const IconThemeData(color: BeigeColors.text),
+        iconTheme: IconThemeData(color: colors.text),
         title: Text(
           AppLocalizations.of(context).search_history,
-          style: TextStyle(
-            color: BeigeColors.text,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
         ),
         actions: [
           if (_searchSessions.isNotEmpty)
@@ -168,7 +170,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(top: 10, left: 16, right: 16),
               decoration: BoxDecoration(
-                color: BeigeColors.error.withValues(alpha: 0.1),
+                color: colors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -177,7 +179,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                     child: Text(
                       AppLocalizations.of(context).get('search_history_paused'),
                       style: TextStyle(
-                        color: BeigeColors.error,
+                        color: colors.error,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -190,26 +192,20 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
           Expanded(
             child: _isLoading
                 ? Center(
-                    child: CircularProgressIndicator(
-                      color: BeigeColors.textLight,
-                    ),
+                    child: CircularProgressIndicator(color: colors.textLight),
                   )
                 : _searchSessions.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.history,
-                          size: 64,
-                          color: BeigeColors.textLight,
-                        ),
+                        Icon(Icons.history, size: 64, color: colors.textLight),
                         const SizedBox(height: 16),
                         Text(
                           AppLocalizations.of(context).no_history,
                           style: TextStyle(
                             fontSize: 18,
-                            color: BeigeColors.textLight,
+                            color: colors.textLight,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -217,7 +213,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                           AppLocalizations.of(context).history_description,
                           style: TextStyle(
                             fontSize: 14,
-                            color: BeigeColors.textLight,
+                            color: colors.textLight,
                           ),
                         ),
                       ],
@@ -231,16 +227,16 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
                         elevation: 2,
-                        color: BeigeColors.extraLight,
+                        color: colors.extraLight,
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(16),
                           title: session.cards.length == 1
                               ? Text(
                                   session.cards.first.query,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: BeigeColors.text,
+                                    color: colors.text,
                                   ),
                                 )
                               : RichText(
@@ -248,18 +244,18 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                     children: [
                                       TextSpan(
                                         text: session.cards.first.query,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: BeigeColors.text,
+                                          color: colors.text,
                                         ),
                                       ),
                                       TextSpan(
                                         text:
                                             ' ${AppLocalizations.of(context).and_others} ${session.cards.length - 1}${AppLocalizations.of(context).items}',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
-                                          color: BeigeColors.text,
+                                          color: colors.text,
                                         ),
                                       ),
                                     ],
@@ -273,7 +269,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                 _formatDateTime(session.createdAt),
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: BeigeColors.textLight,
+                                  color: colors.textLight,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -283,7 +279,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                     .join(', '),
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: BeigeColors.highlight,
+                                  color: colors.highlight,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -298,14 +294,14 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: BeigeColors.accent,
+                                  color: colors.accent,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
                                   '${session.cards.length}개',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: BeigeColors.text,
+                                    color: colors.text,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
