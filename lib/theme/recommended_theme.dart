@@ -35,7 +35,7 @@ class RecommendedTheme extends AppTheme {
     scaffoldBackgroundColor: customColors.background,
     primaryColor: customColors.primary,
     appBarTheme: AppBarTheme(
-      backgroundColor: customColors.primary,
+      backgroundColor: customColors.light,
       foregroundColor: customColors.text,
     ),
     textTheme: TextTheme(
