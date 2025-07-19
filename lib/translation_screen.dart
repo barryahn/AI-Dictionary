@@ -177,6 +177,9 @@ class TranslationScreenState extends State<TranslationScreen> {
   Future<void> _translateText() async {
     if (_inputController.text.trim().isEmpty) return;
 
+    // 키보드 숨기기
+    FocusScope.of(context).unfocus();
+
     final temp = langdetect.detect(_inputController.text.trim());
 
     String detectedLanguageByLangDetect = temp == 'zh-ch' ? 'zh' : temp;
