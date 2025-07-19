@@ -7,26 +7,26 @@ class DarkTheme extends AppTheme {
 
   @override
   CustomColors get customColors => const CustomColors(
-    // 기본 다크 색상들
-    primary: Color(0xFF6366F1), // 인디고 보라색 (강조색)
-    extraLight: Color(0xFF1F2937), // 매우 어두운 회색
-    light: Color(0xFF374151), // 어두운 회색
-    dark: Color(0xFF111827), // 매우 어두운 회색
-    accent: Color(0xFF8B5CF6), // 보라색 액센트
+    // 기본 다크 색상들 - 어두운 회색과 검정 계열
+    primary: Color(0xFF4A5568), // 메인 어두운 회색
+    extraLight: Color(0xFF1A202C), // 매우 어두운 회색
+    light: Color(0xFF2D3748), // 어두운 회색
+    dark: Color(0xFF0F1419), // 매우 어두운 검정
+    accent: Color(0xFF718096), // 액센트 회색
     // 텍스트 색상들
-    text: Color(0xFFF9FAFB), // 밝은 텍스트 색상
-    textLight: Color(0xFFD1D5DB), // 보조 텍스트 색상
+    text: Color(0xFFE2E8F0), // 밝은 텍스트 색상
+    textLight: Color(0xFFA0AEC0), // 보조 텍스트 색상
     // 배경 색상들
-    background: Color(0xFF0F172A), // 깊이 있는 다크 블루 그레이
-    surface: Color(0xFF1E293B), // 카드/표면 배경색
+    background: Color(0xFF0F1419), // 깊이 있는 다크 배경
+    surface: Color(0xFF1A202C), // 카드/표면 배경색
     // 강조 색상들
-    divider: Color(0xFF334155), // 구분선 색상
-    highlight: Color(0xFF60A5FA), // 하이라이트 색상 (밝은 파란색)
+    divider: Color(0xFF2D3748), // 구분선 색상
+    highlight: Color(0xFF718096), // 하이라이트 색상 (회색)
     // 상태 색상들
-    success: Color(0xFF34D399), // 성공/긍정 색상 (밝은 초록색)
-    warning: Color(0xFFFBBF24), // 경고 색상 (밝은 주황색)
-    error: Color(0xFFF87171), // 오류 색상 (밝은 빨간색)
-    info: Color(0xFF60A5FA), // 정보 색상 (밝은 파란색)
+    success: Color(0xFF48BB78), // 성공/긍정 색상 (초록색)
+    warning: Color(0xFFED8936), // 경고 색상 (주황색)
+    error: Color(0xFFF56565), // 오류 색상 (빨간색)
+    info: Color(0xFF4299E1), // 정보 색상 (파란색)
   );
 
   @override
