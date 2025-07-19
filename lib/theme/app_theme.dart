@@ -24,6 +24,8 @@ class CustomColors {
   final Color warning;
   final Color error;
   final Color info;
+  final Color conversation_A;
+  final Color conversation_B;
 
   const CustomColors({
     required this.primary,
@@ -41,6 +43,8 @@ class CustomColors {
     required this.warning,
     required this.error,
     required this.info,
+    required this.conversation_A,
+    required this.conversation_B,
   });
 
   // 투명도가 적용된 색상들
@@ -73,6 +77,8 @@ class CustomColors {
     'warning': warning,
     'error': error,
     'info': info,
+    'conversation_A': conversation_A,
+    'conversation_B': conversation_B,
   };
 
   /// 색상 팔레트를 콘솔에 출력합니다. (디버깅용)

@@ -27,6 +27,8 @@ class LightTheme extends AppTheme {
     warning: Color(0xFFF59E0B), // 경고 색상 (주황색)
     error: Color(0xFFEF4444), // 오류 색상 (빨간색)
     info: Color(0xFF3B82F6), // 정보 색상 (파란색)
+    conversation_A: Color(0xFFBBDEFB), // 대화 색상 A
+    conversation_B: Color(0xFFC8E6C9), // 대화 색상 B
   );
 
   @override

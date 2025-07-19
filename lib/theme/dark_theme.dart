@@ -11,7 +11,7 @@ class DarkTheme extends AppTheme {
     primary: Color(0xFF4A5568), // 메인 어두운 회색
     extraLight: Color(0xFF1A202C), // 매우 어두운 회색
     light: Color(0xFF2D3748), // 어두운 회색
-    dark: Color(0xFF0F1419), // 매우 어두운 검정
+    dark: Color(0xFF5A6166), // 매우 어두운 검정
     accent: Color(0xFF718096), // 액센트 회색
     // 텍스트 색상들
     text: Color(0xFFE2E8F0), // 밝은 텍스트 색상
@@ -20,13 +20,15 @@ class DarkTheme extends AppTheme {
     background: Color(0xFF0F1419), // 깊이 있는 다크 배경
     surface: Color(0xFF1A202C), // 카드/표면 배경색
     // 강조 색상들
-    divider: Color(0xFF2D3748), // 구분선 색상
-    highlight: Color(0xFF718096), // 하이라이트 색상 (회색)
+    divider: Color(0xFFA0AEC0), // 구분선 색상
+    highlight: Color(0xFFF9A4A0), // 하이라이트 색상 (회색)
     // 상태 색상들
     success: Color(0xFF48BB78), // 성공/긍정 색상 (초록색)
-    warning: Color(0xFFED8936), // 경고 색상 (주황색)
-    error: Color(0xFFF56565), // 오류 색상 (빨간색)
-    info: Color(0xFF4299E1), // 정보 색상 (파란색)
+    warning: Color(0xFFF26175), // 경고 색상 (주황색)
+    error: Color(0xFFD73F2F), // 오류 색상 (빨간색)
+    info: Color(0xFF0088DC), // 정보 색상 (파란색)
+    conversation_A: Color(0xFF3F6FAF), // 대화 색상 A
+    conversation_B: Color(0xFF4B754B), // 대화 색상 B
   );
 
   @override

@@ -1030,7 +1030,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.blue[100],
+                                  color: colors.conversation_A,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
@@ -1080,7 +1080,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.green[100],
+                                  color: colors.conversation_B,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
