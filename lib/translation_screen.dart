@@ -102,9 +102,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       textDirection: TextDirection.ltr,
       maxLines: null,
     );
-    textPainter.layout(
-      maxWidth: MediaQuery.of(context).size.width - 80,
-    ); // 패딩 고려
+    textPainter.layout(maxWidth: 300); // 패딩 고려
 
     final textHeight = textPainter.height;
     final headerHeight = 60.0; // 헤더 영역 높이
@@ -136,9 +134,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       textDirection: TextDirection.ltr,
       maxLines: null,
     );
-    textPainter.layout(
-      maxWidth: MediaQuery.of(context).size.width - 80,
-    ); // 패딩 고려
+    textPainter.layout(maxWidth: 300); // 패딩 고려
 
     final textHeight = textPainter.height;
     final headerHeight = 60.0; // 헤더 영역 높이
@@ -277,9 +273,17 @@ class TranslationScreenState extends State<TranslationScreen> {
         _translatedText = translatedText;
       });
 
-      // 번역 결과가 업데이트되면 결과 필드 높이도 업데이트
+      // 번역 결과가 업데이트되면 결과 필드 높이도 업데이트하고 맨 밑으로 스크롤
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _updateResultFieldHeight();
+        // 맨 밑으로 스크롤
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
       });
     } catch (e) {
       setState(() {
