@@ -676,31 +676,62 @@ class TranslationScreenState extends State<TranslationScreen> {
                     ),
                   ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    if (_inputController.text.isNotEmpty) {
-                      _copyToClipboard(
-                        _inputController.text,
-                        AppLocalizations.of(context).input_text_copied,
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: _inputController.text.isNotEmpty
-                          ? colors.primary.withValues(alpha: 0.1)
-                          : Colors.grey.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
+                Row(
+                  children: [
+                    // 클리어 버튼
+                    GestureDetector(
+                      onTap: () {
+                        if (_inputController.text.isNotEmpty) {
+                          _inputController.clear();
+                          _updateInputFieldHeight();
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: _inputController.text.isNotEmpty
+                              ? colors.error.withValues(alpha: 0.1)
+                              : Colors.grey.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Icon(
+                          Icons.clear,
+                          size: 16,
+                          color: _inputController.text.isNotEmpty
+                              ? colors.error
+                              : Colors.grey,
+                        ),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.copy,
-                      size: 16,
-                      color: _inputController.text.isNotEmpty
-                          ? colors.text
-                          : Colors.grey,
+                    const SizedBox(width: 8),
+                    // 복사 버튼
+                    GestureDetector(
+                      onTap: () {
+                        if (_inputController.text.isNotEmpty) {
+                          _copyToClipboard(
+                            _inputController.text,
+                            AppLocalizations.of(context).input_text_copied,
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: _inputController.text.isNotEmpty
+                              ? colors.primary.withValues(alpha: 0.1)
+                              : Colors.grey.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Icon(
+                          Icons.copy,
+                          size: 16,
+                          color: _inputController.text.isNotEmpty
+                              ? colors.text
+                              : Colors.grey,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
@@ -840,45 +871,94 @@ class TranslationScreenState extends State<TranslationScreen> {
                     ],
                   ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    if (_translatedText.isNotEmpty &&
-                        _translatedText !=
+                Row(
+                  children: [
+                    // 클리어 버튼
+                    GestureDetector(
+                      onTap: () {
+                        if (_translatedText.isNotEmpty &&
+                            _translatedText !=
+                                AppLocalizations.of(
+                                  context,
+                                ).translation_result_hint) {
+                          setState(() {
+                            _translatedText = '';
+                          });
+                          _updateResultFieldHeight();
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color:
+                              (_translatedText.isNotEmpty &&
+                                  _translatedText !=
+                                      AppLocalizations.of(
+                                        context,
+                                      ).translation_result_hint)
+                              ? colors.error.withValues(alpha: 0.1)
+                              : Colors.grey.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Icon(
+                          Icons.clear,
+                          size: 16,
+                          color:
+                              (_translatedText.isNotEmpty &&
+                                  _translatedText !=
+                                      AppLocalizations.of(
+                                        context,
+                                      ).translation_result_hint)
+                              ? colors.error
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // 복사 버튼
+                    GestureDetector(
+                      onTap: () {
+                        if (_translatedText.isNotEmpty &&
+                            _translatedText !=
+                                AppLocalizations.of(
+                                  context,
+                                ).translation_result_hint) {
+                          _copyToClipboard(
+                            _translatedText,
                             AppLocalizations.of(
                               context,
-                            ).translation_result_hint) {
-                      _copyToClipboard(
-                        _translatedText,
-                        AppLocalizations.of(context).translation_result_copied,
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color:
-                          (_translatedText.isNotEmpty &&
-                              _translatedText !=
-                                  AppLocalizations.of(
-                                    context,
-                                  ).translation_result_hint)
-                          ? colors.primary.withValues(alpha: 0.1)
-                          : Colors.grey.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
+                            ).translation_result_copied,
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color:
+                              (_translatedText.isNotEmpty &&
+                                  _translatedText !=
+                                      AppLocalizations.of(
+                                        context,
+                                      ).translation_result_hint)
+                              ? colors.primary.withValues(alpha: 0.1)
+                              : Colors.grey.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Icon(
+                          Icons.copy,
+                          size: 16,
+                          color:
+                              (_translatedText.isNotEmpty &&
+                                  _translatedText !=
+                                      AppLocalizations.of(
+                                        context,
+                                      ).translation_result_hint)
+                              ? colors.text
+                              : Colors.grey,
+                        ),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.copy,
-                      size: 16,
-                      color:
-                          (_translatedText.isNotEmpty &&
-                              _translatedText !=
-                                  AppLocalizations.of(
-                                    context,
-                                  ).translation_result_hint)
-                          ? colors.text
-                          : Colors.grey,
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),
