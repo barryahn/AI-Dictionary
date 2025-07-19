@@ -348,6 +348,8 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                             ],
                           ),
                           onTap: () {
+                            // 포커스 해제하여 키보드가 나타나지 않도록 함
+                            FocusScope.of(context).unfocus();
                             Navigator.push(
                               context,
                               MaterialPageRoute(
