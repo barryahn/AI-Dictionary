@@ -46,6 +46,12 @@ class TranslationScreenState extends State<TranslationScreen> {
   static const double _minFieldHeight = 200.0;
   static const double _maxFieldHeight = 400.0;
 
+  // 실행취소를 위한 변수들
+  String? _lastInputText;
+  String? _lastResultText;
+  bool _inputCleared = false;
+  bool _resultCleared = false;
+
   @override
   void initState() {
     super.initState();
@@ -678,32 +684,53 @@ class TranslationScreenState extends State<TranslationScreen> {
                 ),
                 Row(
                   children: [
-                    // 클리어 버튼
+                    // 클리어/실행취소 버튼
                     GestureDetector(
                       onTap: () {
-                        if (_inputController.text.isNotEmpty) {
-                          _inputController.clear();
-                          _updateInputFieldHeight();
+                        if (_inputCleared) {
+                          // 실행취소: 원래 텍스트 복원
+                          if (_lastInputText != null) {
+                            _inputController.text = _lastInputText!;
+                            _updateInputFieldHeight();
+                          }
+                          setState(() {
+                            _inputCleared = false;
+                            _lastInputText = null;
+                          });
+                        } else {
+                          // 클리어: 현재 텍스트 저장 후 클리어
+                          if (_inputController.text.isNotEmpty) {
+                            _lastInputText = _inputController.text;
+                            _inputController.clear();
+                            _updateInputFieldHeight();
+                            setState(() {
+                              _inputCleared = true;
+                            });
+                          }
                         }
                       },
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: _inputController.text.isNotEmpty
-                              ? colors.error.withValues(alpha: 0.1)
-                              : Colors.grey.withValues(alpha: 0.1),
+                          color: _inputCleared
+                              ? colors.primary.withValues(alpha: 0.1)
+                              : (_inputController.text.isNotEmpty
+                                    ? colors.error.withValues(alpha: 0.1)
+                                    : Colors.grey.withValues(alpha: 0.1)),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Icon(
-                          Icons.clear,
+                          _inputCleared ? Icons.undo : Icons.clear,
                           size: 16,
-                          color: _inputController.text.isNotEmpty
-                              ? colors.error
-                              : Colors.grey,
+                          color: _inputCleared
+                              ? colors.text
+                              : (_inputController.text.isNotEmpty
+                                    ? colors.error
+                                    : Colors.grey),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     // 복사 버튼
                     GestureDetector(
                       onTap: () {
@@ -873,48 +900,65 @@ class TranslationScreenState extends State<TranslationScreen> {
                 ),
                 Row(
                   children: [
-                    // 클리어 버튼
+                    // 클리어/실행취소 버튼
                     GestureDetector(
                       onTap: () {
-                        if (_translatedText.isNotEmpty &&
-                            _translatedText !=
-                                AppLocalizations.of(
-                                  context,
-                                ).translation_result_hint) {
-                          setState(() {
-                            _translatedText = '';
-                          });
-                          _updateResultFieldHeight();
+                        if (_resultCleared) {
+                          // 실행취소: 원래 텍스트 복원
+                          if (_lastResultText != null) {
+                            setState(() {
+                              _translatedText = _lastResultText!;
+                              _resultCleared = false;
+                              _lastResultText = null;
+                            });
+                            _updateResultFieldHeight();
+                          }
+                        } else {
+                          // 클리어: 현재 텍스트 저장 후 클리어
+                          if (_translatedText.isNotEmpty &&
+                              _translatedText !=
+                                  AppLocalizations.of(
+                                    context,
+                                  ).translation_result_hint) {
+                            _lastResultText = _translatedText;
+                            setState(() {
+                              _translatedText = '';
+                              _resultCleared = true;
+                            });
+                            _updateResultFieldHeight();
+                          }
                         }
                       },
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color:
-                              (_translatedText.isNotEmpty &&
-                                  _translatedText !=
-                                      AppLocalizations.of(
-                                        context,
-                                      ).translation_result_hint)
-                              ? colors.error.withValues(alpha: 0.1)
-                              : Colors.grey.withValues(alpha: 0.1),
+                          color: _resultCleared
+                              ? colors.primary.withValues(alpha: 0.1)
+                              : ((_translatedText.isNotEmpty &&
+                                        _translatedText !=
+                                            AppLocalizations.of(
+                                              context,
+                                            ).translation_result_hint)
+                                    ? colors.error.withValues(alpha: 0.1)
+                                    : Colors.grey.withValues(alpha: 0.1)),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Icon(
-                          Icons.clear,
+                          _resultCleared ? Icons.undo : Icons.clear,
                           size: 16,
-                          color:
-                              (_translatedText.isNotEmpty &&
-                                  _translatedText !=
-                                      AppLocalizations.of(
-                                        context,
-                                      ).translation_result_hint)
-                              ? colors.error
-                              : Colors.grey,
+                          color: _resultCleared
+                              ? colors.text
+                              : ((_translatedText.isNotEmpty &&
+                                        _translatedText !=
+                                            AppLocalizations.of(
+                                              context,
+                                            ).translation_result_hint)
+                                    ? colors.error
+                                    : Colors.grey),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     // 복사 버튼
                     GestureDetector(
                       onTap: () {
