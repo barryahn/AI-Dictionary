@@ -420,7 +420,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Icon(
                                   Icons.check_circle,
-                                  color: colors.primary,
+                                  color: colors.textLight,
                                   size: 16,
                                 ),
                               ),
@@ -460,9 +460,9 @@ class TranslationScreenState extends State<TranslationScreen> {
                   // 슬라이더
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      activeTrackColor: colors.primary,
+                      activeTrackColor: colors.textLight,
                       inactiveTrackColor: colors.light,
-                      thumbColor: colors.primary,
+                      thumbColor: colors.textLight,
                       overlayColor: colors.primary.withValues(alpha: 0.2),
                       trackHeight: 4,
                       thumbShape: const RoundSliderThumbShape(
@@ -505,9 +505,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                               width: 48,
                               height: 8,
                               decoration: BoxDecoration(
-                                color: isSelected
-                                    ? colors.primary
-                                    : Colors.grey.withValues(alpha: 0.3),
+                                color: isSelected ? colors.text : colors.dark,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -520,7 +518,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                     ? FontWeight.bold
                                     : FontWeight.w500,
                                 color: isSelected
-                                    ? colors.primary
+                                    ? colors.text
                                     : colors.textLight,
                               ),
                             ),

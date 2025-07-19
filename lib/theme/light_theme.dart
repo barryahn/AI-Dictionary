@@ -20,7 +20,7 @@ class LightTheme extends AppTheme {
     background: Color(0xFFFFFFFF), // 순백 배경색
     surface: Color(0xFFF9FAFB), // 카드/표면 배경색
     // 강조 색상들
-    divider: Color(0xFFE5E7EB), // 구분선 색상
+    divider: Color(0xFF3B82F6), // 구분선 색상
     highlight: Color(0xFF3B82F6), // 하이라이트 색상 (파란색)
     // 상태 색상들
     success: Color(0xFF44916F), // 성공/긍정 색상 (초록색)
