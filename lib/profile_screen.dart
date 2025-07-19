@@ -373,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: isSelected ? colors.accent : colors.primary,
                 width: isSelected ? 2 : 1,
               ),
-              color: isSelected ? Colors.white : Colors.transparent,
+              color: isSelected ? colors.light : Colors.transparent,
             ),
             child: Icon(icon, color: colors.text, size: 24),
           ),

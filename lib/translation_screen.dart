@@ -96,7 +96,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
       backgroundColor: colors.primary,
-      textColor: Colors.white,
+      textColor: colors.text,
     );
   }
 
@@ -364,7 +364,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   Widget _buildTonePicker(CustomColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.light,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -555,7 +555,7 @@ class TranslationScreenState extends State<TranslationScreen> {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.light,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -663,25 +663,25 @@ class TranslationScreenState extends State<TranslationScreen> {
           borderRadius: BorderRadius.circular(16),
           child: Center(
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(colors.text),
                       strokeWidth: 2,
                     ),
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.translate, color: Colors.white, size: 20),
+                      Icon(Icons.translate, color: colors.text, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         AppLocalizations.of(context).translate_button,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: colors.text,
                         ),
                       ),
                     ],
@@ -698,7 +698,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.light,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
