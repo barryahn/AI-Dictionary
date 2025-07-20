@@ -29,7 +29,7 @@ class RecommendedTheme extends AppTheme {
     info: Color(0xFF81B29A), // 정보 색상
     conversation_A: Color(0xFFBBDEFB), // 대화 색상 A
     conversation_B: Color(0xFFC8E6C9), // 대화 색상 B
-    google_login: Color(0xFFF3F4F6), // 구글 로그인 색상
+    google_login: Color(0xFFFFFFFF), // 구글 로그인 색상
     snackbar_text: Color(0xFFFFFFFF), // 스낵바 텍스트 색상
   );
 
