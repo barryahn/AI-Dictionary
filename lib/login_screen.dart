@@ -440,7 +440,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 4),
                 Text(
                   loc.get('forgot_password_description_check_spam_folder'),
-                  style: TextStyle(color: colors.warning),
+                  style: TextStyle(
+                    color: colors.light_warning,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

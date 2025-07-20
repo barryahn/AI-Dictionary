@@ -22,6 +22,7 @@ class CustomColors {
   final Color highlight;
   final Color success;
   final Color warning;
+  final Color light_warning;
   final Color error;
   final Color info;
   final Color conversation_A;
@@ -43,6 +44,7 @@ class CustomColors {
     required this.highlight,
     required this.success,
     required this.warning,
+    required this.light_warning,
     required this.error,
     required this.info,
     required this.conversation_A,
@@ -79,6 +81,7 @@ class CustomColors {
     'highlight': highlight,
     'success': success,
     'warning': warning,
+    'light_warning': light_warning,
     'error': error,
     'info': info,
     'conversation_A': conversation_A,

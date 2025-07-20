@@ -25,6 +25,7 @@ class DarkTheme extends AppTheme {
     // 상태 색상들
     success: Color(0xFF06402B), // 성공/긍정 색상 (초록색)
     warning: Color(0xFFCF6679), // 경고 색상 (주황색)
+    light_warning: Color(0xFFDC7F4A), // 경고 색상
     error: Color(0xFF6B020F), // 오류 색상 (코랄색)
     info: Color(0xFF0088DC), // 정보 색상 (파란색)
     conversation_A: Color(0xFF3F6FAF), // 대화 색상 A

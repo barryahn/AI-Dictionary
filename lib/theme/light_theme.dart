@@ -25,6 +25,7 @@ class LightTheme extends AppTheme {
     // 상태 색상들
     success: Color(0xFF44916F), // 성공/긍정 색상 (초록색)
     warning: Color(0xFFEF4444), // 경고 색상 (주황색)
+    light_warning: Color(0xFFFFA16C), // 경고 색상
     error: Color(0xFFEF4444), // 오류 색상 (빨간색)
     info: Color(0xFF3B82F6), // 정보 색상 (파란색)
     conversation_A: Color(0xFFBBDEFB), // 대화 색상 A
