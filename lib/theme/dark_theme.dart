@@ -76,7 +76,7 @@ class DarkTheme extends AppTheme {
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: customColors.primary),
+      style: TextButton.styleFrom(foregroundColor: customColors.text),
     ),
   );
 }
