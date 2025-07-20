@@ -796,13 +796,13 @@ class TranslationScreenState extends State<TranslationScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [colors.primary, colors.primary.withValues(alpha: 0.8)],
+          colors: [colors.primary.withValues(alpha: 0.8), colors.light],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: colors.primary.withValues(alpha: 0.3),
+            color: colors.dark.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

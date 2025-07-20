@@ -11,7 +11,7 @@ class RecommendedTheme extends AppTheme {
     primary: Color(0xFFD4C4A8), // 메인 베이지
     extraLight: Color(0xFFF9F5ED), // 더 밝은 베이지
     light: Color(0xFFF5F1E8), // 밝은 베이지
-    dark: Color(0xFFB8A898), // 어두운 베이지
+    dark: Color.fromARGB(255, 151, 138, 124), // 어두운 베이지
     accent: Color(0xFFE8DCC0), // 액센트 베이지
     // 텍스트 색상들
     text: Color(0xFF5D4E37), // 주요 텍스트 색상
