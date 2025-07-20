@@ -249,7 +249,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _buildMenuItem(
                   icon: Icons.logout,
                   title: loc.get('logout'),
-                  subtitle: loc.get('logout_description'),
                   onTap: () => _showLogoutDialog(loc, colors),
                   textColor: colors.warning,
                   colors: colors,
@@ -280,7 +279,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
-    required String subtitle,
+    String? subtitle,
     required VoidCallback onTap,
     Color? textColor,
     required CustomColors colors,
@@ -297,13 +296,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           fontWeight: FontWeight.w500,
         ),
       ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          color: textColor?.withValues(alpha: 0.7) ?? colors.text,
-          fontSize: 12,
-        ),
-      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: TextStyle(
+                color: textColor?.withValues(alpha: 0.7) ?? colors.text,
+                fontSize: 12,
+              ),
+            )
+          : null,
       trailing: Icon(Icons.chevron_right, color: colors.textLight),
       onTap: onTap,
     );
