@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'services/search_history_service.dart';
 import 'services/language_service.dart';
 import 'services/auth_service.dart';
@@ -705,7 +706,110 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
     );
   }
 
-  void _showDeleteAccountDialog(AppLocalizations loc, CustomColors colors) {
+  void _showDeleteAccountDialog(
+    AppLocalizations loc,
+    CustomColors colors,
+  ) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    // 사용자의 로그인 방식 확인을 위해 Firebase Auth에서 직접 가져오기
+    final user = FirebaseAuth.instance.currentUser;
+
+    // 사용자의 로그인 방식 확인
+    String? loginProvider;
+    if (user != null && user.providerData.isNotEmpty) {
+      loginProvider = user.providerData.first.providerId;
+    }
+
+    // 이메일 로그인 사용자인 경우 비밀번호 입력 다이얼로그 표시
+    if (loginProvider == 'password') {
+      _showPasswordInputDialog(loc, colors, authService);
+    } else {
+      // 구글 로그인 사용자 또는 기타 사용자는 바로 삭제 진행
+      _showDeleteConfirmationDialog(loc, colors, authService);
+    }
+  }
+
+  void _showPasswordInputDialog(
+    AppLocalizations loc,
+    CustomColors colors,
+    AuthService authService,
+  ) {
+    final passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.get('delete_account')),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                loc.get('password_required_for_delete'),
+                style: TextStyle(
+                  color: colors.warning,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: loc.get('password'),
+                  hintText: loc.get('password_hint_for_delete'),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return loc.get('password_required');
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              loc.get('cancel'),
+              style: TextStyle(color: colors.text),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(context);
+                await _performAccountDeletion(
+                  loc,
+                  colors,
+                  authService,
+                  password: passwordController.text,
+                );
+              }
+            },
+            child: Text(
+              loc.get('delete'),
+              style: TextStyle(color: colors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(
+    AppLocalizations loc,
+    CustomColors colors,
+    AuthService authService,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -725,63 +829,7 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              // 계정 삭제 로직
-              final authService = Provider.of<AuthService>(
-                context,
-                listen: false,
-              );
-
-              try {
-                final success = await authService.deleteAccount();
-
-                if (success && mounted) {
-                  // 계정 삭제 성공 메시지
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        loc.get('delete_account_success'),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: colors.snackbar_text,
-                        ),
-                      ),
-                      backgroundColor: colors.success,
-                    ),
-                  );
-
-                  // 데이터 설정 화면 닫기
-                  Navigator.of(context).pop();
-                } else if (mounted) {
-                  // 계정 삭제 실패 메시지
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        loc.get('delete_account_failed'),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: colors.snackbar_text,
-                        ),
-                      ),
-                      backgroundColor: colors.error,
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        '${loc.get('delete_account_failed')}: $e',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: colors.snackbar_text,
-                        ),
-                      ),
-                      backgroundColor: colors.error,
-                    ),
-                  );
-                }
-              }
+              await _performAccountDeletion(loc, colors, authService);
             },
             child: Text(
               loc.get('delete'),
@@ -791,5 +839,64 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _performAccountDeletion(
+    AppLocalizations loc,
+    CustomColors colors,
+    AuthService authService, {
+    String? password,
+  }) async {
+    try {
+      final success = await authService.deleteAccount(password: password);
+
+      if (success && mounted) {
+        // 계정 삭제 성공 메시지
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              loc.get('delete_account_success'),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
+            ),
+            backgroundColor: colors.success,
+          ),
+        );
+
+        // 데이터 설정 화면 닫기
+        Navigator.of(context).pop();
+      } else if (mounted) {
+        // 계정 삭제 실패 메시지
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              loc.get('delete_account_failed'),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
+            ),
+            backgroundColor: colors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${loc.get('delete_account_failed')}: $e',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: colors.snackbar_text,
+              ),
+            ),
+            backgroundColor: colors.error,
+          ),
+        );
+      }
+    }
   }
 }

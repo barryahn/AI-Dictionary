@@ -255,11 +255,94 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  // 계정 삭제
-  Future<bool> deleteAccount() async {
+  // 비밀번호로 재인증
+  Future<bool> reauthenticateWithPassword(String password) async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null && user.email != null) {
+        final credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: password,
+        );
+        await user.reauthenticateWithCredential(credential);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('비밀번호 재인증 실패: $e');
+      }
+      return false;
+    }
+  }
+
+  // 계정 삭제 (재인증 포함)
+  Future<bool> deleteAccount({String? password}) async {
     try {
       final user = _auth.currentUser;
       if (user != null) {
+        // 재인증을 위한 credential 생성
+        AuthCredential? credential;
+
+        // 사용자의 로그인 방식 확인
+        final providerData = user.providerData;
+        if (providerData.isNotEmpty) {
+          final provider = providerData.first.providerId;
+
+          if (provider == 'google.com') {
+            // 구글 로그인 사용자
+            try {
+              // 새로운 구글 로그인을 통해 재인증
+              final GoogleSignInAccount googleSignInAccount =
+                  await _googleSignIn.authenticate();
+
+              if (googleSignInAccount != null) {
+                final GoogleSignInAuthentication googleSignInAuthentication =
+                    await googleSignInAccount.authentication;
+
+                credential = GoogleAuthProvider.credential(
+                  idToken: googleSignInAuthentication.idToken,
+                );
+              }
+            } catch (e) {
+              if (kDebugMode) {
+                print('구글 재인증 credential 생성 실패: $e');
+              }
+            }
+          } else if (provider == 'password') {
+            // 이메일/비밀번호 로그인 사용자
+            if (password != null) {
+              try {
+                credential = EmailAuthProvider.credential(
+                  email: user.email!,
+                  password: password,
+                );
+              } catch (e) {
+                if (kDebugMode) {
+                  print('비밀번호 재인증 credential 생성 실패: $e');
+                }
+              }
+            } else {
+              // 비밀번호가 제공되지 않은 경우
+              if (kDebugMode) {
+                print('이메일 로그인 사용자는 비밀번호가 필요합니다.');
+              }
+              return false;
+            }
+          }
+        }
+
+        // 재인증 수행
+        if (credential != null) {
+          await user.reauthenticateWithCredential(credential);
+        } else {
+          // 재인증 credential을 생성할 수 없는 경우
+          if (kDebugMode) {
+            print('재인증을 위한 credential을 생성할 수 없습니다.');
+          }
+          return false;
+        }
+
         // Firestore에서 사용자 데이터 삭제
         await _firestore.collection('users').doc(user.uid).delete();
 
