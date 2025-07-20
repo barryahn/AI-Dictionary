@@ -111,7 +111,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
     }
   }
 
-  Future<void> _deleteSession(int sessionId, CustomColors colors) async {
+  Future<void> _deleteSession(dynamic sessionId, CustomColors colors) async {
     try {
       await _searchHistoryService.deleteSearchSession(sessionId);
       await refresh(); // 삭제 후 새로고침
