@@ -254,4 +254,35 @@ class AuthService extends ChangeNotifier {
       return false;
     }
   }
+
+  // 계정 삭제
+  Future<bool> deleteAccount() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        // Firestore에서 사용자 데이터 삭제
+        await _firestore.collection('users').doc(user.uid).delete();
+
+        // Firebase Auth에서 계정 삭제
+        await user.delete();
+
+        // 로컬 데이터 정리
+        _isLoggedIn = false;
+        _userEmail = null;
+        _userName = null;
+        _userPhotoUrl = null;
+        _accessToken = null;
+
+        await _clearUserData();
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('계정 삭제 실패: $e');
+      }
+      return false;
+    }
+  }
 }

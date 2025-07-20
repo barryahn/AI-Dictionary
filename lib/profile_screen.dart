@@ -683,7 +683,7 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
           ),
           _buildMenuItem(
             title: loc.get('delete_account'),
-            onTap: () => {},
+            onTap: () => _showDeleteAccountDialog(loc, colors),
             colors: colors,
           ),
         ],
@@ -702,6 +702,94 @@ class _DataSettingsScreenState extends State<DataSettingsScreen> {
         style: TextStyle(color: colors.error, fontWeight: FontWeight.w500),
       ),
       onTap: onTap,
+    );
+  }
+
+  void _showDeleteAccountDialog(AppLocalizations loc, CustomColors colors) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.get('delete_account')),
+        content: Text(
+          loc.get('delete_account_confirm'),
+          style: TextStyle(color: colors.warning, fontWeight: FontWeight.w500),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              loc.get('cancel'),
+              style: TextStyle(color: colors.text),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              // 계정 삭제 로직
+              final authService = Provider.of<AuthService>(
+                context,
+                listen: false,
+              );
+
+              try {
+                final success = await authService.deleteAccount();
+
+                if (success && mounted) {
+                  // 계정 삭제 성공 메시지
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        loc.get('delete_account_success'),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: colors.snackbar_text,
+                        ),
+                      ),
+                      backgroundColor: colors.success,
+                    ),
+                  );
+
+                  // 데이터 설정 화면 닫기
+                  Navigator.of(context).pop();
+                } else if (mounted) {
+                  // 계정 삭제 실패 메시지
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        loc.get('delete_account_failed'),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: colors.snackbar_text,
+                        ),
+                      ),
+                      backgroundColor: colors.error,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '${loc.get('delete_account_failed')}: $e',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: colors.snackbar_text,
+                        ),
+                      ),
+                      backgroundColor: colors.error,
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text(
+              loc.get('delete'),
+              style: TextStyle(color: colors.error),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
