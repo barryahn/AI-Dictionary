@@ -437,6 +437,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  loc.get('forgot_password_description_check_spam_folder'),
+                  style: TextStyle(color: colors.warning),
+                ),
               ],
             ),
           ),

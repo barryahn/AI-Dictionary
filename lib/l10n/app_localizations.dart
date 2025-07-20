@@ -124,6 +124,8 @@ class AppLocalizations {
       'password_too_short': '비밀번호는 6자 이상이어야 합니다',
       'forgot_password': '비밀번호 찾기',
       'forgot_password_description': '이메일로 비밀번호 재설정 링크를 보내드립니다',
+      'forgot_password_description_check_spam_folder':
+          '메일이 오지 않는 경우에는 스팸 메일함을 확인해주세요.',
       'reset_password_email_sent': '비밀번호 재설정 이메일이 전송되었습니다.',
       'reset_password_email_failed': '비밀번호 재설정 이메일 전송에 실패했습니다.',
       'no_account_register': '계정이 없으신가요? 회원가입',
@@ -317,6 +319,8 @@ class AppLocalizations {
       'forgot_password': 'Forgot Password',
       'forgot_password_description':
           'We\'ll send you a password reset link via email',
+      'forgot_password_description_check_spam_folder':
+          'If you don\'t receive the email, please check your spam folder.',
       'reset_password_email_sent': 'Password reset email has been sent.',
       'reset_password_email_failed': 'Failed to send password reset email.',
       'no_account_register': 'Don\'t have an account? Register',
@@ -507,6 +511,7 @@ class AppLocalizations {
       'password_too_short': '密码至少需要6个字符',
       'forgot_password': '忘记密码',
       'forgot_password_description': '我们将通过电子邮件发送密码重置链接',
+      'forgot_password_description_check_spam_folder': '如果您没有收到邮件，请检查垃圾邮件文件夹。',
       'reset_password_email_sent': '密码重置电子邮件已发送。',
       'reset_password_email_failed': '发送密码重置电子邮件失败。',
       'no_account_register': '没有账户？注册',
@@ -695,6 +700,7 @@ class AppLocalizations {
       'password_too_short': '密碼至少需要6個字元',
       'forgot_password': '忘記密碼',
       'forgot_password_description': '我們將通過電子郵件發送密碼重置連結',
+      'forgot_password_description_check_spam_folder': '如果您沒有收到郵件，請檢查垃圾郵件資料夾。',
       'reset_password_email_sent': '密碼重置電子郵件已發送。',
       'reset_password_email_failed': '發送密碼重置電子郵件失敗。',
       'no_account_register': '沒有帳戶？註冊',
@@ -891,6 +897,8 @@ class AppLocalizations {
       'forgot_password': 'Mot de passe oublié',
       'forgot_password_description':
           'Nous vous enverrons un lien de réinitialisation par e-mail',
+      'forgot_password_description_check_spam_folder':
+          'Si vous ne recevez pas l\'e-mail, veuillez vérifier votre dossier spam.',
       'reset_password_email_sent':
           'L\'e-mail de réinitialisation du mot de passe a été envoyé.',
       'reset_password_email_failed':
@@ -1092,6 +1100,8 @@ class AppLocalizations {
       'forgot_password': '¿Olvidaste tu contraseña?',
       'forgot_password_description':
           'Te enviaremos un enlace de restablecimiento por correo electrónico',
+      'forgot_password_description_check_spam_folder':
+          'Si no recibes el correo, por favor revisa tu carpeta de spam.',
       'reset_password_email_sent':
           'Se ha enviado el correo de restablecimiento de contraseña.',
       'reset_password_email_failed':
