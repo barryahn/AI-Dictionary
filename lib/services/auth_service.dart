@@ -276,6 +276,19 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  // 비밀번호 재설정 이메일 보내기
+  Future<bool> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('비밀번호 재설정 이메일 전송 실패: $e');
+      }
+      return false;
+    }
+  }
+
   // 계정 삭제 (재인증 포함)
   Future<bool> deleteAccount({String? password}) async {
     try {

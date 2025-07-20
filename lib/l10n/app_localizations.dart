@@ -122,6 +122,10 @@ class AppLocalizations {
       'password_hint': '비밀번호를 입력하세요',
       'password_required': '비밀번호를 입력해주세요',
       'password_too_short': '비밀번호는 6자 이상이어야 합니다',
+      'forgot_password': '비밀번호 찾기',
+      'forgot_password_description': '이메일로 비밀번호 재설정 링크를 보내드립니다',
+      'reset_password_email_sent': '비밀번호 재설정 이메일이 전송되었습니다.',
+      'reset_password_email_failed': '비밀번호 재설정 이메일 전송에 실패했습니다.',
       'no_account_register': '계정이 없으신가요? 회원가입',
       'have_account_login': '이미 계정이 있으신가요? 로그인',
       'login_failed': '로그인에 실패했습니다',
@@ -310,6 +314,11 @@ class AppLocalizations {
       'password_hint': 'Enter your password',
       'password_required': 'Please enter your password',
       'password_too_short': 'Password must be at least 6 characters',
+      'forgot_password': 'Forgot Password',
+      'forgot_password_description':
+          'We\'ll send you a password reset link via email',
+      'reset_password_email_sent': 'Password reset email has been sent.',
+      'reset_password_email_failed': 'Failed to send password reset email.',
       'no_account_register': 'Don\'t have an account? Register',
       'have_account_login': 'Already have an account? Login',
       'login_failed': 'Login failed',
@@ -496,6 +505,10 @@ class AppLocalizations {
       'password_hint': '请输入密码',
       'password_required': '请输入密码',
       'password_too_short': '密码至少需要6个字符',
+      'forgot_password': '忘记密码',
+      'forgot_password_description': '我们将通过电子邮件发送密码重置链接',
+      'reset_password_email_sent': '密码重置电子邮件已发送。',
+      'reset_password_email_failed': '发送密码重置电子邮件失败。',
       'no_account_register': '没有账户？注册',
       'have_account_login': '已有账户？登录',
       'login_failed': '登录失败',
@@ -680,6 +693,10 @@ class AppLocalizations {
       'password_hint': '請輸入密碼',
       'password_required': '請輸入密碼',
       'password_too_short': '密碼至少需要6個字元',
+      'forgot_password': '忘記密碼',
+      'forgot_password_description': '我們將通過電子郵件發送密碼重置連結',
+      'reset_password_email_sent': '密碼重置電子郵件已發送。',
+      'reset_password_email_failed': '發送密碼重置電子郵件失敗。',
       'no_account_register': '沒有帳戶？註冊',
       'have_account_login': '已有帳戶？登入',
       'login_failed': '登入失敗',
@@ -871,6 +888,13 @@ class AppLocalizations {
       'password_required': 'Veuillez entrer votre mot de passe',
       'password_too_short':
           'Le mot de passe doit contenir au moins 6 caractères',
+      'forgot_password': 'Mot de passe oublié',
+      'forgot_password_description':
+          'Nous vous enverrons un lien de réinitialisation par e-mail',
+      'reset_password_email_sent':
+          'L\'e-mail de réinitialisation du mot de passe a été envoyé.',
+      'reset_password_email_failed':
+          'Échec de l\'envoi de l\'e-mail de réinitialisation du mot de passe.',
       'no_account_register': 'Vous n\'avez pas de compte ? Inscrivez-vous',
       'have_account_login': 'Vous avez déjà un compte ? Connectez-vous',
       'login_failed': 'Échec de la connexion',
@@ -1065,6 +1089,13 @@ class AppLocalizations {
       'password_hint': 'Ingresa tu contraseña',
       'password_required': 'Por favor ingresa tu contraseña',
       'password_too_short': 'La contraseña debe tener al menos 6 caracteres',
+      'forgot_password': '¿Olvidaste tu contraseña?',
+      'forgot_password_description':
+          'Te enviaremos un enlace de restablecimiento por correo electrónico',
+      'reset_password_email_sent':
+          'Se ha enviado el correo de restablecimiento de contraseña.',
+      'reset_password_email_failed':
+          'Error al enviar el correo de restablecimiento de contraseña.',
       'no_account_register': '¿No tienes cuenta? Regístrate',
       'have_account_login': '¿Ya tienes cuenta? Inicia sesión',
       'login_failed': 'Error al iniciar sesión',

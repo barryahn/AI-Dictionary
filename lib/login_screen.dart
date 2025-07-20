@@ -88,7 +88,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // 비밀번호 입력 필드
                 _buildPasswordField(loc, colors),
-                const SizedBox(height: 24),
+                const SizedBox(height: 4),
+
+                // 비밀번호 찾기 버튼 (로그인 모드에서만 표시)
+                if (_isLoginMode) ...[_buildForgotPasswordButton(loc, colors)],
+                const SizedBox(height: 10),
 
                 // 로그인/회원가입 버튼
                 _buildSubmitButton(loc, colors),
@@ -225,6 +229,25 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         return null;
       },
+    );
+  }
+
+  Widget _buildForgotPasswordButton(AppLocalizations loc, CustomColors colors) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: _isLoading
+            ? null
+            : () => _showForgotPasswordDialog(loc, colors),
+        child: Text(
+          loc.get('forgot_password'),
+          style: TextStyle(
+            color: colors.text,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 
@@ -369,6 +392,145 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     }
+  }
+
+  void _showForgotPasswordDialog(AppLocalizations loc, CustomColors colors) {
+    final emailController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    bool isLoading = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(loc.get('forgot_password')),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  loc.get('forgot_password_description'),
+                  style: TextStyle(color: colors.textLight),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: loc.get('email'),
+                    hintText: loc.get('email_hint'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return loc.get('email_required');
+                    }
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
+                      return loc.get('email_invalid');
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: isLoading ? null : () => Navigator.pop(context),
+              child: Text(
+                loc.get('cancel'),
+                style: TextStyle(color: colors.text),
+              ),
+            ),
+            TextButton(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (formKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+
+                        try {
+                          final success = await authService.value
+                              .sendPasswordResetEmail(
+                                emailController.text.trim(),
+                              );
+
+                          if (mounted) {
+                            Navigator.pop(context);
+
+                            if (success) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    loc.get('reset_password_email_sent'),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: colors.snackbar_text,
+                                    ),
+                                  ),
+                                  backgroundColor: colors.success,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    loc.get('reset_password_email_failed'),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: colors.snackbar_text,
+                                    ),
+                                  ),
+                                  backgroundColor: colors.error,
+                                ),
+                              );
+                            }
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '${loc.get('reset_password_email_failed')}: $e',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: colors.snackbar_text,
+                                  ),
+                                ),
+                                backgroundColor: colors.error,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    },
+              child: isLoading
+                  ? SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colors.text,
+                      ),
+                    )
+                  : Text(
+                      loc.get('confirm'),
+                      style: TextStyle(color: colors.text),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _handleSubmit(AppLocalizations loc) async {
