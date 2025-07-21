@@ -41,7 +41,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _isSessionStarted = false;
   bool _isSearching = false;
   bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
-  String? _currentSessionId; // 현재 세션 ID를 저장
+  dynamic _currentSessionId; // 현재 세션 ID를 저장
 
   // 언어 선택을 위한 상태 변수들
   late String _fromLanguage = LanguageService.fromLanguage;
