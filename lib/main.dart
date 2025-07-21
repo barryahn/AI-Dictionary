@@ -5,6 +5,7 @@ import 'search_result_screen.dart';
 import 'search_history_screen.dart';
 import 'profile_screen.dart';
 import 'translation_screen.dart';
+import 'tutorial_screen.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'services/auth_service.dart';
@@ -393,11 +394,44 @@ class _HomeTabState extends State<_HomeTab> {
 }
 
 // 인증 상태에 따라 화면을 전환하는 래퍼 위젯
-class AuthWrapper extends StatelessWidget {
+class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
 
   @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkTutorialStatus();
+  }
+
+  Future<void> _checkTutorialStatus() async {
+    final isCompleted = await TutorialService.isTutorialCompleted();
+    setState(() {
+      _isLoading = false;
+    });
+
+    // 튜토리얼이 완료되지 않았다면 홈 화면 로딩 후 튜토리얼 표시
+    if (!isCompleted && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => const TutorialScreen()));
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Consumer<AuthService>(
       builder: (context, authService, child) {
         // 로그인 상태와 관계없이 메인 화면을 보여줌

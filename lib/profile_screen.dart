@@ -9,6 +9,7 @@ import 'theme/app_theme.dart';
 import 'login_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'search_history_screen.dart';
+import 'tutorial_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -512,18 +513,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showHelp(AppLocalizations loc) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(loc.get('help')),
-        content: Text(loc.get('feature_coming_soon')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(loc.get('confirm')),
-          ),
-        ],
-      ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const TutorialScreen()),
     );
   }
 

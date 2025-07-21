@@ -204,6 +204,27 @@ class AppLocalizations {
       'basic': '기본',
       'polite': '공손',
       'formal': '격식',
+
+      // 도움말 관련
+      'welcome_tutorial': '앱 사용법 안내',
+      'tutorial_welcome': 'Nuance에 오신 것을 환영합니다!',
+      'tutorial_welcome_desc': '앱의 주요 기능들을 간단히 안내해드릴게요.',
+      'tutorial_search_title': '단어 검색하기',
+      'tutorial_search_desc': '검색창을 터치하면 단어를 검색할 수 있어요.',
+      'tutorial_language_title': '언어 선택하기',
+      'tutorial_language_desc': '출발 언어와 도착 언어를 선택할 수 있어요.',
+      'tutorial_history_title': '검색 기록',
+      'tutorial_history_desc': '검색한 단어들이 여기에 저장됩니다.',
+      'tutorial_translate_title': '번역 기능',
+      'tutorial_translate_desc': '문장을 번역할 수 있어요.',
+      'tutorial_profile_title': '프로필 설정',
+      'tutorial_profile_desc': '앱 설정과 계정 관리가 가능해요.',
+      'tutorial_next': '다음',
+      'tutorial_skip': '건너뛰기',
+      'tutorial_finish': '시작하기',
+      'tutorial_dont_show_again': '다시 보지 않기',
+      'tutorial_show_again': '다시 보기',
+      'tutorial_show_again_desc': '설정에서 언제든지 다시 볼 수 있어요.',
     },
     'en': {
       // App Title
