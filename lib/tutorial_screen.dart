@@ -40,20 +40,15 @@ class _TutorialScreenState extends State<TutorialScreen> {
     TutorialStep(
       title: 'tutorial_history_title',
       description: 'tutorial_history_desc',
+      descriptionDetail: 'tutorial_history_desc_detail',
       icon: Icons.history,
       showSpeechBubble: true,
     ),
     TutorialStep(
       title: 'tutorial_translate_title',
       description: 'tutorial_translate_desc',
+      descriptionDetail: 'tutorial_translate_desc_detail',
       icon: Icons.translate,
-      showSpeechBubble: true,
-    ),
-    TutorialStep(
-      title: 'tutorial_profile_title',
-      description: 'tutorial_profile_desc',
-      descriptionDetail: 'tutorial_profile_desc_detail',
-      icon: Icons.person,
       showSpeechBubble: true,
     ),
   ];
