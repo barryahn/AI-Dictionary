@@ -426,6 +426,38 @@ class AppLocalizations {
       'basic': 'Basic',
       'polite': 'Polite',
       'formal': 'Formal',
+
+      // Help / Tutorial
+      'welcome_tutorial': 'App Tutorial',
+      'tutorial_welcome': 'Welcome to ${appName}!',
+      'tutorial_welcome_desc':
+          'We\'ll briefly guide you through the main features of the app.',
+      'tutorial_search_title': 'Searching Words',
+      'tutorial_search_desc':
+          'If you\'re confused about a meaning or nuance,\ntry searching for the word!',
+      'tutorial_search_desc_detail':
+          'AI will show you how native speakers actually use the word.',
+      'tutorial_language_title': 'Choosing Languages',
+      'tutorial_language_desc':
+          'Be sure to select the source and target languages before searching!',
+      'tutorial_language_desc_detail':
+          'Set the source language as your native language,\nand the target language as the one you\'re studying.',
+      'tutorial_history_title': 'Search History',
+      'tutorial_history_desc': 'Words you search for will be saved here.',
+      'tutorial_history_desc_detail':
+          'If you log in, your history will be kept even after reinstalling the app.',
+      'tutorial_translate_title': 'AI Translation',
+      'tutorial_translate_desc':
+          'Select a translation tone and try translating a sentence!',
+      'tutorial_translate_desc_detail':
+          'Choose the right tone for the situation\nto get more natural translation results.',
+      'tutorial_next': 'Next',
+      'tutorial_skip': 'Skip',
+      'tutorial_finish': 'Get Started',
+      'tutorial_dont_show_again': 'Don\'t show again',
+      'tutorial_show_again': 'Show again',
+      'tutorial_show_again_desc':
+          'You can view this tutorial again anytime in settings.',
     },
     'zh': {
       // 应用标题
@@ -615,6 +647,29 @@ class AppLocalizations {
       'basic': '基本',
       'polite': '礼貌',
       'formal': '正式',
+
+      // 帮助 / 教程
+      'welcome_tutorial': '应用使用教程',
+      'tutorial_welcome': '欢迎来到${appName}！',
+      'tutorial_welcome_desc': '我们将简要介绍应用的主要功能。',
+      'tutorial_search_title': '单词搜索',
+      'tutorial_search_desc': '如果对含义或语感感到困惑，\n请尝试搜索单词！',
+      'tutorial_search_desc_detail': 'AI会告诉你母语者实际如何使用这个单词。',
+      'tutorial_language_title': '选择语言',
+      'tutorial_language_desc': '搜索前请务必选择源语言和目标语言！',
+      'tutorial_language_desc_detail': '源语言请选择你的母语，\n目标语言请选择你正在学习的语言。',
+      'tutorial_history_title': '搜索历史',
+      'tutorial_history_desc': '你搜索过的单词会保存在这里。',
+      'tutorial_history_desc_detail': '登录后，即使重新安装应用也能保留历史记录。',
+      'tutorial_translate_title': 'AI翻译',
+      'tutorial_translate_desc': '选择翻译语气，\n尝试翻译句子！',
+      'tutorial_translate_desc_detail': '根据场景选择合适的语气，\n获得更自然的翻译结果。',
+      'tutorial_next': '下一步',
+      'tutorial_skip': '跳过',
+      'tutorial_finish': '开始使用',
+      'tutorial_dont_show_again': '不再显示',
+      'tutorial_show_again': '再次查看',
+      'tutorial_show_again_desc': '你可以随时在设置中再次查看本教程。',
     },
     'zh-TW': {
       // 應用標題
@@ -804,6 +859,29 @@ class AppLocalizations {
       'basic': '基本',
       'polite': '禮貌',
       'formal': '正式',
+
+      // 幫助 / 教學
+      'welcome_tutorial': '應用使用教學',
+      'tutorial_welcome': '歡迎來到${appName}！',
+      'tutorial_welcome_desc': '我們將簡單介紹應用的主要功能。',
+      'tutorial_search_title': '單字搜尋',
+      'tutorial_search_desc': '如果對意思或語感感到困惑，\n請嘗試搜尋單字！',
+      'tutorial_search_desc_detail': 'AI會告訴你母語者實際如何使用這個單字。',
+      'tutorial_language_title': '選擇語言',
+      'tutorial_language_desc': '搜尋前請務必選擇來源語言和目標語言！',
+      'tutorial_language_desc_detail': '來源語言請選擇你的母語，\n目標語言請選擇你正在學習的語言。',
+      'tutorial_history_title': '搜尋紀錄',
+      'tutorial_history_desc': '你搜尋過的單字會保存在這裡。',
+      'tutorial_history_desc_detail': '登入後，即使重新安裝應用也能保留紀錄。',
+      'tutorial_translate_title': 'AI翻譯',
+      'tutorial_translate_desc': '選擇翻譯語氣，\n嘗試翻譯句子！',
+      'tutorial_translate_desc_detail': '根據情境選擇合適的語氣，\n獲得更自然的翻譯結果。',
+      'tutorial_next': '下一步',
+      'tutorial_skip': '跳過',
+      'tutorial_finish': '開始使用',
+      'tutorial_dont_show_again': '不再顯示',
+      'tutorial_show_again': '再次查看',
+      'tutorial_show_again_desc': '你可以隨時在設定中再次查看本教學。',
     },
     'fr': {
       // Titre de l'application
@@ -1009,6 +1087,38 @@ class AppLocalizations {
       'basic': 'Basique',
       'polite': 'Poli',
       'formal': 'Formel',
+
+      // Aide / Tutoriel
+      'welcome_tutorial': 'Tutoriel de l\'application',
+      'tutorial_welcome': 'Bienvenue sur ${appName} !',
+      'tutorial_welcome_desc':
+          'Nous allons vous présenter brièvement les principales fonctionnalités de l\'application.',
+      'tutorial_search_title': 'Rechercher un mot',
+      'tutorial_search_desc':
+          'Si vous hésitez sur un sens ou une nuance,\nessayez de rechercher le mot !',
+      'tutorial_search_desc_detail':
+          'L\'IA vous montrera comment les locuteurs natifs utilisent réellement le mot.',
+      'tutorial_language_title': 'Choisir la langue',
+      'tutorial_language_desc':
+          'Avant de rechercher, sélectionnez la langue source et la langue cible !',
+      'tutorial_language_desc_detail':
+          'La langue source est votre langue maternelle,\nla langue cible est celle que vous apprenez.',
+      'tutorial_history_title': 'Historique des recherches',
+      'tutorial_history_desc': 'Les mots recherchés seront enregistrés ici.',
+      'tutorial_history_desc_detail':
+          'En vous connectant, votre historique sera conservé même après réinstallation.',
+      'tutorial_translate_title': 'Traduction IA',
+      'tutorial_translate_desc':
+          'Choisissez un ton de traduction et essayez de traduire une phrase !',
+      'tutorial_translate_desc_detail':
+          'Choisissez le ton adapté à la situation\npour obtenir un résultat plus naturel.',
+      'tutorial_next': 'Suivant',
+      'tutorial_skip': 'Passer',
+      'tutorial_finish': 'Commencer',
+      'tutorial_dont_show_again': 'Ne plus afficher',
+      'tutorial_show_again': 'Afficher à nouveau',
+      'tutorial_show_again_desc':
+          'Vous pouvez revoir ce tutoriel à tout moment dans les paramètres.',
     },
     'es': {
       // Título de la aplicación
@@ -1211,6 +1321,38 @@ class AppLocalizations {
       'basic': 'Básico',
       'polite': 'Educado',
       'formal': 'Formal',
+
+      // Ayuda / Tutorial
+      'welcome_tutorial': 'Tutorial de la aplicación',
+      'tutorial_welcome': '¡Bienvenido a ${appName}!',
+      'tutorial_welcome_desc':
+          'Te guiaremos brevemente por las funciones principales de la app.',
+      'tutorial_search_title': 'Buscar palabras',
+      'tutorial_search_desc':
+          'Si tienes dudas sobre el significado o matiz,\n¡intenta buscar la palabra!',
+      'tutorial_search_desc_detail':
+          'La IA te mostrará cómo usan realmente la palabra los hablantes nativos.',
+      'tutorial_language_title': 'Elegir idioma',
+      'tutorial_language_desc':
+          '¡Asegúrate de seleccionar el idioma de origen y destino antes de buscar!',
+      'tutorial_language_desc_detail':
+          'El idioma de origen debe ser tu lengua materna,\ny el de destino el que estás aprendiendo.',
+      'tutorial_history_title': 'Historial de búsqueda',
+      'tutorial_history_desc': 'Las palabras que busques se guardarán aquí.',
+      'tutorial_history_desc_detail':
+          'Si inicias sesión, tu historial se mantendrá incluso tras reinstalar la app.',
+      'tutorial_translate_title': 'Traducción con IA',
+      'tutorial_translate_desc':
+          'Selecciona un tono de traducción y prueba a traducir una frase.',
+      'tutorial_translate_desc_detail':
+          'Elige el tono adecuado para la situación\npara obtener resultados más naturales.',
+      'tutorial_next': 'Siguiente',
+      'tutorial_skip': 'Omitir',
+      'tutorial_finish': 'Empezar',
+      'tutorial_dont_show_again': 'No mostrar de nuevo',
+      'tutorial_show_again': 'Ver de nuevo',
+      'tutorial_show_again_desc':
+          'Puedes ver este tutorial de nuevo en la configuración en cualquier momento.',
     },
   };
 
@@ -1308,6 +1450,32 @@ class AppLocalizations {
   String get basic => get('basic');
   String get polite => get('polite');
   String get formal => get('formal');
+
+  // 도움말 관련
+  String get welcome_tutorial => get('welcome_tutorial');
+  String get tutorial_welcome => get('tutorial_welcome');
+  String get tutorial_welcome_desc => get('tutorial_welcome_desc');
+  String get tutorial_search_title => get('tutorial_search_title');
+  String get tutorial_search_desc => get('tutorial_search_desc');
+  String get tutorial_search_desc_detail => get('tutorial_search_desc_detail');
+  String get tutorial_language_title => get('tutorial_language_title');
+  String get tutorial_language_desc => get('tutorial_language_desc');
+  String get tutorial_language_desc_detail =>
+      get('tutorial_language_desc_detail');
+  String get tutorial_history_title => get('tutorial_history_title');
+  String get tutorial_history_desc => get('tutorial_history_desc');
+  String get tutorial_history_desc_detail =>
+      get('tutorial_history_desc_detail');
+  String get tutorial_translate_title => get('tutorial_translate_title');
+  String get tutorial_translate_desc => get('tutorial_translate_desc');
+  String get tutorial_translate_desc_detail =>
+      get('tutorial_translate_desc_detail');
+  String get tutorial_next => get('tutorial_next');
+  String get tutorial_skip => get('tutorial_skip');
+  String get tutorial_finish => get('tutorial_finish');
+  String get tutorial_dont_show_again => get('tutorial_dont_show_again');
+  String get tutorial_show_again => get('tutorial_show_again');
+  String get tutorial_show_again_desc => get('tutorial_show_again_desc');
 }
 
 /// 로컬라이제이션 델리게이트
