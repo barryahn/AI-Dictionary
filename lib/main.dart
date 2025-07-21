@@ -213,7 +213,11 @@ class _HomeTabState extends State<_HomeTab> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).get('app_title'),
-          style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: colors.text,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'SancheonUju',
+          ),
         ),
         backgroundColor: colors.background,
         elevation: 0,

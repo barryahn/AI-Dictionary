@@ -11,7 +11,7 @@ class AppLocalizations {
   }
 
   // 앱 이름 상수
-  static const String appName = 'Sasha';
+  static const String appName = 'Nuance';
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'ko': {
