@@ -314,7 +314,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget _buildResultView(CustomColors colors) {
     return ListView(
       controller: _scrollController,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 90),
       children: _searchResults.asMap().entries.map((entry) {
         final index = entry.key;
         final widget = entry.value;
@@ -586,11 +586,37 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         ),
         elevation: 0,
       ),
-      body: _isSearching ? _buildResultView(colors) : _buildInitialView(colors),
-      bottomNavigationBar: Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: bottomBar,
+      body: Stack(
+        children: [
+          _isSearching ? _buildResultView(colors) : _buildInitialView(colors),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              ignoring: false,
+              child: Container(
+                padding: const EdgeInsets.only(top: 20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color.fromARGB(0, 255, 255, 255), // 완전 투명 흰색
+                      colors.light,
+                    ],
+                  ),
+                ),
+                child: bottomBar,
+              ),
+            ),
+          ),
+        ],
       ),
+      // bottomNavigationBar: Padding(
+      //   padding: MediaQuery.of(context).viewInsets,
+      //   child: bottomBar,
+      // ),
     );
   }
 
