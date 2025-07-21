@@ -358,16 +358,20 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       // 검색 중일 때의 "중단" 버튼
       print('검색 중 하단 바 표시');
       bottomBar = BottomAppBar(
+        color: colors.background,
         child: Center(
           child: ElevatedButton.icon(
             icon: const Icon(Icons.stop_circle_outlined),
-            label: Text(AppLocalizations.of(context).stop_search),
+            label: Text(
+              AppLocalizations.of(context).stop_search,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
             onPressed: _stopFetching,
             style: ElevatedButton.styleFrom(
-              backgroundColor: colors.warning,
-              foregroundColor: colors.text,
+              backgroundColor: colors.text,
+              foregroundColor: colors.background,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
