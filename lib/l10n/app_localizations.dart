@@ -861,7 +861,7 @@ class AppLocalizations {
       'formal': '正式',
 
       // 幫助 / 教學
-      'welcome_tutorial': '應用使用教學',
+      'welcome_tutorial': '歡迎使用教學',
       'tutorial_welcome': '歡迎來到${appName}！',
       'tutorial_welcome_desc': '我們將簡單介紹應用的主要功能。',
       'tutorial_search_title': '單字搜尋',
