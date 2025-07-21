@@ -159,6 +159,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
     CustomColors colors,
     AppLocalizations l10n,
   ) {
+    final appName = AppLocalizations.appName;
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -194,15 +196,57 @@ class _TutorialScreenState extends State<TutorialScreen> {
           const SizedBox(height: 40),
 
           // 제목
-          Text(
-            l10n.get(step.title),
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: colors.text,
-            ),
-            textAlign: TextAlign.center,
-          ),
+          (() {
+            final titleText = l10n.get(step.title);
+            if (titleText.contains(appName)) {
+              final startIdx = titleText.indexOf(appName);
+              final endIdx = startIdx + appName.length;
+              return Text.rich(
+                TextSpan(
+                  children: [
+                    if (startIdx > 0)
+                      TextSpan(
+                        text: titleText.substring(0, startIdx),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: colors.text,
+                        ),
+                      ),
+                    TextSpan(
+                      text: appName,
+                      style: TextStyle(
+                        fontFamily: 'SancheonUju',
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: colors.text,
+                      ),
+                    ),
+                    if (endIdx < titleText.length)
+                      TextSpan(
+                        text: titleText.substring(endIdx),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: colors.text,
+                        ),
+                      ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              );
+            } else {
+              return Text(
+                titleText,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: colors.text,
+                ),
+                textAlign: TextAlign.center,
+              );
+            }
+          })(),
 
           const SizedBox(height: 16),
 
