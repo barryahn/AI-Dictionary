@@ -26,12 +26,14 @@ class _TutorialScreenState extends State<TutorialScreen> {
     TutorialStep(
       title: 'tutorial_search_title',
       description: 'tutorial_search_desc',
+      descriptionDetail: 'tutorial_search_desc_detail',
       icon: Icons.search,
       showSpeechBubble: true,
     ),
     TutorialStep(
       title: 'tutorial_language_title',
       description: 'tutorial_language_desc',
+      descriptionDetail: 'tutorial_language_desc_detail',
       icon: Icons.language,
       showSpeechBubble: true,
     ),
@@ -50,6 +52,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
     TutorialStep(
       title: 'tutorial_profile_title',
       description: 'tutorial_profile_desc',
+      descriptionDetail: 'tutorial_profile_desc_detail',
       icon: Icons.person,
       showSpeechBubble: true,
     ),
@@ -213,6 +216,14 @@ class _TutorialScreenState extends State<TutorialScreen> {
             ),
             textAlign: TextAlign.center,
           ),
+          if (step.descriptionDetail != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              l10n.get(step.descriptionDetail!),
+              style: TextStyle(color: colors.textLight, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );
@@ -299,12 +310,14 @@ class _TutorialScreenState extends State<TutorialScreen> {
 class TutorialStep {
   final String title;
   final String description;
+  final String? descriptionDetail;
   final IconData icon;
   final bool showSpeechBubble;
 
   TutorialStep({
     required this.title,
     required this.description,
+    this.descriptionDetail = '',
     required this.icon,
     this.showSpeechBubble = false,
   });
