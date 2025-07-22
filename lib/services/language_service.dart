@@ -36,7 +36,37 @@ class LanguageService {
   // 언어 초기화 (저장된 설정 불러오기)
   static Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
-    _currentLanguage = prefs.getString(_languageKey) ?? korean;
+    String? savedLanguage = prefs.getString(_languageKey);
+    if (savedLanguage == null) {
+      // 시스템 로케일을 확인하여 언어 결정
+      Locale systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+      String langCode = systemLocale.languageCode;
+      String? countryCode = systemLocale.countryCode;
+
+      // 시스템 로케일 출력
+      print('systemLocale: \\${systemLocale.toString()}');
+      print('langCode: \\${langCode}');
+      print('countryCode: \\${countryCode}');
+
+      if (langCode == 'ko') {
+        _currentLanguage = korean;
+      } else if (langCode == 'en') {
+        _currentLanguage = english;
+      } else if (langCode == 'zh' && countryCode == 'TW') {
+        _currentLanguage = taiwanese;
+      } else if (langCode == 'zh') {
+        _currentLanguage = chinese;
+      } else if (langCode == 'fr') {
+        _currentLanguage = french;
+      } else if (langCode == 'es') {
+        _currentLanguage = spanish;
+      } else {
+        _currentLanguage = english;
+      }
+      await prefs.setString(_languageKey, _currentLanguage);
+    } else {
+      _currentLanguage = savedLanguage;
+    }
     _fromLanguage = prefs.getString(_fromLanguageKey) ?? '영어';
     _toLanguage = prefs.getString(_toLanguageKey) ?? '한국어';
   }
