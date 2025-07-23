@@ -21,10 +21,13 @@ import 'firebase_options.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await LanguageService.initialize(); // 언어 서비스 초기화
-  await OpenAIService.initialize(); // OpenAI 서비스 초기화
-  await AuthService().initialize(); // 인증 서비스 초기화
-  await ThemeService.initialize(); // 테마 서비스 초기화
+  // 여러 서비스 초기화를 병렬로 처리
+  await Future.wait([
+    LanguageService.initialize(),
+    OpenAIService.initialize(),
+    AuthService().initialize(),
+    ThemeService.initialize(),
+  ]);
   runApp(const MyApp());
 }
 
