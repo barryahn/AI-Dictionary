@@ -249,6 +249,11 @@ class TranslationScreenState extends State<TranslationScreen> {
 
       // '아니요'를 선택했거나 다이얼로그를 닫았으면 번역 취소
       if (shouldContinue != true) {
+        // 다이얼로그가 닫힌 후에도 입력창에 포커스가 가지 않도록 약간 딜레이를 주고 unfocus를 한 번 더 호출
+        FocusScope.of(context).unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          FocusScope.of(context).unfocus();
+        });
         return;
       }
     }
