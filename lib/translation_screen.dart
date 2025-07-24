@@ -831,7 +831,6 @@ class TranslationScreenState extends State<TranslationScreen> {
                       Text(
                         AppLocalizations.of(context).translate_button,
                         style: TextStyle(
-                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: colors.text,
                         ),
