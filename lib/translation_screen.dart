@@ -204,25 +204,30 @@ class TranslationScreenState extends State<TranslationScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: AppLocalizations.of(context).selected_input_language,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: colors.text,
-                    fontWeight: FontWeight.w500,
+            text: WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context).selected_input_language,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: colors.text,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: selectedFromLanguage,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: colors.error,
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    selectedFromLanguage,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: colors.textLight,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           content: Text(
