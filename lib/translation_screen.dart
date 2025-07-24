@@ -557,7 +557,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: colors.textLight,
-                      inactiveTrackColor: colors.light,
+                      inactiveTrackColor: colors.background,
                       thumbColor: colors.textLight,
                       overlayColor: colors.primary.withValues(alpha: 0.2),
                       trackHeight: 4,
