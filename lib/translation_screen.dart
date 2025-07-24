@@ -215,8 +215,9 @@ class TranslationScreenState extends State<TranslationScreen> {
                       color: colors.text,
                       fontWeight: FontWeight.w500,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   Text(
                     LanguageService.getLocalizedTranslationLanguages(
                       AppLocalizations.of(context),
@@ -228,6 +229,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                       color: colors.textLight,
                       fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -236,6 +238,7 @@ class TranslationScreenState extends State<TranslationScreen> {
           content: Text(
             AppLocalizations.of(context).is_this_language_correct,
             style: TextStyle(fontSize: 14),
+            textAlign: TextAlign.center,
           ),
           actions: [
             TextButton(
