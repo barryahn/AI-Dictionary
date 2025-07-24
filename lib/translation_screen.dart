@@ -206,9 +206,7 @@ class TranslationScreenState extends State<TranslationScreen> {
           title: RichText(
             text: WidgetSpan(
               alignment: PlaceholderAlignment.middle,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Column(
                 children: [
                   Text(
                     AppLocalizations.of(context).selected_input_language,
@@ -218,8 +216,13 @@ class TranslationScreenState extends State<TranslationScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  const SizedBox(height: 12),
                   Text(
-                    selectedFromLanguage,
+                    LanguageService.getLocalizedTranslationLanguages(
+                      AppLocalizations.of(context),
+                    ).firstWhere(
+                      (item) => item['code'] == selectedFromLanguage,
+                    )['name']!,
                     style: TextStyle(
                       fontSize: 18,
                       color: colors.textLight,
