@@ -203,43 +203,41 @@ class TranslationScreenState extends State<TranslationScreen> {
       bool? shouldContinue = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: RichText(
-            text: WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              child: Column(
-                children: [
-                  Text(
-                    AppLocalizations.of(context).selected_input_language,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: colors.text,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    LanguageService.getLocalizedTranslationLanguages(
-                      AppLocalizations.of(context),
-                    ).firstWhere(
-                      (item) => item['code'] == selectedFromLanguage,
-                    )['name']!,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: colors.textLight,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context).selected_input_language,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: colors.text,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
+              const SizedBox(height: 8),
+              Text(
+                LanguageService.getLocalizedTranslationLanguages(
+                  AppLocalizations.of(context),
+                ).firstWhere(
+                  (item) => item['code'] == selectedFromLanguage,
+                )['name']!,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: colors.textLight,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context).is_this_language_correct,
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          content: Text(
-            AppLocalizations.of(context).is_this_language_correct,
-            style: TextStyle(fontSize: 14),
-            textAlign: TextAlign.center,
-          ),
+
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
