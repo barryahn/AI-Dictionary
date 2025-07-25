@@ -120,13 +120,21 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: colors.accent,
-            shape: BoxShape.circle,
+          width: 100,
+          height: 100,
+          child: ColorFiltered(
+            colorFilter: const ColorFilter.matrix(<double>[
+              0.808, 0.191, 0.001, 0, 0, // R
+              0.161, 0.808, 0.031, 0, 0, // G
+              0.161, 0.191, 0.648, 0, 0, // B
+              0, 0, 0, 1, 0, // A
+            ]),
+            child: Image.asset(
+              'assets/WordVibe_appIcon_letters.png',
+              width: 40,
+              height: 40,
+            ),
           ),
-          child: Icon(Icons.translate, size: 40, color: colors.text),
         ),
         const SizedBox(height: 16),
         Text(
