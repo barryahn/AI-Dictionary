@@ -460,7 +460,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         foregroundColor: colors.text,
         leading: IconButton(
           icon: Icon(Icons.close, color: colors.text),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => {
+            Navigator.pop(context),
+
+            // 키보드 숨기기
+            FocusScope.of(context).unfocus(),
+          },
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
