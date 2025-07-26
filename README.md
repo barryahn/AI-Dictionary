@@ -1,4 +1,4 @@
-# ai_dictionary
+# WordVibe
 
 A new Flutter project.
 
