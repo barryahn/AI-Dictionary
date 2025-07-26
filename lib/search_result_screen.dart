@@ -256,6 +256,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         setState(() {});
       }
 
+      // 검색 결과가 없는 경우 저장하지 않음
+      if (result.trim() == "No result") {
+        return;
+      }
+
+      // 검색 결과가 있는 경우 저장
       print('검색 카드 저장 시작');
       await _saveSearchCard(query, result, false);
       print('검색 카드 저장 완료');
