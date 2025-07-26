@@ -94,6 +94,9 @@ flutter:
     - family: SancheonUju
       fonts:
         - asset: assets/fonts/SancheonUjuOTF-Regular.otf
+
+    - family: SunBatang
+      fonts:
         - asset: assets/fonts/SunBatang-Bold.otf
         - asset: assets/fonts/SunBatang-Medium.otf
 
