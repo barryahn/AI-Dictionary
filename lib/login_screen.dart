@@ -108,6 +108,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // 모드 전환 버튼
                 _buildModeToggleButton(loc, colors),
+
+                const SizedBox(height: 64),
               ],
             ),
           ),
