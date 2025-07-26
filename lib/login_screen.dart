@@ -69,8 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.only(
             left: 24,
             right: 24,
-            top: 64,
-            bottom: 24,
+            top: 40,
+            bottom: 96,
           ),
           child: Form(
             key: _formKey,
@@ -108,8 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // 모드 전환 버튼
                 _buildModeToggleButton(loc, colors),
-
-                const SizedBox(height: 64),
               ],
             ),
           ),
