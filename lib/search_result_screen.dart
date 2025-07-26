@@ -314,7 +314,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget _buildResultView(CustomColors colors) {
     return ListView(
       controller: _scrollController,
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 90),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 96),
       children: _searchResults.asMap().entries.map((entry) {
         final index = entry.key;
         final widget = entry.value;
@@ -390,7 +390,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               borderRadius: BorderRadius.circular(30),
               border: Border.all(color: colors.dark),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             child: Row(
               children: [
                 Expanded(
@@ -836,7 +836,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               parsedData['비슷한_표현'] as List<dynamic>,
               colors,
             ),
-            const SizedBox(height: 64),
+            const SizedBox(height: 48),
           ],
 
           Divider(thickness: 2, color: colors.divider),
