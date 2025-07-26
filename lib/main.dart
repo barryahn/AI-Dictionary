@@ -232,8 +232,9 @@ class _HomeTabState extends State<_HomeTab> {
           AppLocalizations.of(context).get('app_title'),
           style: TextStyle(
             color: colors.text,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
-            fontFamily: 'SancheonUju',
+            fontFamily: 'SunBatang',
           ),
         ),
         backgroundColor: colors.background,
