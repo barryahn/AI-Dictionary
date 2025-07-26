@@ -32,6 +32,7 @@ class AppLocalizations {
       'stop_search': '중단',
       'search_failed': '검색 결과를 가져오는데 실패했습니다.',
       'search_stopped': '검색이 중단되었습니다.',
+      'no_search_result': '적절한 검색 결과가 없습니다.',
       'main_search_hint': '검색할 단어를 입력해보세요',
 
       // 언어 선택
@@ -248,6 +249,7 @@ class AppLocalizations {
       'stop_search': 'Stop',
       'search_failed': 'Failed to get search results.',
       'search_stopped': 'Search was stopped.',
+      'no_search_result': 'No appropriate search results found.',
       'main_search_hint': 'Enter a word to search',
 
       // Language Selection
@@ -477,6 +479,7 @@ class AppLocalizations {
       'stop_search': '停止',
       'search_failed': '获取搜索结果失败。',
       'search_stopped': '搜索已停止。',
+      'no_search_result': '没有找到合适的搜索结果。',
       'main_search_hint': '输入要搜索的单词',
 
       // 语言选择
@@ -689,6 +692,7 @@ class AppLocalizations {
       'stop_search': '停止',
       'search_failed': '獲取搜尋結果失敗。',
       'search_stopped': '搜尋已停止。',
+      'no_search_result': '沒有找到合適的搜尋結果。',
       'main_search_hint': '輸入要搜尋的單字',
 
       // 語言選擇
@@ -901,6 +905,7 @@ class AppLocalizations {
       'stop_search': 'Arrêter',
       'search_failed': 'Échec de l\'obtention des résultats de recherche.',
       'search_stopped': 'La recherche a été arrêtée.',
+      'no_search_result': 'Aucun résultat de recherche approprié trouvé.',
       'main_search_hint': 'Entrez un mot à rechercher',
 
       // Sélection de langue
@@ -1138,6 +1143,8 @@ class AppLocalizations {
       'stop_search': 'Detener',
       'search_failed': 'Error al obtener resultados de búsqueda.',
       'search_stopped': 'La búsqueda se detuvo.',
+      'no_search_result':
+          'No se encontraron resultados de búsqueda apropiados.',
       'main_search_hint': 'Ingresa una palabra para buscar',
 
       // Selección de idioma
@@ -1386,6 +1393,7 @@ class AppLocalizations {
   String get stop_search => get('stop_search');
   String get search_failed => get('search_failed');
   String get search_stopped => get('search_stopped');
+  String get no_search_result => get('no_search_result');
   String get main_search_hint => get('main_search_hint');
 
   // 언어 선택

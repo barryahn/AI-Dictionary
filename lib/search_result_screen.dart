@@ -226,10 +226,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           print('로딩 상태 해제: 인덱스 $index');
         }
 
-        // 결과 업데이트
-        if (index < _searchResults.length) {
-          _searchResults[index] = _buildResultSection(query, result, index);
-          print('결과 섹션 업데이트: 인덱스 $index');
+        // "No result" 응답 처리
+        if (result.trim() == "No result") {
+          if (index < _searchResults.length) {
+            _searchResults[index] = _buildNoResultSection(
+              query,
+              index,
+              AppLocalizations.of(context).no_search_result,
+            );
+            print('No result 응답 처리: 인덱스 $index');
+          }
+        } else {
+          // 결과 업데이트
+          if (index < _searchResults.length) {
+            _searchResults[index] = _buildResultSection(query, result, index);
+            print('결과 섹션 업데이트: 인덱스 $index');
+          }
         }
 
         // 마지막 검색이 완료되면 전체 검색 상태 해제
@@ -718,6 +730,55 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ),
           ),
           const SizedBox(height: 16),
+          Divider(thickness: 2, color: colors.divider),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoResultSection(String query, int index, String message) {
+    final themeService = context.read<ThemeService>();
+    final colors = themeService.colors;
+
+    return AutoScrollTag(
+      key: Key(index.toString()),
+      controller: _scrollController,
+      index: index,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          // 검색 입력창(읽기 전용)
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: TextEditingController(text: query),
+                  style: TextStyle(fontSize: 28, color: colors.text),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  readOnly: true,
+                ),
+              ),
+            ],
+          ),
+          Divider(thickness: 1, color: colors.dark),
+
+          const SizedBox(height: 24),
+
+          Center(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 16,
+                height: 1.5,
+                color: colors.error,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 64),
+
           Divider(thickness: 2, color: colors.divider),
         ],
       ),
