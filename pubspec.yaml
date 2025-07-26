@@ -54,6 +54,7 @@ dependencies:
   fluttertoast: ^8.2.12
   flutter_langdetect: ^0.0.1
   language_detector: ^1.0.1
+  firebase_crashlytics: ^4.3.10
 
 dev_dependencies:
   flutter_test:
