@@ -627,13 +627,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget _buildLoadingSection(String query, int index) {
     final themeService = context.read<ThemeService>();
     final colors = themeService.colors;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final appBarHeight = statusBarHeight + 56;
 
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
       index: index,
       child: SizedBox(
-        height: MediaQuery.of(context).size.height - 200, // 화면 높이에서 상단 여백 제외
+        height:
+            MediaQuery.of(context).size.height -
+            appBarHeight, // 화면 높이에서 상단 여백 제외
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -802,7 +806,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               parsedData['뉘앙스'].toString(),
               style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 48),
           ],
 
           // 대화 예시
@@ -832,7 +836,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               parsedData['비슷한_표현'] as List<dynamic>,
               colors,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 64),
           ],
 
           Divider(thickness: 2, color: colors.divider),
