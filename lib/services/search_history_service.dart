@@ -42,6 +42,27 @@ class SearchHistoryService {
     }
   }
 
+  // AuthService 상태 변경 리스너 등록용
+  void _authListener() {
+    if (_authService.isLoggedIn) {
+      initializeCache();
+    } else {
+      disposeCache();
+    }
+  }
+
+  SearchHistoryService() {
+    // 로그인 상태 변경 시 캐시 관리
+    _authService.addListener(_authListener);
+    // 초기 상태도 반영
+    _authListener();
+  }
+
+  void dispose() {
+    _authService.removeListener(_authListener);
+    disposeCache();
+  }
+
   // 새로운 검색 세션 시작
   Future<void> startNewSession(String sessionName) async {
     if (_authService.isLoggedIn) {
