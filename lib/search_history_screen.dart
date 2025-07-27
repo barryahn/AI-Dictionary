@@ -248,119 +248,123 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _searchSessions.length,
-                    itemBuilder: (context, index) {
-                      final session = _searchSessions[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        elevation: 2,
-                        color: colors.extraLight,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
-                          title: session.cards.length == 1
-                              ? Text(
-                                  session.cards.first.query,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: colors.text,
-                                  ),
-                                )
-                              : RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: session.cards.first.query,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: colors.text,
+                : RefreshIndicator(
+                    onRefresh: refresh,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _searchSessions.length,
+                      itemBuilder: (context, index) {
+                        final session = _searchSessions[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          elevation: 2,
+                          color: colors.extraLight,
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            title: session.cards.length == 1
+                                ? Text(
+                                    session.cards.first.query,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: colors.text,
+                                    ),
+                                  )
+                                : RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: session.cards.first.query,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: colors.text,
+                                          ),
                                         ),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            ' ${AppLocalizations.of(context).and_others} ${session.cards.length - 1}${AppLocalizations.of(context).items}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: colors.text,
+                                        TextSpan(
+                                          text:
+                                              ' ${AppLocalizations.of(context).and_others} ${session.cards.length - 1}${AppLocalizations.of(context).items}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: colors.text,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Text(
-                                _formatDateTime(session.createdAt),
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: colors.textLight,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                session.cards
-                                    .map((card) => card.query)
-                                    .join(', '),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: colors.highlight,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: colors.accent,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  '${session.cards.length}개',
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  _formatDateTime(session.createdAt),
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: colors.text,
-                                    fontWeight: FontWeight.bold,
+                                    color: colors.textLight,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: colors.warning,
-                                  size: 20,
+                                const SizedBox(height: 4),
+                                Text(
+                                  session.cards
+                                      .map((card) => card.query)
+                                      .join(', '),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: colors.highlight,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                                onPressed: () =>
-                                    _deleteSession(session.id!, colors),
-                              ),
-                            ],
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colors.accent,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '${session.cards.length}개',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: colors.text,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: colors.warning,
+                                    size: 20,
+                                  ),
+                                  onPressed: () =>
+                                      _deleteSession(session.id!, colors),
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              // 포커스 해제하여 키보드가 나타나지 않도록 함
+                              FocusScope.of(context).unfocus();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SearchResultScreen(
+                                    searchSession: session,
+                                  ),
+                                ),
+                              ).then((_) => refresh());
+                            },
                           ),
-                          onTap: () {
-                            // 포커스 해제하여 키보드가 나타나지 않도록 함
-                            FocusScope.of(context).unfocus();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    SearchResultScreen(searchSession: session),
-                              ),
-                            ).then((_) => refresh());
-                          },
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
           ),
         ],
