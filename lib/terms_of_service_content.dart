@@ -1,79 +1,79 @@
 class TermsOfServiceContent {
   static const String content = '''
-제1조 (목적)
-이 약관은 WordVibe(이하 "회사")가 제공하는 AI 기반 다국어 사전 및 번역 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
+Article 1 (Purpose)
+These Terms of Service govern the rights, obligations, and responsibilities between WordVibe (hereinafter "Company") and users in relation to the use of AI-based multilingual dictionary and translation services (hereinafter "Service") provided by the Company.
 
-제2조 (정의)
-1. "서비스"란 회사가 제공하는 AI 기반 다국어 사전 검색, 번역, 학습 기록 관리 서비스를 의미합니다.
-2. "이용자"란 이 약관에 따라 회사와 이용계약을 체결하고 회사가 제공하는 서비스를 이용하는 자를 의미합니다.
-3. "계정"이란 이용자의 식별과 서비스 이용을 위하여 이용자가 선정하고 회사가 승인하는 문자, 숫자 또는 특수문자의 조합을 의미합니다.
-4. "검색 기록"이란 이용자가 서비스에서 검색한 단어, 번역 내용 및 관련 데이터를 의미합니다.
+Article 2 (Definitions)
+1. "Service" means AI-based multilingual dictionary search, translation, and learning record management services provided by the Company.
+2. "User" means any person who enters into a service agreement with the Company in accordance with these Terms and uses the services provided by the Company.
+3. "Account" means a combination of characters, numbers, or special characters selected by the user and approved by the Company for user identification and service use.
+4. "Search History" means words searched by users in the service, translation content, and related data.
 
-제3조 (약관의 효력 및 변경)
-1. 이 약관은 서비스를 이용하고자 하는 모든 이용자에 대하여 그 효력을 발생합니다.
-2. 회사는 필요한 경우 관련법령을 위배하지 않는 범위에서 이 약관을 변경할 수 있습니다.
-3. 회사가 약관을 변경할 경우에는 적용일자 및 변경사유를 명시하여 현행약관과 함께 서비스 초기화면에 그 적용일자 7일 이전부터 공지합니다.
+Article 3 (Effectiveness and Changes of Terms)
+1. These Terms shall be effective for all users who wish to use the Service.
+2. The Company may change these Terms to the extent that it does not violate relevant laws and regulations.
+3. When the Company changes the Terms, it shall post the effective date and reasons for the change along with the current Terms on the service's initial screen at least 7 days before the effective date.
 
-제4조 (서비스의 제공)
-1. 회사는 다음과 같은 서비스를 제공합니다:
-   - AI 기반 다국어 사전 검색 서비스
-   - 실시간 번역 서비스 (친근, 기본, 공손, 격식 톤 지원)
-   - 검색 기록 저장 및 관리 서비스
-   - 학습 통계 및 분석 서비스
-   - 다국어 지원
-   - 테마 설정 서비스 (추천, 라이트, 다크 모드)
+Article 4 (Service Provision)
+1. The Company provides the following services:
+   - AI-based multilingual dictionary search service
+   - Real-time translation service (friendly, basic, polite, formal tone support)
+   - Search history storage and management service
+   - Learning statistics and analysis service
+   - Multilingual support
+   - Theme setting service (recommended, light, dark mode)
 
-2. 서비스는 연중무휴, 1일 24시간 제공함을 원칙으로 합니다.
-3. 회사는 서비스의 제공에 필요한 경우 정기점검을 실시할 수 있으며, 정기점검시간은 서비스제공화면에 공지한 바에 따릅니다.
+2. Services are provided 24 hours a day, 365 days a year as a principle.
+3. The Company may conduct regular maintenance when necessary for service provision, and maintenance times shall be posted on the service provision screen.
 
-제5조 (서비스의 중단)
-1. 회사는 컴퓨터 등 정보통신설비의 보수점검, 교체 및 고장, 통신의 두절 등의 사유가 발생한 경우에는 서비스의 제공을 일시적으로 중단할 수 있습니다.
-2. 회사는 제1항의 사유로 서비스의 제공이 일시적으로 중단됨으로 인하여 이용자 또는 제3자가 입은 손해에 대하여 배상하지 아니합니다.
+Article 5 (Service Suspension)
+1. The Company may temporarily suspend service provision when there are reasons such as maintenance, replacement, and failure of computers and other information and communication facilities, or communication interruption.
+2. The Company shall not compensate for damages suffered by users or third parties due to temporary suspension of service provision for the reasons stated in Paragraph 1.
 
-제6조 (이용자의 의무)
-1. 이용자는 다음 행위를 하여서는 안 됩니다:
-   - 신청 또는 변경 시 허위내용의 등록
-   - 타인의 정보 도용
-   - 회사가 게시한 정보의 변경
-   - 회사가 정한 정보 이외의 정보(컴퓨터 프로그램 등) 등의 송신 또는 게시
-   - 회사 기타 제3자의 저작권 등 지적재산권에 대한 침해
-   - 회사 기타 제3자의 명예를 손상시키거나 업무를 방해하는 행위
-   - 외설 또는 폭력적인 메시지, 화상, 음성, 기타 공서양속에 반하는 정보를 서비스에 공개 또는 게시하는 행위
-   - 서비스의 정상적인 운영을 방해하는 행위
-   - AI 서비스의 남용 또는 악용
+Article 6 (User Obligations)
+1. Users shall not perform the following acts:
+   - Registration of false information during application or modification
+   - Impersonation of others
+   - Modification of information posted by the Company
+   - Transmission or posting of information other than that specified by the Company (computer programs, etc.)
+   - Infringement of copyright and other intellectual property rights of the Company or third parties
+   - Acts that damage the reputation of the Company or third parties or interfere with business
+   - Posting or publishing obscene or violent messages, images, sounds, or other information contrary to public order and morals on the service
+   - Acts that interfere with normal operation of the service
+   - Abuse or misuse of AI services
 
-2. 이용자는 관계법령, 이 약관의 규정, 이용안내 및 서비스상에 공지한 주의사항, 회사가 통지하는 사항 등을 준수하여야 하며, 기타 회사의 업무에 방해되는 행위를 하여서는 안 됩니다.
+2. Users shall comply with relevant laws and regulations, the provisions of these Terms, usage guidelines and precautions posted on the service, and matters notified by the Company, and shall not perform acts that interfere with the Company's business.
 
-제7조 (회사의 의무)
-1. 회사는 관련법령과 이 약관이 금지하거나 공서양속에 반하는 행위를 하지 않으며 이 약관이 정하는 바에 따라 지속적이고, 안정적으로 서비스를 제공하기 위하여 노력합니다.
-2. 회사는 이용자가 안전하게 인터넷 서비스를 이용할 수 있도록 이용자의 개인정보(신용정보 포함) 보호를 위한 보안 시스템을 구축하고 개인정보처리방침을 공시하고 준수합니다.
-3. 회사는 AI 서비스의 정확성과 품질 향상을 위해 지속적으로 개선 노력을 기울입니다.
+Article 7 (Company Obligations)
+1. The Company shall not perform acts prohibited by relevant laws and regulations or contrary to public order and morals, and shall strive to provide services continuously and stably in accordance with these Terms.
+2. The Company shall establish and operate security systems for the protection of users' personal information (including credit information) and post and comply with privacy policies so that users can safely use Internet services.
+3. The Company strives to continuously improve the accuracy and quality of AI services.
 
-제8조 (개인정보보호)
-1. 회사는 이용자의 개인정보를 보호하기 위해 개인정보처리방침을 수립하고 이를 준수합니다.
-2. 이용자의 개인정보 보호에 관한 상세한 내용은 개인정보처리방침에서 정합니다.
-3. 회사는 이용자의 검색 기록, 번역 내용 등 서비스 이용 데이터를 안전하게 보호합니다.
+Article 8 (Personal Information Protection)
+1. The Company establishes and complies with privacy policies to protect users' personal information.
+2. Detailed matters regarding the protection of users' personal information shall be stipulated in the privacy policy.
+3. The Company safely protects users' service usage data such as search history and translation content.
 
-제9조 (저작권의 귀속 및 이용제한)
-1. 회사가 작성한 저작물에 대한 저작권 기타 지적재산권은 회사에 귀속합니다.
-2. 이용자는 서비스를 이용함으로써 얻은 정보 중 회사에게 지적재산권이 귀속된 정보를 회사의 사전 승낙 없이 복제, 송신, 출판, 배포, 방송 기타 방법에 의하여 영리목적으로 이용하거나 제3자에게 이용하게 하여서는 안됩니다.
-3. AI 서비스를 통해 생성된 콘텐츠의 저작권은 회사에 귀속됩니다.
+Article 9 (Copyright Attribution and Usage Restrictions)
+1. Copyright and other intellectual property rights for works created by the Company belong to the Company.
+2. Users shall not commercially use or allow third parties to use information obtained through the service that belongs to the Company's intellectual property rights without prior approval from the Company through reproduction, transmission, publication, distribution, broadcasting, or other methods.
+3. Copyright for content generated through AI services belongs to the Company.
 
-제10조 (면책조항)
-1. 회사는 천재지변 또는 이에 준하는 불가항력으로 인하여 서비스를 제공할 수 없는 경우에는 서비스 제공에 관한 책임이 면제됩니다.
-2. 회사는 이용자의 귀책사유로 인한 서비스 이용의 장애에 대하여는 책임을 지지 않습니다.
-3. 회사는 이용자가 서비스를 이용하여 기대하는 수익을 상실한 것에 대하여 책임을 지지 않으며, 그 밖의 서비스를 통하여 얻은 자료로 인한 손해에 관하여 책임을 지지 않습니다.
-4. 회사는 AI 서비스의 정확성에 대해 보장하지 않으며, 이용자는 AI 생성 결과를 참고 자료로만 활용해야 합니다.
+Article 10 (Exemption Clauses)
+1. The Company shall be exempt from responsibility for service provision when services cannot be provided due to natural disasters or equivalent force majeure.
+2. The Company shall not be responsible for service usage obstacles due to user's fault.
+3. The Company shall not be responsible for lost profits that users expect from using the service, and shall not be responsible for damages caused by materials obtained through the service.
+4. The Company does not guarantee the accuracy of AI services, and users must use AI-generated results only as reference materials.
 
-제11조 (분쟁해결)
-1. 회사는 이용자가 제기하는 정당한 의견이나 불만을 반영하고 그 피해를 보상처리하기 위하여 피해보상처리기구를 설치·운영합니다.
-2. 회사와 이용자 간에 발생한 전자상거래 분쟁에 관하여는 소비자분쟁조정위원회의 조정에 따를 수 있습니다.
+Article 11 (Dispute Resolution)
+1. The Company shall establish and operate damage compensation processing organizations to reflect users' legitimate opinions or complaints and process damages.
+2. Disputes arising between the Company and users regarding e-commerce may be subject to mediation by the Consumer Dispute Mediation Committee.
 
-제12조 (재판권 및 준거법)
-1. 회사와 이용자 간에 발생한 분쟁에 관하여는 대한민국 법을 적용합니다.
-2. 회사와 이용자 간에 제기된 소송에는 대한민국의 법원을 관할법원으로 합니다.
+Article 12 (Jurisdiction and Governing Law)
+1. Korean law shall apply to disputes arising between the Company and users.
+2. Korean courts shall have jurisdiction over lawsuits filed between the Company and users.
 
-부칙
-이 약관은 2025년 7월 28일부터 시행합니다.
+Supplementary Provisions
+These Terms shall take effect from July 28, 2025.
 ''';
 }
