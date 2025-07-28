@@ -646,12 +646,13 @@ class TermsOfServiceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final themeService = context.watch<ThemeService>();
     final colors = themeService.colors;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('서비스 이용 약관'),
+        title: Text(loc.get('terms_of_service')),
         backgroundColor: colors.background,
         iconTheme: IconThemeData(color: colors.text),
         elevation: 0,
