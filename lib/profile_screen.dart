@@ -261,6 +261,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
 
               _buildMenuItem(
+                icon: Icons.description,
+                title: loc.get('terms_of_service'),
+                subtitle: loc.get('terms_of_service_description'),
+                onTap: () => _showTermsOfService(loc),
+                colors: colors,
+              ),
+
+              _buildMenuItem(
                 icon: Icons.info,
                 title: loc.get('app_info'),
                 subtitle: loc.get('app_version'),
@@ -541,6 +549,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showTermsOfService(AppLocalizations loc) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const TermsOfServiceScreen()),
+    );
+  }
+
   /* void _showAppInfo(AppLocalizations loc) {
     showDialog(
       context: context,
@@ -621,6 +636,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+}
+
+class TermsOfServiceScreen extends StatelessWidget {
+  const TermsOfServiceScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('서비스 이용 약관'),
+        backgroundColor: colors.background,
+        iconTheme: IconThemeData(color: colors.text),
+        elevation: 0,
+      ),
+      backgroundColor: colors.background,
+      body: Center(
+        child: Text(
+          'null',
+          style: TextStyle(
+            fontSize: 24,
+            color: colors.text,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 }
