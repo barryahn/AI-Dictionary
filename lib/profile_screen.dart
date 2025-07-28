@@ -10,6 +10,7 @@ import 'login_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'search_history_screen.dart';
 import 'tutorial_screen.dart';
+import 'terms_of_service_content.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -656,14 +657,11 @@ class TermsOfServiceScreen extends StatelessWidget {
         elevation: 0,
       ),
       backgroundColor: colors.background,
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Text(
-          'null',
-          style: TextStyle(
-            fontSize: 24,
-            color: colors.text,
-            fontWeight: FontWeight.bold,
-          ),
+          TermsOfServiceContent.content,
+          style: TextStyle(fontSize: 14, color: colors.text, height: 1.6),
         ),
       ),
     );
