@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'search_result_screen.dart';
 import 'search_history_screen.dart';
@@ -153,24 +154,37 @@ class _MyHomePageState extends State<MyHomePage> {
     final themeService = context.watch<ThemeService>();
     final colors = themeService.colors;
 
-    return Scaffold(
-      backgroundColor: colors.background,
-      body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.translate), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-        ],
-        selectedItemColor: colors.text,
-        unselectedItemColor: colors.textLight,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (_selectedIndex != 0) {
+          setState(() {
+            _selectedIndex = 0;
+          });
+        } else {
+          // 종료
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
         backgroundColor: colors.background,
+        body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.translate), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
+          ],
+          selectedItemColor: colors.text,
+          unselectedItemColor: colors.textLight,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: colors.background,
+        ),
       ),
     );
   }
