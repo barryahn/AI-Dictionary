@@ -464,197 +464,200 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       );
     }
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: colors.background,
-      appBar: AppBar(
-        foregroundColor: colors.text,
-        leading: IconButton(
-          icon: Icon(Icons.close, color: colors.text),
-          onPressed: () => {
-            Navigator.pop(context),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: colors.background,
+        appBar: AppBar(
+          foregroundColor: colors.text,
+          leading: IconButton(
+            icon: Icon(Icons.close, color: colors.text),
+            onPressed: () => {
+              Navigator.pop(context),
 
-            // 키보드 숨기기
-            FocusScope.of(context).unfocus(),
-          },
+              // 키보드 숨기기
+              FocusScope.of(context).unfocus(),
+            },
+          ),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 출발 언어 드롭다운
+              SizedBox(
+                width: 108,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: Text(
+                      AppLocalizations.of(context).language,
+                      style: TextStyle(fontSize: 14, color: colors.textLight),
+                    ),
+                    items:
+                        LanguageService.getLocalizedTranslationLanguages(
+                              AppLocalizations.of(context),
+                            )
+                            .map(
+                              (Map<String, String> item) =>
+                                  DropdownMenuItem<String>(
+                                    value: item['code']!,
+                                    child: Text(
+                                      item['name']!,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: colors.text,
+                                      ),
+                                    ),
+                                  ),
+                            )
+                            .toList(),
+                    value: _fromLanguage,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+                        if (newValue == _toLanguage) {
+                          _updateLanguages(_toLanguage, _fromLanguage);
+                        } else {
+                          _updateLanguages(newValue, _toLanguage);
+                        }
+                      }
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      padding: const EdgeInsets.only(left: 12, right: 6),
+                      height: 36,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: colors.extraLight,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: colors.dark, width: 1),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(height: 48),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        color: colors.background,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              // 화살표 버튼 (언어 위치 바꾸기)
+              GestureDetector(
+                onTap: () {
+                  _updateLanguages(_toLanguage, _fromLanguage);
+                },
+                child: Container(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 12,
+                    color: colors.text,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              // 도착 언어 드롭다운
+              SizedBox(
+                width: 108,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: Text(
+                      AppLocalizations.of(context).language,
+                      style: TextStyle(fontSize: 14, color: colors.textLight),
+                    ),
+                    items:
+                        LanguageService.getLocalizedTranslationLanguages(
+                              AppLocalizations.of(context),
+                            )
+                            .map(
+                              (Map<String, String> item) =>
+                                  DropdownMenuItem<String>(
+                                    value: item['code']!,
+                                    child: Text(
+                                      item['name']!,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: colors.text,
+                                      ),
+                                    ),
+                                  ),
+                            )
+                            .toList(),
+                    value: _toLanguage,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+                        if (newValue == _fromLanguage) {
+                          _updateLanguages(_toLanguage, _fromLanguage);
+                        } else {
+                          _updateLanguages(_fromLanguage, newValue);
+                        }
+                      }
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      padding: const EdgeInsets.only(left: 12, right: 6),
+                      height: 36,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: colors.extraLight,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: colors.dark, width: 1),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(height: 48),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        color: colors.background,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          elevation: 0,
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
+        body: Stack(
           children: [
-            // 출발 언어 드롭다운
-            SizedBox(
-              width: 108,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: Text(
-                    AppLocalizations.of(context).language,
-                    style: TextStyle(fontSize: 14, color: colors.textLight),
-                  ),
-                  items:
-                      LanguageService.getLocalizedTranslationLanguages(
-                            AppLocalizations.of(context),
-                          )
-                          .map(
-                            (Map<String, String> item) =>
-                                DropdownMenuItem<String>(
-                                  value: item['code']!,
-                                  child: Text(
-                                    item['name']!,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: colors.text,
-                                    ),
-                                  ),
-                                ),
-                          )
-                          .toList(),
-                  value: _fromLanguage,
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
-                      if (newValue == _toLanguage) {
-                        _updateLanguages(_toLanguage, _fromLanguage);
-                      } else {
-                        _updateLanguages(newValue, _toLanguage);
-                      }
-                    }
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    padding: const EdgeInsets.only(left: 12, right: 6),
-                    height: 36,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: colors.extraLight,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: colors.dark, width: 1),
+            _isSearching ? _buildResultView(colors) : _buildInitialView(colors),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: IgnorePointer(
+                ignoring: false,
+                child: Container(
+                  padding: const EdgeInsets.only(top: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        const Color.fromARGB(0, 255, 255, 255), // 완전 투명 흰색
+                        colors.light,
+                      ],
                     ),
                   ),
-                  menuItemStyleData: const MenuItemStyleData(height: 48),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      color: colors.background,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 4),
-            // 화살표 버튼 (언어 위치 바꾸기)
-            GestureDetector(
-              onTap: () {
-                _updateLanguages(_toLanguage, _fromLanguage);
-              },
-              child: Container(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: colors.text,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            // 도착 언어 드롭다운
-            SizedBox(
-              width: 108,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: Text(
-                    AppLocalizations.of(context).language,
-                    style: TextStyle(fontSize: 14, color: colors.textLight),
-                  ),
-                  items:
-                      LanguageService.getLocalizedTranslationLanguages(
-                            AppLocalizations.of(context),
-                          )
-                          .map(
-                            (Map<String, String> item) =>
-                                DropdownMenuItem<String>(
-                                  value: item['code']!,
-                                  child: Text(
-                                    item['name']!,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: colors.text,
-                                    ),
-                                  ),
-                                ),
-                          )
-                          .toList(),
-                  value: _toLanguage,
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
-                      if (newValue == _fromLanguage) {
-                        _updateLanguages(_toLanguage, _fromLanguage);
-                      } else {
-                        _updateLanguages(_fromLanguage, newValue);
-                      }
-                    }
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    padding: const EdgeInsets.only(left: 12, right: 6),
-                    height: 36,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: colors.extraLight,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: colors.dark, width: 1),
-                    ),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(height: 48),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      color: colors.background,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
+                  child: bottomBar,
                 ),
               ),
             ),
           ],
         ),
-        elevation: 0,
+        // bottomNavigationBar: Padding(
+        //   padding: MediaQuery.of(context).viewInsets,
+        //   child: bottomBar,
+        // ),
       ),
-      body: Stack(
-        children: [
-          _isSearching ? _buildResultView(colors) : _buildInitialView(colors),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: IgnorePointer(
-              ignoring: false,
-              child: Container(
-                padding: const EdgeInsets.only(top: 20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      const Color.fromARGB(0, 255, 255, 255), // 완전 투명 흰색
-                      colors.light,
-                    ],
-                  ),
-                ),
-                child: bottomBar,
-              ),
-            ),
-          ),
-        ],
-      ),
-      // bottomNavigationBar: Padding(
-      //   padding: MediaQuery.of(context).viewInsets,
-      //   child: bottomBar,
-      // ),
     );
   }
 
