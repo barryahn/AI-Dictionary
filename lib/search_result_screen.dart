@@ -272,6 +272,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       if (!mounted) return;
 
       setState(() {
+        // 키보드 숨기기
+        FocusScope.of(context).unfocus();
+
         // 에러 발생 시에도 로딩 상태 해제
         if (index < _isLoading.length) {
           _isLoading[index] = false;
@@ -309,19 +312,27 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(
-            controller: _searchController,
-            focusNode: _focusNode,
-            style: TextStyle(fontSize: 28, color: colors.text),
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context).search_hint,
-              hintStyle: TextStyle(
-                color: colors.textLight,
-                fontWeight: FontWeight.w400,
+          PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, result) async {
+              if (!didPop) {
+                FocusScope.of(context).unfocus();
+              }
+            },
+            child: TextField(
+              controller: _searchController,
+              focusNode: _focusNode,
+              style: TextStyle(fontSize: 28, color: colors.text),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context).search_hint,
+                hintStyle: TextStyle(
+                  color: colors.textLight,
+                  fontWeight: FontWeight.w400,
+                ),
+                border: InputBorder.none,
               ),
-              border: InputBorder.none,
+              onSubmitted: (_) => _startSearch(),
             ),
-            onSubmitted: (_) => _startSearch(),
           ),
           Divider(thickness: 1, color: colors.dark),
         ],
