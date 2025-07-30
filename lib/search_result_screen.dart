@@ -859,7 +859,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
           // 검색어(큰 글씨) - JSON에서 단어 필드 사용
           if (parsedData['단어'] != null) ...[
-            Text(
+            SelectableText(
               parsedData['단어'].toString(),
               style: TextStyle(
                 fontSize: 32,
@@ -888,7 +888,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           if (parsedData['뉘앙스'] != null) ...[
             _buildSectionTitle(AppLocalizations.of(context).nuance, colors),
             const SizedBox(height: 8),
-            Text(
+            SelectableText(
               parsedData['뉘앙스'].toString(),
               style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
             ),
@@ -1036,7 +1036,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         style: TextStyle(fontSize: 16, color: colors.text),
                       ),
                       Expanded(
-                        child: Text(
+                        child: SelectableText(
                           def.toString(),
                           style: TextStyle(
                             fontSize: 20,
@@ -1164,7 +1164,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(
+                                child: SelectableText(
                                   text,
                                   style: TextStyle(
                                     fontSize: 15,
@@ -1214,7 +1214,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(
+                                child: SelectableText(
                                   text,
                                   style: TextStyle(
                                     fontSize: 15,
@@ -1264,7 +1264,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              SelectableText(
                 word,
                 style: TextStyle(
                   fontSize: 16,
@@ -1272,7 +1272,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   color: colors.text,
                 ),
               ),
-              Text(meaning, style: TextStyle(fontSize: 12, color: colors.text)),
+              SelectableText(
+                meaning,
+                style: TextStyle(fontSize: 12, color: colors.text),
+              ),
             ],
           ),
         );
