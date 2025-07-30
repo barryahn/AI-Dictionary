@@ -53,62 +53,67 @@ class _LoginScreenState extends State<LoginScreen> {
     final themeService = context.watch<ThemeService>();
     final colors = themeService.colors;
 
-    return Scaffold(
-      backgroundColor: colors.background,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
         backgroundColor: colors.background,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colors.text),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 40,
-            bottom: 96,
+        appBar: AppBar(
+          backgroundColor: colors.background,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: colors.text),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // 앱 로고/제목
-                _buildHeader(loc, colors),
-                const SizedBox(height: 60),
+        ),
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 40,
+              bottom: 96,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // 앱 로고/제목
+                  _buildHeader(loc, colors),
+                  const SizedBox(height: 60),
 
-                // 이메일 입력 필드
-                _buildEmailField(loc, colors),
-                const SizedBox(height: 16),
+                  // 이메일 입력 필드
+                  _buildEmailField(loc, colors),
+                  const SizedBox(height: 16),
 
-                // 비밀번호 입력 필드
-                _buildPasswordField(loc, colors),
-                const SizedBox(height: 4),
+                  // 비밀번호 입력 필드
+                  _buildPasswordField(loc, colors),
+                  const SizedBox(height: 4),
 
-                // 비밀번호 찾기 버튼 (로그인 모드에서만 표시)
-                if (_isLoginMode) ...[_buildForgotPasswordButton(loc, colors)],
-                const SizedBox(height: 10),
+                  // 비밀번호 찾기 버튼 (로그인 모드에서만 표시)
+                  if (_isLoginMode) ...[
+                    _buildForgotPasswordButton(loc, colors),
+                  ],
+                  const SizedBox(height: 10),
 
-                // 로그인/회원가입 버튼
-                _buildSubmitButton(loc, colors),
-                const SizedBox(height: 16),
+                  // 로그인/회원가입 버튼
+                  _buildSubmitButton(loc, colors),
+                  const SizedBox(height: 16),
 
-                // 구분선
-                _buildDivider(loc, colors),
-                const SizedBox(height: 16),
+                  // 구분선
+                  _buildDivider(loc, colors),
+                  const SizedBox(height: 16),
 
-                // Google 로그인 버튼
-                _buildGoogleLoginButton(loc, colors),
-                const SizedBox(height: 16),
+                  // Google 로그인 버튼
+                  _buildGoogleLoginButton(loc, colors),
+                  const SizedBox(height: 16),
 
-                // 모드 전환 버튼
-                _buildModeToggleButton(loc, colors),
-              ],
+                  // 모드 전환 버튼
+                  _buildModeToggleButton(loc, colors),
+                ],
+              ),
             ),
           ),
         ),
