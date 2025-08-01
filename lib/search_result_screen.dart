@@ -45,7 +45,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   dynamic _currentSessionId; // 현재 세션 ID를 저장
 
   // 언어 판별
-  final languageIdentifier = LanguageIdentifier(confidenceThreshold: 0.01);
+  final languageIdentifier = LanguageIdentifier(confidenceThreshold: 0.005);
 
   // 언어 선택을 위한 상태 변수들
   late String _fromLanguage = LanguageService.fromLanguage;
@@ -213,10 +213,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final supportedLanguages = LanguageService.getSupportedLanguagesCode();
     final List<String> languages = [];
 
-    for (final lang in possibleLanguages) {
+    /* for (final lang in possibleLanguages) {
       print('lang: ${lang.languageTag}');
       print('lang: ${lang.confidence}');
-    }
+    } */
 
     for (final language in possibleLanguages) {
       if (supportedLanguages.contains(language.languageTag)) {
