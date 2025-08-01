@@ -42,12 +42,14 @@ class OpenAIService {
 
 [출력 형식 규칙]
 
-1. Markdown은 반드시 아래의 형식으로 출력할 것.
-2. 검색 단어에 오타가 있으면 오타를 수정하고 단어를 표기할 것.
-3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 말 것.
-4. "뉘앙스" 항목은 반드시 $l1로 설명하고 작성할 것.
-5. "대화_예시"는 총 최대 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
-6. "비슷한_표현"은 총 최대 4개. $l2 단어와 그 뜻을 $l1로 작성.
+1. Markdown은 반드시 아래의 형식으로 출력한다.
+2. 검색 단어에 오타가 있으면 오타를 수정해서 '###단어'에 표기한다.
+3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
+4. '품사', '뉘앙스' 항목은 반드시 $l1로 작성한다.
+5. '###대화_예시'는 총 최대 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
+6. '###비슷한_표현'은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성한다.
+
+아래는 중국어 단어 '照片'를 검색하고 영어로 설명한 예시입니다. 형식만 참고해서 출력하세요.
 
 아래는 영어 단어 'change'를 검색하고 중국어로 설명한 예시입니다. 형식만 참고해서 출력하세요.
 
@@ -57,16 +59,16 @@ class OpenAIService {
 
 ####품사: **Verb**
 
-| 단어           | 뉘앙스                                                                                                                                      |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 단어 | 뉘앙스 |
+| ------------ | --- |
 | 改变 (gǎibiàn) | Often refers to changing abstract things like thoughts, behavior, situations, or attitudes. It implies a transformation or modification. |
-| 变 (biàn)     | Emphasizes a state change, often natural or spontaneous, rather than intentional.                                                        |
-| 换 (huàn)     | Physical or concrete swapping or replacing something with another. Often used for clothes, money, items.                                 |
+| 变 (biàn)     | Emphasizes a state change, often natural or spontaneous, rather than intentional. |
+| 换 (huàn)     | Physical or concrete swapping or replacing something with another. Often used for clothes, money, items. |
 
-#### ▸ 품사: **Noun**
+####품사: **Noun**
 
-| 단어            | 뉘앙스                                                                                                                                                                                    |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 단어 | 뉘앙스 |
+| ------------- | ---- |
 | 变化 (biànhuà)  | Focuses on the result or process of change, often gradual or natural. Unlike 改变 (which often implies intent), 变化 emphasizes transformation over time — of state, situation, mood, etc. |
 | 零钱 (língqián) | Refers specifically to coins or small denominations of money, often used when paying cash. In English, this is the monetary meaning of change.                                         |
 
@@ -89,10 +91,10 @@ class OpenAIService {
 
 ###비슷한 표현
 
-| 단어 | 뜻                                                                 |
-| -- | ------------------------------------------------------------------ |
+| 단어 | 뜻 |
+| -- | --- |
 | 调整 | adjust; used in situations involving fine-tuning or minor changes |
-| 转变 | shift or transformation, especially in perspective or roles       |
+| 转变 | shift or transformation, especially in perspective or roles |
 
 ''';
 
@@ -165,12 +167,12 @@ class OpenAIService {
 
 [출력 형식 규칙]
 
-1. Markdown은 반드시 아래의 형식으로 출력할 것.
-2. 검색 단어에 오타가 있으면 오타를 수정하고 단어를 표기할 것.
-3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 말 것.
-4. "뉘앙스" 항목은 반드시 $l1로 설명하고 작성할 것.
-5. "대화_예시"는 총 최대 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
-6. "비슷한_표현"은 총 최대 4개. $l2 단어와 그 뜻을 $l1로 작성.
+1. Markdown은 반드시 아래의 형식으로 출력한다.
+2. 검색 단어에 오타가 있으면 오타를 수정해서 '###단어'에 표기한다.
+3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
+4. '품사', '뜻', '뉘앙스' 항목은 반드시 $l1로 작성한다.
+5. '###대화_예시'는 총 최대 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
+6. '###비슷한_표현'은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성한다.
 
 아래는 중국어 단어 '照片'를 검색하고 영어로 설명한 예시입니다. 형식만 참고해서 출력하세요.
 
@@ -178,13 +180,11 @@ class OpenAIService {
 
 ###사전적 뜻
 
-####품사: **Noun**
-
-| 번역                            |
-| ----------------------------- |
-| photograph                    |
-| photo                         |
-| picture (taken with a camera) |
+| 품사 | 뜻 |
+| ---- | --- |
+| Noun | photograph |
+| Noun | photo |
+| Noun | picture (taken with a camera) |
 
 ###뉘앙스
 
@@ -209,8 +209,8 @@ class OpenAIService {
 
 ###비슷한 표현
 
-| 단어 | 뜻                                                 |
-| -- | ------------------------------------------------- |
+| 단어 | 뜻 |
+| -- | --- |
 | 相片 | photo (synonym; interchangeable in most contexts) |
 | 影像 | image; often used in technical or formal settings |
 
