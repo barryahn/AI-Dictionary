@@ -213,10 +213,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final supportedLanguages = LanguageService.getSupportedLanguagesCode();
     final List<String> languages = [];
 
-    /* for (final lang in possibleLanguages) {
+    for (final lang in possibleLanguages) {
       print('lang: ${lang.languageTag}');
       print('lang: ${lang.confidence}');
-    } */
+    }
 
     for (final language in possibleLanguages) {
       if (supportedLanguages.contains(language.languageTag)) {
@@ -243,7 +243,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
       String result = '';
 
-      if (languages.first == LanguageService.getLanguageCode(_toLanguage)) {
+      if (languages.first == LanguageService.getLanguageCode(_toLanguage) ||
+          languages.contains(LanguageService.getLanguageCode(_toLanguage))) {
         result = await OpenAIService.getL2WordDefinition(
           query,
           _fromLanguage,
