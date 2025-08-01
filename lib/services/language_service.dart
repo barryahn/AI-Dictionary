@@ -138,23 +138,46 @@ class LanguageService {
     }
   }
 
+  static List<String> getSupportedLanguagesCode() {
+    return ['ko', 'en', 'zh', 'zh-TW', 'fr', 'es'];
+  }
+
   // 언어 이름 가져오기
   static String getLanguageName(String languageCode) {
     switch (languageCode) {
-      case korean:
+      case korean || 'ko':
         return '한국어';
-      case english:
+      case english || 'en':
         return 'English';
-      case chinese:
+      case chinese || 'zh':
         return '中文';
-      case taiwanese:
+      case taiwanese || 'zh-TW':
         return '繁體中文';
-      case french:
+      case french || 'fr':
         return 'Français';
-      case spanish:
+      case spanish || 'es':
         return 'Español';
       default:
         return '한국어';
+    }
+  }
+
+  static String getLanguageNameInKorean(String languageCode) {
+    switch (languageCode) {
+      case korean || 'ko':
+        return '한국어';
+      case english || 'en':
+        return '영어';
+      case chinese || 'zh':
+        return '중국어';
+      case taiwanese || 'zh-TW':
+        return '대만어';
+      case french || 'fr':
+        return '프랑스어';
+      case spanish || 'es':
+        return '스페인어';
+      default:
+        return 'nothing';
     }
   }
 

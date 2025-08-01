@@ -10,6 +10,7 @@ import 'services/language_service.dart';
 import 'services/theme_service.dart';
 import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
+import 'package:google_mlkit_language_id/google_mlkit_language_id.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -42,6 +43,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _isSearching = false;
   bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
   dynamic _currentSessionId; // 현재 세션 ID를 저장
+
+  // 언어 판별
+  final languageIdentifier = LanguageIdentifier(confidenceThreshold: 0.01);
 
   // 언어 선택을 위한 상태 변수들
   late String _fromLanguage = LanguageService.fromLanguage;
@@ -202,13 +206,63 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     }
   }
 
+  Future<List<String>> _identifyLanguage(String query) async {
+    final List<IdentifiedLanguage> possibleLanguages = await languageIdentifier
+        .identifyPossibleLanguages(query);
+
+    final supportedLanguages = LanguageService.getSupportedLanguagesCode();
+    final List<String> languages = [];
+
+    /* for (final lang in possibleLanguages) {
+      print('lang: ${lang.languageTag}');
+      print('lang: ${lang.confidence}');
+    } */
+
+    for (final language in possibleLanguages) {
+      if (supportedLanguages.contains(language.languageTag)) {
+        languages.add(language.languageTag);
+      }
+    }
+    return languages;
+  }
+
   Future<void> _fetchSearchResult(String query, int index) async {
     try {
-      final result = await OpenAIService.getWordDefinitionSimple(
+      /* final result = await OpenAIService.getWordDefinitionSimple(
         query,
         _fromLanguage,
         _toLanguage,
-      );
+      ); */
+
+      final languages = await _identifyLanguage(query);
+      print('languages: $languages');
+
+      if (languages.isEmpty) {
+        return;
+      }
+
+      String result = '';
+
+      if (languages.first == LanguageService.getLanguageCode(_toLanguage)) {
+        result = await OpenAIService.getL2WordDefinition(
+          query,
+          _fromLanguage,
+          _toLanguage,
+        );
+      } else if (languages.first ==
+          LanguageService.getLanguageCode(_fromLanguage)) {
+        result = await OpenAIService.getL1WordDefinition(
+          query,
+          _fromLanguage,
+          _toLanguage,
+        );
+      } else {
+        result = await OpenAIService.getL2WordDefinition(
+          query,
+          _fromLanguage,
+          LanguageService.getLanguageNameInKorean(languages.first),
+        );
+      }
 
       // API 응답 결과 출력
       print('=== API 응답 결과 (인덱스: $index) ===');
@@ -347,7 +401,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       children: _searchResults.asMap().entries.map((entry) {
         final index = entry.key;
         final widget = entry.value;
-        print('결과 위젯 $index: ${widget.runtimeType}');
+        //print('결과 위젯 $index: ${widget.runtimeType}');
         return widget;
       }).toList(),
     );
@@ -831,6 +885,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       print('원본 응답: $aiResponse');
       print('=====================================');
       // JSON 파싱 실패 시 기존 방식으로 표시
+      print(
+        '=====================================$query=====================================',
+      );
       return _buildFallbackResultSection(query, aiResponse, index);
     }
 
