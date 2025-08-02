@@ -1,8 +1,20 @@
+import 'dart:async';
+
 import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+typedef ChatDeltaCallback = void Function(String delta);
+typedef ChatCompleteCallback = void Function();
+typedef ChatErrorCallback = void Function(Object error);
+
 class OpenAIService {
   static bool _isInitialized = false;
+  static Stream<OpenAIStreamChatCompletionModel>? _chatStream;
+  static StreamSubscription<OpenAIStreamChatCompletionModel>? _subscription;
+
+  static void dispose() {
+    _subscription?.cancel();
+  }
 
   static Future<void> initialize() async {
     if (_isInitialized) return;
@@ -20,10 +32,13 @@ class OpenAIService {
   L1 단어 정의 생성
   ===============================================*/
 
-  static Future<String> getL1WordDefinition(
+  static void getL1WordDefinition(
     String word,
     String l1,
     String l2,
+    ChatDeltaCallback onDelta,
+    ChatCompleteCallback onComplete,
+    ChatErrorCallback onError,
   ) async {
     try {
       await initialize();
@@ -124,20 +139,23 @@ class OpenAIService {
       final requestMessages = [systemMessage, userMessage];
 
       // the actual request.
-      OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat
-          .create(
-            model: "gpt-4.1-mini",
-            messages: requestMessages,
-            temperature: 0.1,
-            maxTokens: 700,
-          );
+      final stream = OpenAI.instance.chat.createStream(
+        model: "gpt-4.1-mini",
+        messages: requestMessages,
+        temperature: 0.1,
+        maxTokens: 700,
+      );
 
-      return chatCompletion.choices.first.message.haveContent
-          ? chatCompletion.choices.first.message.content![0].text.toString()
-          : '응답을 생성할 수 없습니다.';
+      _subscription = stream.listen(
+        (event) {
+          final deltaText = event.choices.first.delta.content![0]?.text ?? '';
+          if (deltaText != '') onDelta(deltaText.toString());
+        },
+        onDone: onComplete,
+        onError: onError,
+      );
     } catch (e) {
       print('OpenAI API 호출 오류: $e');
-      return '죄송합니다. 현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해주세요.';
     }
   }
 
@@ -145,10 +163,13 @@ class OpenAIService {
   L2 단어 정의 생성
   ===============================================*/
 
-  static Future<String> getL2WordDefinition(
+  static void getL2WordDefinition(
     String word,
     String l1,
     String l2,
+    ChatDeltaCallback onDelta,
+    ChatCompleteCallback onComplete,
+    ChatErrorCallback onError,
   ) async {
     try {
       await initialize();
@@ -242,20 +263,23 @@ class OpenAIService {
       final requestMessages = [systemMessage, userMessage];
 
       // the actual request.
-      OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat
-          .create(
-            model: "gpt-4.1",
-            messages: requestMessages,
-            temperature: 0.1,
-            maxTokens: 700,
-          );
+      final stream = OpenAI.instance.chat.createStream(
+        model: "gpt-4.1-mini",
+        messages: requestMessages,
+        temperature: 0.1,
+        maxTokens: 700,
+      );
 
-      return chatCompletion.choices.first.message.haveContent
-          ? chatCompletion.choices.first.message.content![0].text.toString()
-          : '응답을 생성할 수 없습니다.';
+      _subscription = stream.listen(
+        (event) {
+          final deltaText = event.choices.first.delta.content![0]?.text ?? '';
+          if (deltaText != '') onDelta(deltaText.toString());
+        },
+        onDone: onComplete,
+        onError: onError,
+      );
     } catch (e) {
       print('OpenAI API 호출 오류: $e');
-      return '죄송합니다. 현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해주세요.';
     }
   }
 

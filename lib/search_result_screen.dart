@@ -242,86 +242,134 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       }
 
       String result = '';
+      bool isCompleted = false;
 
       if (languages.first == LanguageService.getLanguageCode(_toLanguage) ||
           languages.contains(LanguageService.getLanguageCode(_toLanguage))) {
-        result = await OpenAIService.getL2WordDefinition(
+        OpenAIService.getL2WordDefinition(
           query,
           _fromLanguage,
           _toLanguage,
+          (delta) {
+            if (!mounted || !_isFetching) return;
+            setState(() {
+              result += delta;
+              // 실시간으로 결과 업데이트
+              if (index < _searchResults.length) {
+                _searchResults[index] = _buildResultSection(
+                  query,
+                  result,
+                  index,
+                );
+              }
+            });
+          },
+          () {
+            if (!mounted || !_isFetching) return;
+            isCompleted = true;
+            _handleSearchComplete(query, result, index);
+          },
+          (error) {
+            if (!mounted || !_isFetching) return;
+            print('OpenAI API 오류: $error');
+            setState(() {
+              if (index < _isLoading.length) {
+                _isLoading[index] = false;
+              }
+              if (index < _searchResults.length) {
+                _searchResults[index] = _buildErrorSection(query, index);
+              }
+              if (index == _searchQueries.length - 1) {
+                _isFetching = false;
+              }
+            });
+          },
         );
       } else if (languages.first ==
           LanguageService.getLanguageCode(_fromLanguage)) {
-        result = await OpenAIService.getL1WordDefinition(
+        OpenAIService.getL1WordDefinition(
           query,
           _fromLanguage,
           _toLanguage,
+          (delta) {
+            if (!mounted || !_isFetching) return;
+            setState(() {
+              result += delta;
+              // 실시간으로 결과 업데이트
+              if (index < _searchResults.length) {
+                _searchResults[index] = _buildResultSection(
+                  query,
+                  result,
+                  index,
+                );
+              }
+            });
+          },
+          () {
+            if (!mounted || !_isFetching) return;
+            isCompleted = true;
+            _handleSearchComplete(query, result, index);
+          },
+          (error) {
+            if (!mounted || !_isFetching) return;
+            print('OpenAI API 오류: $error');
+            setState(() {
+              if (index < _isLoading.length) {
+                _isLoading[index] = false;
+              }
+              if (index < _searchResults.length) {
+                _searchResults[index] = _buildErrorSection(query, index);
+              }
+              if (index == _searchQueries.length - 1) {
+                _isFetching = false;
+              }
+            });
+          },
         );
       } else {
-        result = await OpenAIService.getL2WordDefinition(
+        OpenAIService.getL2WordDefinition(
           query,
           _fromLanguage,
           LanguageService.getLanguageNameInKorean(languages.first),
+          (delta) {
+            if (!mounted || !_isFetching) return;
+            setState(() {
+              result += delta;
+              // 실시간으로 결과 업데이트
+              if (index < _searchResults.length) {
+                _searchResults[index] = _buildResultSection(
+                  query,
+                  result,
+                  index,
+                );
+              }
+            });
+          },
+          () {
+            if (!mounted || !_isFetching) return;
+            isCompleted = true;
+            _handleSearchComplete(query, result, index);
+          },
+          (error) {
+            if (!mounted || !_isFetching) return;
+            print('OpenAI API 오류: $error');
+            setState(() {
+              if (index < _isLoading.length) {
+                _isLoading[index] = false;
+              }
+              if (index < _searchResults.length) {
+                _searchResults[index] = _buildErrorSection(query, index);
+              }
+              if (index == _searchQueries.length - 1) {
+                _isFetching = false;
+              }
+            });
+          },
         );
       }
 
-      // API 응답 결과 출력
-      print('=== API 응답 결과 (인덱스: $index) ===');
-      print('검색어: $query');
-      print('응답: $result');
-      print('=====================================');
-
-      if (!mounted || !_isFetching) return; // 중단되었는지 확인
-
-      print('상태 업데이트 시작: 로딩 해제 및 결과 표시');
-      setState(() {
-        // 로딩 상태 해제
-        if (index < _isLoading.length) {
-          _isLoading[index] = false;
-          print('로딩 상태 해제: 인덱스 $index');
-        }
-
-        // "No result" 응답 처리
-        if (result.trim() == "No result") {
-          if (index < _searchResults.length) {
-            _searchResults[index] = _buildNoResultSection(
-              query,
-              index,
-              AppLocalizations.of(context).no_search_result,
-            );
-            print('No result 응답 처리: 인덱스 $index');
-          }
-        } else {
-          // 결과 업데이트
-          if (index < _searchResults.length) {
-            _searchResults[index] = _buildResultSection(query, result, index);
-            print('결과 섹션 업데이트: 인덱스 $index');
-          }
-        }
-
-        // 마지막 검색이 완료되면 전체 검색 상태 해제
-        if (index == _searchQueries.length - 1) {
-          _isFetching = false;
-          print('모든 검색 완료 - _isFetching = false');
-        }
-      });
-
-      // 강제로 위젯 다시 빌드
-      if (mounted) {
-        setState(() {});
-      }
-
-      // 검색 결과가 없는 경우 저장하지 않음
-      if (result.trim() == "No result") {
-        return;
-      }
-
-      // 검색 결과가 있는 경우 저장
-      print('검색 카드 저장 시작');
-      await _saveSearchCard(query, result, false);
-      print('검색 카드 저장 완료');
-
-      print('AI 응답 처리 완료: $query');
+      // 스트리밍 방식이므로 여기서는 즉시 반환
+      return;
     } catch (e) {
       print('AI 응답 오류: $e');
       if (!mounted) return;
@@ -881,14 +929,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         return _buildFallbackResultSection(query, aiResponse, index);
       }
     } catch (e) {
-      print('=== JSON 파싱 실패 (인덱스: $index) ===');
+      /* print('=== JSON 파싱 실패 (인덱스: $index) ===');
       print('파싱 오류: $e');
       print('원본 응답: $aiResponse');
       print('=====================================');
       // JSON 파싱 실패 시 기존 방식으로 표시
       print(
         '=====================================$query=====================================',
-      );
+      ); */
       return _buildFallbackResultSection(query, aiResponse, index);
     }
 
@@ -1339,6 +1387,66 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         );
       }).toList(),
     );
+  }
+
+  void _handleSearchComplete(String query, String result, int index) async {
+    // API 응답 결과 출력
+    print('=== API 응답 결과 (인덱스: $index) ===');
+    print('검색어: $query');
+    print('응답: $result');
+    print('=====================================');
+
+    if (!mounted || !_isFetching) return; // 중단되었는지 확인
+
+    print('상태 업데이트 시작: 로딩 해제 및 결과 표시');
+    setState(() {
+      // 로딩 상태 해제
+      if (index < _isLoading.length) {
+        _isLoading[index] = false;
+        print('로딩 상태 해제: 인덱스 $index');
+      }
+
+      // "No result" 응답 처리
+      if (result.trim() == "No result") {
+        if (index < _searchResults.length) {
+          _searchResults[index] = _buildNoResultSection(
+            query,
+            index,
+            AppLocalizations.of(context).no_search_result,
+          );
+          print('No result 응답 처리: 인덱스 $index');
+        }
+      } else {
+        // 결과 업데이트
+        if (index < _searchResults.length) {
+          _searchResults[index] = _buildResultSection(query, result, index);
+          print('결과 섹션 업데이트: 인덱스 $index');
+        }
+      }
+
+      // 마지막 검색이 완료되면 전체 검색 상태 해제
+      if (index == _searchQueries.length - 1) {
+        _isFetching = false;
+        print('모든 검색 완료 - _isFetching = false');
+      }
+    });
+
+    // 강제로 위젯 다시 빌드
+    if (mounted) {
+      setState(() {});
+    }
+
+    // 검색 결과가 없는 경우 저장하지 않음
+    if (result.trim() == "No result") {
+      return;
+    }
+
+    // 검색 결과가 있는 경우 저장
+    print('검색 카드 저장 시작');
+    await _saveSearchCard(query, result, false);
+    print('검색 카드 저장 완료');
+
+    print('AI 응답 처리 완료: $query');
   }
 
   void _updateLanguages(String fromLang, String toLang) {
