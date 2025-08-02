@@ -916,6 +916,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget _buildResultSection(String query, String aiResponse, int index) {
     final themeService = context.read<ThemeService>();
     final colors = themeService.colors;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final appBarHeight = statusBarHeight + 56;
 
     // JSON 파싱 시도
     Map<String, dynamic>? parsedData;
@@ -944,95 +946,111 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       key: Key(index.toString()),
       controller: _scrollController,
       index: index,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          // 검색 입력창(읽기 전용)
-          Row(
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height - appBarHeight,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: TextEditingController(text: query),
-                  style: TextStyle(fontSize: 28, color: colors.text),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  readOnly: true,
-                ),
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: TextStyle(fontSize: 28, color: colors.text),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
               ),
+              Divider(thickness: 1, color: colors.dark),
+
+              // 검색어(큰 글씨) - JSON에서 단어 필드 사용
+              if (parsedData['단어'] != null) ...[
+                SelectableText(
+                  parsedData['단어'].toString(),
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: colors.text,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 사전적 뜻
+              if (parsedData['사전적_뜻'] != null &&
+                  parsedData['사전적_뜻'] is List) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).dictionary_meaning,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                _buildDictionaryMeanings(
+                  parsedData['사전적_뜻'] as List<dynamic>,
+                  colors,
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 뉘앙스
+              if (parsedData['뉘앙스'] != null) ...[
+                _buildSectionTitle(AppLocalizations.of(context).nuance, colors),
+                const SizedBox(height: 8),
+                SelectableText(
+                  parsedData['뉘앙스'].toString(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                    color: colors.text,
+                  ),
+                ),
+                const SizedBox(height: 48),
+              ],
+
+              // 대화 예시
+              if (parsedData['대화_예시'] != null &&
+                  parsedData['대화_예시'] is List) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).conversation_examples,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                _buildConversationExamples(
+                  parsedData['대화_예시'] as List<dynamic>,
+                  _fromLanguage,
+                  _toLanguage,
+                  colors,
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 비슷한 표현
+              if (parsedData['비슷한_표현'] != null &&
+                  parsedData['비슷한_표현'] is List) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).similar_expressions,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                _buildSimilarExpressions(
+                  parsedData['비슷한_표현'] as List<dynamic>,
+                  colors,
+                ),
+                const SizedBox(height: 48),
+              ],
+
+              Divider(thickness: 2, color: colors.divider),
             ],
           ),
-          Divider(thickness: 1, color: colors.dark),
-
-          // 검색어(큰 글씨) - JSON에서 단어 필드 사용
-          if (parsedData['단어'] != null) ...[
-            SelectableText(
-              parsedData['단어'].toString(),
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: colors.text,
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // 사전적 뜻
-          if (parsedData['사전적_뜻'] != null && parsedData['사전적_뜻'] is List) ...[
-            _buildSectionTitle(
-              AppLocalizations.of(context).dictionary_meaning,
-              colors,
-            ),
-            const SizedBox(height: 12),
-            _buildDictionaryMeanings(
-              parsedData['사전적_뜻'] as List<dynamic>,
-              colors,
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // 뉘앙스
-          if (parsedData['뉘앙스'] != null) ...[
-            _buildSectionTitle(AppLocalizations.of(context).nuance, colors),
-            const SizedBox(height: 8),
-            SelectableText(
-              parsedData['뉘앙스'].toString(),
-              style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
-            ),
-            const SizedBox(height: 48),
-          ],
-
-          // 대화 예시
-          if (parsedData['대화_예시'] != null && parsedData['대화_예시'] is List) ...[
-            _buildSectionTitle(
-              AppLocalizations.of(context).conversation_examples,
-              colors,
-            ),
-            const SizedBox(height: 12),
-            _buildConversationExamples(
-              parsedData['대화_예시'] as List<dynamic>,
-              _fromLanguage,
-              _toLanguage,
-              colors,
-            ),
-            const SizedBox(height: 24),
-          ],
-
-          // 비슷한 표현
-          if (parsedData['비슷한_표현'] != null && parsedData['비슷한_표현'] is List) ...[
-            _buildSectionTitle(
-              AppLocalizations.of(context).similar_expressions,
-              colors,
-            ),
-            const SizedBox(height: 12),
-            _buildSimilarExpressions(
-              parsedData['비슷한_표현'] as List<dynamic>,
-              colors,
-            ),
-            const SizedBox(height: 48),
-          ],
-
-          Divider(thickness: 2, color: colors.divider),
-        ],
+        ),
       ),
     );
   }
@@ -1044,44 +1062,55 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   ) {
     final themeService = context.read<ThemeService>();
     final colors = themeService.colors;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final appBarHeight = statusBarHeight + 56;
 
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
       index: index,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          Row(
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height - appBarHeight,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: TextEditingController(text: query),
-                  style: TextStyle(fontSize: 28, color: colors.text),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  readOnly: true,
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: TextStyle(fontSize: 28, color: colors.text),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: colors.dark),
+              Text(
+                query,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: colors.text,
                 ),
               ),
+              const SizedBox(height: 20),
+              Text(
+                aiResponse,
+                style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
+              ),
+              const SizedBox(height: 4),
+              Divider(thickness: 2, color: colors.divider),
             ],
           ),
-          Divider(thickness: 1, color: colors.dark),
-          Text(
-            query,
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: colors.text,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            aiResponse,
-            style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
-          ),
-          const SizedBox(height: 4),
-          Divider(thickness: 2, color: colors.divider),
-        ],
+        ),
       ),
     );
   }
