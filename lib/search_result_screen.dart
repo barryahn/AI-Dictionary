@@ -1068,30 +1068,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 const SizedBox(height: 24),
               ],
 
-              // 사전적 뜻
+              // 사전적 뜻 (L1 형식에서는 각 뜻마다 뉘앙스가 포함됨)
               if (parsedData['사전적_뜻'] != null) ...[
                 _buildSectionTitle(
                   AppLocalizations.of(context).dictionary_meaning,
                   colors,
                 ),
                 const SizedBox(height: 12),
-                _buildDictionaryMeanings(parsedData['사전적_뜻'], colors),
+                _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
                 const SizedBox(height: 24),
-              ],
-
-              // 뉘앙스
-              if (parsedData['뉘앙스'] != null) ...[
-                _buildSectionTitle(AppLocalizations.of(context).nuance, colors),
-                const SizedBox(height: 8),
-                SelectableText(
-                  parsedData['뉘앙스'].toString(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    height: 1.5,
-                    color: colors.text,
-                  ),
-                ),
-                const SizedBox(height: 48),
               ],
 
               // 대화 예시
@@ -1401,6 +1386,112 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildL1DictionaryMeanings(dynamic meanings, CustomColors colors) {
+    // L1 형식에 맞게 처리
+    if (meanings is Map<String, dynamic>) {
+      // 단일 사전적 뜻 객체 처리
+      return _buildSingleL1DictionaryMeaning(meanings, colors);
+    } else if (meanings is List) {
+      // 여러 사전적 뜻 객체 처리
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: meanings.map<Widget>((meaning) {
+          if (meaning is Map<String, dynamic>) {
+            return _buildSingleL1DictionaryMeaning(meaning, colors);
+          }
+          return const SizedBox.shrink();
+        }).toList(),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildSingleL1DictionaryMeaning(
+    Map<String, dynamic> meaning,
+    CustomColors colors,
+  ) {
+    final partOfSpeech = meaning['품사']?.toString() ?? '';
+    final translationRaw = meaning['번역'];
+
+    if (translationRaw == null || translationRaw is! Map<String, dynamic>) {
+      return const SizedBox.shrink();
+    }
+
+    final word = translationRaw['번역단어']?.toString() ?? '';
+    final nuance = translationRaw['뉘앙스']?.toString() ?? '';
+
+    if (word.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (partOfSpeech.isNotEmpty) ...[
+            Text(
+              partOfSpeech,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: colors.highlight,
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+          // 번역 단어
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('• ', style: TextStyle(fontSize: 16, color: colors.text)),
+                Expanded(
+                  child: SelectableText(
+                    word,
+                    style: TextStyle(
+                      fontSize: 20,
+                      height: 1.4,
+                      color: colors.text,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 뉘앙스 (있다면)
+          if (nuance.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '  ',
+                    style: TextStyle(fontSize: 16, color: colors.text),
+                  ),
+                  Expanded(
+                    child: SelectableText(
+                      nuance,
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1.4,
+                        color: colors.text,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
