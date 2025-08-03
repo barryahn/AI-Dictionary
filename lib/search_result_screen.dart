@@ -1056,7 +1056,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Divider(thickness: 1, color: colors.dark),
 
               // 검색어(큰 글씨) - JSON에서 단어 필드 사용
-              if (parsedData['단어'] != null) ...[
+              if (parsedData['단어'] != null &&
+                  parsedData['단어'].toString().trim() != '' &&
+                  parsedData['단어'].toString().trim() != query.trim()) ...[
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
@@ -1065,8 +1067,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     color: colors.text,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
               ],
+
+              const SizedBox(height: 12),
 
               // 사전적 뜻 (L1 형식에서는 각 뜻마다 뉘앙스가 포함됨)
               if (parsedData['사전적_뜻'] != null) ...[
@@ -1152,7 +1156,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Divider(thickness: 1, color: colors.dark),
 
               // 검색어(큰 글씨) - JSON에서 단어 필드 사용
-              if (parsedData['단어'] != null) ...[
+              if (parsedData['단어'] != null &&
+                  parsedData['단어'].toString().trim() != '' &&
+                  parsedData['단어'].toString().trim() != query.trim()) ...[
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
@@ -1161,8 +1167,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     color: colors.text,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
               ],
+
+              const SizedBox(height: 12),
 
               // 사전적 뜻
               if (parsedData['사전적_뜻'] != null) ...[
