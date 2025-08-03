@@ -442,7 +442,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               onSubmitted: (_) => _startSearch(),
             ),
           ),
-          Divider(thickness: 1, color: colors.dark),
+          Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
         ],
       ),
     );
@@ -800,7 +800,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
               ],
             ),
-            Divider(thickness: 1, color: colors.dark),
+            Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
             // 로딩 인디케이터 - 남은 공간을 모두 차지
             Expanded(
               child: Center(
@@ -850,7 +850,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
             ],
           ),
-          Divider(thickness: 1, color: colors.dark),
+          Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
           // 에러 메시지
           Center(
             child: Text(
@@ -894,7 +894,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
             ],
           ),
-          Divider(thickness: 1, color: colors.dark),
+          Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
 
           const SizedBox(height: 24),
 
@@ -1057,7 +1057,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ],
               ),
-              Divider(thickness: 1, color: colors.dark),
+              Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
 
               // 검색어(큰 글씨) - JSON에서 단어 필드 사용
               if (parsedData['단어'] != null &&
@@ -1157,7 +1157,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ],
               ),
-              Divider(thickness: 1, color: colors.dark),
+              Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
 
               // 검색어(큰 글씨) - JSON에서 단어 필드 사용
               if (parsedData['단어'] != null &&
@@ -1274,7 +1274,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ],
               ),
-              Divider(thickness: 1, color: colors.dark),
+              Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
               Text(
                 query,
                 style: TextStyle(
@@ -1523,8 +1523,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   child: SelectableText(
                     word,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       height: 1.4,
+                      fontWeight: FontWeight.w500,
                       color: colors.text,
                     ),
                   ),
@@ -1709,7 +1710,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       ),
                     );
                   }),
-                  Divider(height: 16, color: colors.dark),
+                  Divider(
+                    height: 16,
+                    color: colors.dark.withValues(alpha: 0.4),
+                  ),
                 ],
                 // L1 언어 대화 (예: 영어)
                 if (l1Lines.isNotEmpty) ...[
@@ -1820,6 +1824,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               color: colors.text,
             ),
           ),
+
           if (meaning.isNotEmpty) ...[
             const SizedBox(height: 2),
             SelectableText(
