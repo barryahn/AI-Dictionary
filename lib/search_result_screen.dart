@@ -137,6 +137,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   void _stopFetching() {
     print('검색 중단 요청');
+
+    // 검색 중단 시 스트리밍 즉시 중단
+    OpenAIService.dispose();
+
     setState(() {
       _isFetching = false;
       // 마지막 로딩 상태를 에러나 다른 상태로 바꿀 수 있습니다.
