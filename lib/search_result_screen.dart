@@ -974,6 +974,168 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       return _buildFallbackResultSection(query, aiResponse, index);
     }
 
+    // L1 형식인지 L2 형식인지 판별
+    bool isL1Format = _isL1Format(parsedData!);
+
+    if (isL1Format) {
+      return _buildL1ResultSection(
+        query,
+        parsedData,
+        index,
+        colors,
+        appBarHeight,
+      );
+    } else {
+      return _buildL2ResultSection(
+        query,
+        parsedData,
+        index,
+        colors,
+        appBarHeight,
+      );
+    }
+  }
+
+  bool _isL1Format(Map<String, dynamic> parsedData) {
+    // L1 형식은 "번역" 키가 있고 그 안에 "번역단어"가 있는 구조
+    if (parsedData['사전적_뜻'] != null) {
+      if (parsedData['사전적_뜻'] is List) {
+        for (var meaning in parsedData['사전적_뜻']) {
+          if (meaning is Map<String, dynamic> &&
+              meaning['번역'] != null &&
+              meaning['번역'] is Map<String, dynamic> &&
+              meaning['번역']['번역단어'] != null) {
+            return true;
+          }
+        }
+      } else if (parsedData['사전적_뜻'] is Map<String, dynamic> &&
+          parsedData['사전적_뜻']['번역'] != null &&
+          parsedData['사전적_뜻']['번역'] is Map<String, dynamic> &&
+          parsedData['사전적_뜻']['번역']['번역단어'] != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Widget _buildL1ResultSection(
+    String query,
+    Map<String, dynamic> parsedData,
+    int index,
+    CustomColors colors,
+    double appBarHeight,
+  ) {
+    return AutoScrollTag(
+      key: Key(index.toString()),
+      controller: _scrollController,
+      index: index,
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height - appBarHeight,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: TextStyle(fontSize: 28, color: colors.text),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: colors.dark),
+
+              // 검색어(큰 글씨) - JSON에서 단어 필드 사용
+              if (parsedData['단어'] != null) ...[
+                SelectableText(
+                  parsedData['단어'].toString(),
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: colors.text,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 사전적 뜻
+              if (parsedData['사전적_뜻'] != null) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).dictionary_meaning,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                _buildDictionaryMeanings(parsedData['사전적_뜻'], colors),
+                const SizedBox(height: 24),
+              ],
+
+              // 뉘앙스
+              if (parsedData['뉘앙스'] != null) ...[
+                _buildSectionTitle(AppLocalizations.of(context).nuance, colors),
+                const SizedBox(height: 8),
+                SelectableText(
+                  parsedData['뉘앙스'].toString(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                    color: colors.text,
+                  ),
+                ),
+                const SizedBox(height: 48),
+              ],
+
+              // 대화 예시
+              if (parsedData['대화_예시'] != null) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).conversation_examples,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                _buildConversationExamples(
+                  parsedData['대화_예시'],
+                  _fromLanguage,
+                  _toLanguage,
+                  colors,
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 비슷한 표현
+              if (parsedData['비슷한_표현'] != null) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).similar_expressions,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
+                const SizedBox(height: 48),
+              ],
+
+              Divider(thickness: 2, color: colors.divider),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildL2ResultSection(
+    String query,
+    Map<String, dynamic> parsedData,
+    int index,
+    CustomColors colors,
+    double appBarHeight,
+  ) {
     return AutoScrollTag(
       key: Key(index.toString()),
       controller: _scrollController,
