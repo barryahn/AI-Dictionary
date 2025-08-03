@@ -1407,16 +1407,32 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     // L1 형식에 맞게 처리
     if (meanings is Map<String, dynamic>) {
       // 단일 사전적 뜻 객체 처리
-      return _buildSingleL1DictionaryMeaning(meanings, colors);
+      return _buildSingleL1DictionaryMeaning(meanings, colors, 0);
     } else if (meanings is List) {
-      // 여러 사전적 뜻 객체 처리
+      // 여러 사전적 뜻 객체 처리 - 품사별로 그룹화
+      final Map<String, List<Map<String, dynamic>>> groupedByPartOfSpeech = {};
+
+      for (var meaning in meanings) {
+        if (meaning is Map<String, dynamic>) {
+          final partOfSpeech = meaning['품사']?.toString() ?? '';
+          if (!groupedByPartOfSpeech.containsKey(partOfSpeech)) {
+            groupedByPartOfSpeech[partOfSpeech] = [];
+          }
+          groupedByPartOfSpeech[partOfSpeech]!.add(meaning);
+        }
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: meanings.map<Widget>((meaning) {
-          if (meaning is Map<String, dynamic>) {
-            return _buildSingleL1DictionaryMeaning(meaning, colors);
-          }
-          return const SizedBox.shrink();
+        children: groupedByPartOfSpeech.entries.map<Widget>((entry) {
+          final partOfSpeech = entry.key;
+          final meaningsList = entry.value;
+
+          return _buildGroupedL1DictionaryMeanings(
+            partOfSpeech,
+            meaningsList,
+            colors,
+          );
         }).toList(),
       );
     }
@@ -1424,11 +1440,43 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return const SizedBox.shrink();
   }
 
+  Widget _buildGroupedL1DictionaryMeanings(
+    String partOfSpeech,
+    List<Map<String, dynamic>> meanings,
+    CustomColors colors,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (partOfSpeech.isNotEmpty) ...[
+            Text(
+              partOfSpeech,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: colors.highlight,
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+          ...meanings.asMap().entries.map<Widget>((entry) {
+            final index = entry.key;
+            final meaning = entry.value;
+
+            return _buildSingleL1DictionaryMeaning(meaning, colors, index);
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSingleL1DictionaryMeaning(
     Map<String, dynamic> meaning,
     CustomColors colors,
+    int index,
   ) {
-    final partOfSpeech = meaning['품사']?.toString() ?? '';
     final translationRaw = meaning['번역'];
 
     if (translationRaw == null || translationRaw is! Map<String, dynamic>) {
@@ -1447,24 +1495,30 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (partOfSpeech.isNotEmpty) ...[
-            Text(
-              partOfSpeech,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: colors.highlight,
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
           // 번역 단어
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('• ', style: TextStyle(fontSize: 16, color: colors.text)),
+                Container(
+                  width: 18,
+                  height: 18,
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors.highlight.withValues(alpha: 0.15),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colors.highlight,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: SelectableText(
                     word,
@@ -1485,10 +1539,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '  ',
-                    style: TextStyle(fontSize: 16, color: colors.text),
-                  ),
+                  const SizedBox(width: 28),
                   Expanded(
                     child: SelectableText(
                       nuance,
