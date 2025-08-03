@@ -75,6 +75,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   List<UnifiedSearchSession> _searchSessions = [];
   bool _isLoading = true;
   bool _isPauseHistoryEnabled = false; // 일시 중지 상태 확인용
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -84,6 +85,12 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
 
   Future<void> refresh() async {
     if (!mounted) return;
+
+    // 현재 스크롤 위치 저장
+    final currentScrollOffset = _scrollController.hasClients
+        ? _scrollController.offset
+        : 0.0;
+
     setState(() {
       _isLoading = true;
     });
@@ -97,6 +104,13 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
         _searchSessions = sessions;
         _isPauseHistoryEnabled = isPaused;
         _isLoading = false;
+      });
+
+      // 데이터 로드 완료 후 이전 스크롤 위치로 복원
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients && currentScrollOffset > 0) {
+          _scrollController.jumpTo(currentScrollOffset);
+        }
       });
     } catch (e) {
       if (!mounted) return;
@@ -165,6 +179,12 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
     } else {
       return AppLocalizations.of(context).just_now;
     }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -251,6 +271,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                 : RefreshIndicator(
                     onRefresh: refresh,
                     child: ListView.builder(
+                      controller: _scrollController,
                       padding: const EdgeInsets.all(16),
                       itemCount: _searchSessions.length,
                       itemBuilder: (context, index) {
