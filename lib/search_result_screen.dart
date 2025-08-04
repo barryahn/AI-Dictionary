@@ -1533,7 +1533,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         fontSize: 16,
                         height: 1.4,
                         color: colors.text,
-                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
@@ -1741,7 +1741,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               style: TextStyle(
                                 fontSize: 15,
                                 color: colors.text,
-                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
