@@ -131,9 +131,26 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   // 검색어 변경 감지 및 경고 아이콘 표시
   void _onSearchTextChanged() {
     final query = _searchController.text;
-    final hasInvalidChars = RegExp(
-      r'[\[\]\$<>\\|{}`~@#&^%*=+]',
-    ).hasMatch(query);
+    final hasInvalidChars =
+        query.contains('[') ||
+        query.contains(']') ||
+        query.contains('{') ||
+        query.contains('}') ||
+        query.contains('\$') ||
+        query.contains('<') ||
+        query.contains('>') ||
+        query.contains('\\') ||
+        query.contains('|') ||
+        query.contains('`') ||
+        query.contains('~') ||
+        query.contains('@') ||
+        query.contains('#') ||
+        query.contains('&') ||
+        query.contains('^') ||
+        query.contains('%') ||
+        query.contains('*') ||
+        query.contains('=') ||
+        query.contains('+');
     final isTooLong = query.length > 45;
 
     setState(() {
