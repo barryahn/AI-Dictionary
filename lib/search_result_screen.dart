@@ -44,6 +44,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _isSearching = false;
   bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
   dynamic _currentSessionId; // 현재 세션 ID를 저장
+  bool _showWarningIcon = false; // 경고 아이콘 표시 여부
 
   // 언어 판별
   final languageIdentifier = LanguageIdentifier(confidenceThreshold: 0.005);
@@ -55,6 +56,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
     super.initState();
+
+    // 검색어 변경 리스너 추가
+    _searchController.addListener(_onSearchTextChanged);
 
     // 백그라운드에서 캐시 초기화
     _initializeBackgroundCache();
@@ -124,9 +128,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     });
   }
 
+  // 검색어 변경 감지 및 경고 아이콘 표시
+  void _onSearchTextChanged() {
+    final query = _searchController.text;
+    final hasInvalidChars = RegExp(
+      r'[\[\]\$<>\\|{}`~@#&^%*=+]',
+    ).hasMatch(query);
+    final isTooLong = query.length > 45;
+
+    setState(() {
+      _showWarningIcon = hasInvalidChars || isTooLong;
+    });
+  }
+
   void _startSearch() {
     final query = _searchController.text.trim();
-    if (query.isNotEmpty) {
+    if (query.isNotEmpty && !_showWarningIcon) {
       setState(() {
         _isSearching = true;
       });
@@ -406,6 +423,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   void dispose() {
     _searchHistoryService.completeCurrentSession();
     _searchHistoryService.disposeCache();
+    _searchController.removeListener(_onSearchTextChanged);
     _searchController.dispose();
     _focusNode.dispose();
     _scrollController.dispose();
@@ -427,19 +445,33 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 FocusScope.of(context).unfocus();
               }
             },
-            child: TextField(
-              controller: _searchController,
-              focusNode: _focusNode,
-              style: TextStyle(fontSize: 28, color: colors.text),
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context).search_hint,
-                hintStyle: TextStyle(
-                  color: colors.textLight,
-                  fontWeight: FontWeight.w400,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    focusNode: _focusNode,
+                    style: TextStyle(fontSize: 28, color: colors.text),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context).search_hint,
+                      hintStyle: TextStyle(
+                        color: colors.textLight,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                    onSubmitted: (_) => _startSearch(),
+                  ),
                 ),
-                border: InputBorder.none,
-              ),
-              onSubmitted: (_) => _startSearch(),
+                if (_showWarningIcon) ...[
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: colors.error,
+                    size: 24,
+                  ),
+                ],
+              ],
             ),
           ),
           Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
@@ -532,7 +564,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _searchController..clear(),
+                    controller: _searchController,
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context).additional_search,
@@ -546,7 +578,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     ),
                     onSubmitted: (value) {
                       final newQuery = value.trim();
-                      if (newQuery.isNotEmpty) {
+                      if (newQuery.isNotEmpty && !_showWarningIcon) {
                         _addSearchResult(newQuery);
                         _searchController.clear();
                         FocusScope.of(context).unfocus();
@@ -554,11 +586,19 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     },
                   ),
                 ),
+                if (_showWarningIcon) ...[
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: colors.error,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 IconButton(
                   icon: Icon(Icons.send, color: colors.text),
                   onPressed: () {
                     final newQuery = _searchController.text.trim();
-                    if (newQuery.isNotEmpty) {
+                    if (newQuery.isNotEmpty && !_showWarningIcon) {
                       _addSearchResult(newQuery);
                       _searchController.clear();
                       FocusScope.of(context).unfocus();
