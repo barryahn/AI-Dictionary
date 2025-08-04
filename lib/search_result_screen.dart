@@ -1176,30 +1176,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
               const SizedBox(height: 12),
 
-              // 사전적 뜻
+              // 사전적 뜻 (L2 형식에서도 각 뜻마다 뉘앙스가 포함됨)
               if (parsedData['사전적_뜻'] != null) ...[
                 _buildSectionTitle(
                   AppLocalizations.of(context).dictionary_meaning,
                   colors,
                 ),
                 const SizedBox(height: 12),
-                _buildDictionaryMeanings(parsedData['사전적_뜻'], colors),
+                _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
                 const SizedBox(height: 24),
-              ],
-
-              // 뉘앙스
-              if (parsedData['뉘앙스'] != null) ...[
-                _buildSectionTitle(AppLocalizations.of(context).nuance, colors),
-                const SizedBox(height: 8),
-                SelectableText(
-                  parsedData['뉘앙스'].toString(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    height: 1.5,
-                    color: colors.text,
-                  ),
-                ),
-                const SizedBox(height: 48),
               ],
 
               // 대화 예시

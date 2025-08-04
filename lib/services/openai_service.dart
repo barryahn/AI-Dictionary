@@ -63,17 +63,17 @@ class OpenAIService {
 4. "품사", "뉘앙스" 항목은 반드시 $l1로 작성한다. "번역단어"는 반드시 $l2로 작성한다.
 5. "대화_예시"는 총 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
 6. "비슷한_표현"은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성한다.
+7. 중국어의 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기한다.
 
 아래는 영어 단어 'change'를 검색하고 중국어로 설명한 예시입니다. 형식만 참고해서 출력하세요.
 
 {"단어": "change"}
-{"사전적_뜻": {"품사": "Verb", "번역": {"번역단어": "改变 (gǎibiàn)", "뉘앙스": "Often refers to changing abstract things like thoughts, behavior, situations, or attitudes. It implies a transformation or modification."}}}
-{"사전적_뜻": {"품사": "Verb", "번역": {"번역단어": "变 (biàn)", "뉘앙스": "Emphasizes a state change, often natural or spontaneous, rather than intentional."}}}
-{"사전적_뜻": {"품사": "Noun", "번역": {"번역단어": "变化 (biànhuà)", "뉘앙스": "Focuses on the result or process of change, often gradual or natural. Unlike 改变 (which often implies intent), 变化 emphasizes transformation over time — of state, situation, mood, etc."}}}
-{"대화_예시": {"중국어": [{"speaker": "A", "line": "我想换工作。"}, {"speaker": "B", "line": "为什么？发生什么事了？"}], "영어": [{"speaker": "A", "line": "I want to change my job."}, {"speaker": "B", "line": "Why? What happened?"}]}}
+{"사전적_뜻": {"품사": "($l1로 작성)", "번역": {"번역단어": "($l2로 작성)", "뉘앙스": "($word의 뉘앙스와 사용하는 상황을 $l1로 친절하게 설명)"}}}
+(다른 뜻이 있거나, 다른 품사의 단어가 있다면 추가)
+{"대화_예시": {"$l2": [{"speaker": "A", "line": "($l2 대화)"}, {"speaker": "B", "line": "($l2 대화)"}], "$l1": [{"speaker": "A", "line": "($l1 대화)"}, {"speaker": "B", "line": "($l1 대화)"}]}}
 (대화_예시 한 세트 더 추가)
-{"비슷한_표현": {"단어": "调整", "뜻": "adjust; used in situations involving fine-tuning or minor changes"}}
-{"비슷한_표현": {"단어": "转变", "뜻": "shift or transformation, especially in perspective or roles"}}
+{"비슷한_표현": {"단어": "($l2 단어)", "뜻": "($l1 뜻)"}}
+{"비슷한_표현": {"단어": "($l2 단어)", "뜻": "($l1 뜻)"}}
 (만약 다른 비슷한 표현이 있다면 최대 4개까지만 추가)
 
 ''';
@@ -156,14 +156,14 @@ class OpenAIService {
 1. NDJSON은 반드시 아래의 형식으로 출력한다.
 2. 검색 단어에 오타가 있으면 오타를 수정해서 "단어"에 표기한다.
 3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
-4. '품사', '뜻', '뉘앙스'의 내용은 무조건 $l1로 작성한다.
+4. "품사", "뉘앙스", "번역단어" 항목은 반드시 $l1로 작성한다.
 5. "대화_예시"는 총 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
 6. "비슷한_표현"은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성한다.
+7. 중국어의 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기한다.
 
 {"단어": "$word"}
-{"사전적_뜻": {"품사": "($l1로 작성)", "뜻": "($l1로 작성)"}}
+{"사전적_뜻": {"품사": "($l1로 작성)", "번역": {"번역단어": "($l1로 작성)", "뉘앙스": "($word의 뉘앙스와 사용하는 상황을 $l1로 친절하게 설명)"}}}
 (다른 뜻이 있거나, 다른 품사의 단어가 있다면 추가)
-{"뉘앙스": "($word의 뉘앙스와 사용하는 상황을 $l1로 설명)"}
 {"대화_예시": {"$l2": [{"speaker": "A", "line": "($l2 대화)"}, {"speaker": "B", "line": "($l2 대화)"}], "$l1": [{"speaker": "A", "line": "($l1 대화)"}, {"speaker": "B", "line": "($l1 대화)"}]}}
 (대화_예시 한 세트 더 추가)
 {"비슷한_표현": {"단어": "($l2 단어)", "뜻": "($l1 뜻)"}}
