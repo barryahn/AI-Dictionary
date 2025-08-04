@@ -448,13 +448,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showLanguageSettings(AppLocalizations loc) {
+    // 사용자의 시스템 로케일 가져오기
+    Locale systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+    String langCode = systemLocale.languageCode;
+    String? countryCode = systemLocale.countryCode;
+
+    // 시스템 로케일에 따른 언어 코드 결정
+    String systemLanguageCode;
+    if (langCode == 'ko') {
+      systemLanguageCode = 'ko';
+    } else if (langCode == 'en') {
+      systemLanguageCode = 'en';
+    } else if (langCode == 'zh' && countryCode == 'TW') {
+      systemLanguageCode = 'zh-TW';
+    } else if (langCode == 'zh') {
+      systemLanguageCode = 'zh';
+    } else if (langCode == 'fr') {
+      systemLanguageCode = 'fr';
+    } else if (langCode == 'es') {
+      systemLanguageCode = 'es';
+    } else {
+      systemLanguageCode = 'en'; // 기본값
+    }
+
+    // 시스템 언어를 1순위로, 나머지는 기존 순서대로 정렬
+    List<Map<String, String>> sortedLanguages = [];
+    List<Map<String, String>> otherLanguages = [];
+
+    for (var language in LanguageService.supportedLanguages) {
+      if (language['code'] == systemLanguageCode) {
+        sortedLanguages.add(language);
+      } else {
+        otherLanguages.add(language);
+      }
+    }
+
+    // 시스템 언어가 없으면 기존 순서 유지
+    if (sortedLanguages.isEmpty) {
+      sortedLanguages = otherLanguages;
+    } else {
+      sortedLanguages.addAll(otherLanguages);
+    }
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(loc.get('app_language_setting')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: LanguageService.supportedLanguages.map((language) {
+          children: sortedLanguages.map((language) {
             final isSelected =
                 LanguageService.currentLanguage == language['code'];
             return ListTile(
