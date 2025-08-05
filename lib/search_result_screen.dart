@@ -520,7 +520,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     if (!_isSearching) {
       // 초기 검색 화면의 하단 바
       bottomBar = BottomAppBar(
-        color: colors.light,
+        color: colors.background,
         height: 64,
         child: Row(
           children: [
@@ -530,7 +530,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               style: ElevatedButton.styleFrom(
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(2),
-                backgroundColor: colors.background,
+                backgroundColor: colors.white,
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 2),
@@ -544,7 +544,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       // 검색 중일 때의 "중단" 버튼
       print('검색 중 하단 바 표시');
       bottomBar = BottomAppBar(
-        color: colors.background,
+        color: Colors.transparent,
         child: Center(
           child: ElevatedButton.icon(
             icon: const Icon(Icons.stop_circle_outlined),
@@ -554,7 +554,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ),
             onPressed: _stopFetching,
             style: ElevatedButton.styleFrom(
-              backgroundColor: colors.text,
+              backgroundColor: colors.primary,
               foregroundColor: colors.background,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -572,9 +572,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Container(
             decoration: BoxDecoration(
-              color: colors.light,
+              color: colors.white,
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: colors.dark),
+              border: Border.all(color: colors.primary, width: 1.5),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             child: Row(
@@ -633,9 +633,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        backgroundColor: colors.background,
+        backgroundColor: colors.white,
         appBar: AppBar(
           foregroundColor: colors.text,
+          backgroundColor: colors.white,
           leading: IconButton(
             icon: Icon(Icons.close, color: colors.text),
             onPressed: () => {
@@ -693,15 +694,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       height: 36,
                       width: 80,
                       decoration: BoxDecoration(
-                        color: colors.extraLight,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: colors.dark, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: colors.textLight),
                       ),
                     ),
                     menuItemStyleData: const MenuItemStyleData(height: 48),
                     dropdownStyleData: DropdownStyleData(
                       decoration: BoxDecoration(
-                        color: colors.background,
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -772,15 +771,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       height: 36,
                       width: 80,
                       decoration: BoxDecoration(
-                        color: colors.extraLight,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: colors.dark, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: colors.textLight),
                       ),
                     ),
                     menuItemStyleData: const MenuItemStyleData(height: 48),
                     dropdownStyleData: DropdownStyleData(
                       decoration: BoxDecoration(
-                        color: colors.background,
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -806,10 +803,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        const Color.fromARGB(0, 255, 255, 255), // 완전 투명 흰색
-                        colors.light,
-                      ],
+                      colors: [Colors.transparent, colors.background],
                     ),
                   ),
                   child: bottomBar,
@@ -874,7 +868,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
               ),
             ),
-            Divider(thickness: 2, color: colors.divider),
+            Divider(thickness: 2, color: colors.primary),
           ],
         ),
       ),
@@ -920,7 +914,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          Divider(thickness: 2, color: colors.divider),
+          Divider(thickness: 2, color: colors.primary),
         ],
       ),
     );
@@ -969,7 +963,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ),
           const SizedBox(height: 64),
 
-          Divider(thickness: 2, color: colors.divider),
+          Divider(thickness: 2, color: colors.primary),
         ],
       ),
     );
@@ -1120,6 +1114,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               if (parsedData['단어'] != null &&
                   parsedData['단어'].toString().trim() != '' &&
                   parsedData['단어'].toString().trim() != query.trim()) ...[
+                const SizedBox(height: 8),
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
@@ -1128,10 +1123,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     color: colors.text,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 4),
               ],
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // 사전적 뜻 (L1 형식에서는 각 뜻마다 뉘앙스가 포함됨)
               if (parsedData['사전적_뜻'] != null) ...[
@@ -1141,7 +1136,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
                 const SizedBox(height: 12),
                 _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
               ],
 
               // 대화 예시
@@ -1157,7 +1152,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   _toLanguage,
                   colors,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 36),
               ],
 
               // 비슷한 표현
@@ -1171,7 +1166,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 const SizedBox(height: 48),
               ],
 
-              Divider(thickness: 2, color: colors.divider),
+              Divider(thickness: 2, color: colors.primary),
             ],
           ),
         ),
@@ -1271,7 +1266,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 const SizedBox(height: 48),
               ],
 
-              Divider(thickness: 2, color: colors.divider),
+              Divider(thickness: 2, color: colors.primary),
             ],
           ),
         ),
@@ -1331,7 +1326,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
               ),
               const SizedBox(height: 4),
-              Divider(thickness: 2, color: colors.divider),
+              Divider(thickness: 2, color: colors.primary),
             ],
           ),
         ),
@@ -1343,9 +1338,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: colors.text,
+        fontSize: 24,
+        fontWeight: FontWeight.w200,
+        color: colors.primary,
       ),
     );
   }
@@ -1411,7 +1406,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: colors.highlight,
+                color: colors.textLight,
               ),
             ),
             const SizedBox(height: 8),
@@ -1498,7 +1493,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: colors.highlight,
+                color: colors.textLight,
               ),
             ),
             const SizedBox(height: 8),
@@ -1549,14 +1544,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: colors.highlight.withValues(alpha: 0.15),
+                    color: colors.primary.withValues(alpha: 0.15),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '${index + 1}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: colors.highlight,
+                      color: colors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1691,14 +1686,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: colors.highlight,
+              color: colors.textLight,
             ),
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: colors.background,
+              color: colors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: colors.dark),
             ),
@@ -1851,7 +1846,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: colors.background,
+        color: colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: colors.dark),
       ),
