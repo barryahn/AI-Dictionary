@@ -8,27 +8,27 @@ class DarkTheme extends AppTheme {
   @override
   CustomColors get customColors => const CustomColors(
     // 기본 다크 색상들 - 어두운 회색과 검정 계열
-    primary: Color(0xFF4A5568), // 메인 어두운 회색
-    secondary: Color(0xFF1A202C), // 메인 베이지
-    white: Colors.black,
+    primary: Color(0xFF8EBBFF), // 메인 파란색
+    secondary: Color(0xFF364267), // 보조 회색
+    white: Color(0xFF0e101c),
     extraLight: Color(0xFF1A202C), // 매우 어두운 회색
     light: Color(0xFF2D3748), // 어두운 회색
     dark: Color(0xFF5A6166), // 살짝 어두운 회색
     accent: Color(0xFF718096), // 액센트 회색
     // 텍스트 색상들
-    text: Color(0xFFE2E8F0), // 밝은 텍스트 색상
+    text: Color(0xFFF4F5FC), // 밝은 텍스트 색상
     textLight: Color(0xFFA0AEC0), // 보조 텍스트 색상
     // 배경 색상들
-    background: Color(0xFF0F1419), // 깊이 있는 다크 배경
+    background: Color(0xFF24293E), // 깊이 있는 다크 배경
     surface: Color(0xFF1A202C), // 카드/표면 배경색
     // 강조 색상들
     divider: Color(0xFFA0AEC0), // 구분선 색상
     highlight: Color(0xFFF9A4A0), // 하이라이트 색상 (밝은 주황색)
     // 상태 색상들
     success: Color(0xFF06402B), // 성공/긍정 색상 (초록색)
-    warning: Color(0xFFCF6679), // 경고 색상 (주황색)
-    light_warning: Color(0xFFDC7F4A), // 경고 색상
-    error: Color(0xFF6B020F), // 오류 색상 (코랄색)
+    warning: Color(0xFFF54B64), // 경고 색상 (주황색)
+    light_warning: Color(0xFFF78361), // 경고 색상
+    error: Color(0xFFF78361), // 오류 색상 (코랄색)
     info: Color(0xFF0088DC), // 정보 색상 (파란색)
     conversation_A: Color(0xFF3F6FAF), // 대화 색상 A
     conversation_B: Color(0xFF4B754B), // 대화 색상 B
