@@ -59,12 +59,10 @@ class RecommendedTheme extends AppTheme {
     colorScheme: ColorScheme.light(
       primary: customColors.primary,
       secondary: customColors.accent,
-      background: customColors.background,
       surface: customColors.surface,
       error: customColors.error,
       onPrimary: customColors.text,
       onSecondary: customColors.text,
-      onBackground: customColors.text,
       onSurface: customColors.text,
       onError: Colors.white,
     ),
