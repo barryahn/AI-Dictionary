@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: colors.accent,
+                  color: colors.light,
                   shape: BoxShape.circle,
                 ),
                 child:
@@ -169,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _showLoginDialog(loc);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.accent,
+                    backgroundColor: colors.light,
                     foregroundColor: colors.text,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -404,12 +404,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: isSelected ? colors.accent : colors.primary,
-                width: isSelected ? 2 : 1,
+                color: isSelected ? colors.textLight : colors.textLight,
+                width: isSelected ? 2 : 1.4,
               ),
-              color: isSelected ? colors.light : Colors.transparent,
+              color: isSelected ? colors.white : Colors.transparent,
             ),
-            child: Icon(icon, color: colors.text, size: 24),
+            child: isSelected
+                ? Icon(icon, color: colors.primary, size: 24)
+                : Icon(icon, color: colors.text, size: 24),
           ),
           const SizedBox(height: 8),
           Text(
