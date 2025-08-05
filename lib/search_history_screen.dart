@@ -279,7 +279,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12),
                           elevation: 2,
-                          color: colors.extraLight,
+                          color: colors.white,
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(16),
                             title: session.cards.length == 1
@@ -287,7 +287,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                     session.cards.first.query,
                                     style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                       color: colors.text,
                                     ),
                                   )
@@ -298,7 +298,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                           text: session.cards.first.query,
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w600,
                                             color: colors.text,
                                           ),
                                         ),
@@ -307,7 +307,8 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                               ' ${AppLocalizations.of(context).and_others} ${session.cards.length - 1}${AppLocalizations.of(context).items}',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: colors.text,
+                                            color: colors.primary,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ],
@@ -331,8 +332,8 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                       .join(', '),
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: colors.highlight,
-                                    fontWeight: FontWeight.w500,
+                                    color: colors.textLight,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ],
@@ -346,14 +347,14 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: colors.accent,
+                                    color: colors.textLight,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     '${session.cards.length}개',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: colors.text,
+                                      color: colors.background,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
