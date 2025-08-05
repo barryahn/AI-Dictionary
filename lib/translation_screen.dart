@@ -824,7 +824,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white, width: 10),
+          border: Border.all(color: Colors.transparent, width: 10),
           color: colors.white,
         ),
         margin: const EdgeInsets.all(3),
