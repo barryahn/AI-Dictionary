@@ -8,18 +8,18 @@ class DarkTheme extends AppTheme {
   @override
   CustomColors get customColors => const CustomColors(
     // 기본 다크 색상들 - 어두운 회색과 검정 계열
-    primary: Color(0xFF8EBBFF), // 메인 파란색
-    secondary: Color(0xFF364267), // 보조 회색
-    white: Color(0xFF0e101c),
-    extraLight: Color(0xFF1A202C), // 매우 어두운 회색
-    light: Color(0xFF2D3748), // 어두운 회색
-    dark: Color(0xFF5A6166), // 살짝 어두운 회색
+    primary: Color(0xFFB67CFA), // 메인 파란색
+    secondary: Color(0xFF1C1722), // 보조 회색
+    white: Color(0xFF191919),
+    extraLight: Color(0xFF1D1D1D), // 매우 어두운 회색
+    light: Color(0xFF2A2A2A), // 어두운 회색
+    dark: Color(0xFF373737), // 살짝 어두운 회색
     accent: Color(0xFF718096), // 액센트 회색
     // 텍스트 색상들
-    text: Color(0xFFF4F5FC), // 밝은 텍스트 색상
-    textLight: Color(0xFFA0AEC0), // 보조 텍스트 색상
+    text: Color(0xFFF0F0F0), // 밝은 텍스트 색상
+    textLight: Color(0xFF9B9B9B), // 보조 텍스트 색상
     // 배경 색상들
-    background: Color(0xFF24293E), // 깊이 있는 다크 배경
+    background: Color(0xFF232323), // 깊이 있는 다크 배경
     surface: Color(0xFF1A202C), // 카드/표면 배경색
     // 강조 색상들
     divider: Color(0xFFA0AEC0), // 구분선 색상
@@ -42,8 +42,10 @@ class DarkTheme extends AppTheme {
     scaffoldBackgroundColor: customColors.background,
     primaryColor: customColors.primary,
     appBarTheme: AppBarTheme(
-      backgroundColor: customColors.light,
+      backgroundColor: customColors.background,
       foregroundColor: customColors.text,
+      surfaceTintColor: customColors.background,
+      shadowColor: customColors.background,
     ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: customColors.text),
@@ -55,12 +57,10 @@ class DarkTheme extends AppTheme {
     colorScheme: ColorScheme.dark(
       primary: customColors.primary,
       secondary: customColors.accent,
-      background: customColors.background,
       surface: customColors.surface,
       error: customColors.error,
       onPrimary: customColors.text,
       onSecondary: customColors.text,
-      onBackground: customColors.text,
       onSurface: customColors.text,
       onError: Colors.white,
     ),
