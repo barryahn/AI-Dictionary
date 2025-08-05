@@ -821,8 +821,13 @@ class TranslationScreenState extends State<TranslationScreen> {
           end: Alignment.bottomRight,
         ),
       ),
-      child: Material(
-        color: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white, width: 10),
+          color: colors.white,
+        ),
+        margin: const EdgeInsets.all(3),
         child: InkWell(
           onTap: _isLoading ? null : _translateText,
           borderRadius: BorderRadius.circular(16),
@@ -832,9 +837,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        colors.background,
-                      ),
+                      valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
                       strokeWidth: 2,
                     ),
                   )
@@ -843,17 +846,26 @@ class TranslationScreenState extends State<TranslationScreen> {
                     children: [
                       Icon(
                         Icons.translate,
-                        color: colors.background,
+                        color: colors.primary,
                         size: 20,
                         weight: 800,
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        AppLocalizations.of(context).translate_button,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                          color: colors.background,
+                      ShaderMask(
+                        shaderCallback: (Rect bounds) {
+                          return LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [colors.primary, colors.secondary],
+                          ).createShader(bounds);
+                        },
+                        child: Text(
+                          AppLocalizations.of(context).translate_button,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white, // 반드시 있어야 gradient가 적용됨
+                          ),
                         ),
                       ),
                     ],
