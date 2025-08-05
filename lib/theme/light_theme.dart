@@ -9,7 +9,7 @@ class LightTheme extends AppTheme {
   CustomColors get customColors => const CustomColors(
     // 기본 회색 색상들
     primary: Color(0xFFE07A5F), // 메인 회색
-    secondary: Color(0xFFf3bcae), // 메인 베이지
+    secondary: Color(0xFFAAC133), // 메인 베이지
     white: Colors.white,
     extraLight: Color(0xFFF9FAFB), // 매우 밝은 회색
     light: Color(0xFFF3F4F6), // 밝은 회색

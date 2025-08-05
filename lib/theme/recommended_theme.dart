@@ -10,18 +10,18 @@ class RecommendedTheme extends AppTheme {
     // 기본 베이지 색상들
     primary: Color(0xFFE07A5F), // 메인 베이지
     // Secondary
-    secondary: Color(0xFFf3bcae), // 메인 베이지
+    secondary: Color(0xFFAAC133), // 메인 베이지
 
     white: Colors.white,
     light: Color(0xFFf9e9db), // 밝은 베이지
-    extraLight: Color.fromARGB(255, 245, 247, 244), // 더 밝은 베이지
-    dark: Color.fromARGB(255, 100, 97, 96), // 어두운 베이지
+    extraLight: Color(0xFFf5f7f4), // 더 밝은 베이지
+    dark: Color(0xFF646160), // 어두운 베이지
     accent: Color(0xFFE8DCC0), // 액센트 베이지
     // 텍스트 색상들
-    text: Color.fromARGB(255, 50, 48, 48), // 주요 텍스트 색상
-    textLight: Color.fromARGB(255, 116, 112, 111), // 보조 텍스트 색상
+    text: Color(0xFF323030), // 주요 텍스트 색상
+    textLight: Color(0xFF74706F), // 보조 텍스트 색상
     // 배경 색상들
-    background: Color.fromARGB(255, 248, 250, 247), // 메인 배경색
+    background: Color(0xFFF8FAF7), // 메인 배경색
     surface: Colors.white, // 카드/표면 배경색
     // 강조 색상들
     divider: Color(0xFFE07A5F), // 구분선 색상
