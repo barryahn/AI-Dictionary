@@ -8,8 +8,8 @@ class LightTheme extends AppTheme {
   @override
   CustomColors get customColors => const CustomColors(
     // 기본 회색 색상들
-    primary: Color(0xFF6B7280), // 메인 회색
-    secondary: Color(0xFFF5F1E8), // 메인 베이지
+    primary: Color(0xFFE07A5F), // 메인 회색
+    secondary: Color(0xFFf3bcae), // 메인 베이지
     white: Colors.white,
     extraLight: Color(0xFFF9FAFB), // 매우 밝은 회색
     light: Color(0xFFF3F4F6), // 밝은 회색
@@ -42,8 +42,10 @@ class LightTheme extends AppTheme {
     scaffoldBackgroundColor: customColors.background,
     primaryColor: customColors.primary,
     appBarTheme: AppBarTheme(
-      backgroundColor: customColors.light,
+      backgroundColor: customColors.background,
       foregroundColor: customColors.text,
+      surfaceTintColor: customColors.background,
+      shadowColor: customColors.background,
     ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: customColors.text),
@@ -55,12 +57,10 @@ class LightTheme extends AppTheme {
     colorScheme: ColorScheme.light(
       primary: customColors.primary,
       secondary: customColors.accent,
-      background: customColors.background,
       surface: customColors.surface,
       error: customColors.error,
       onPrimary: customColors.text,
       onSecondary: customColors.text,
-      onBackground: customColors.text,
       onSurface: customColors.text,
       onError: Colors.white,
     ),
