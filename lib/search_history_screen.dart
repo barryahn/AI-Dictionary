@@ -341,25 +341,21 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
+                                /* Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 4,
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: colors.textLight,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
                                   child: Text(
                                     '${session.cards.length}개',
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      color: colors.background,
+                                      fontSize: 14,
+                                      color: colors.secondary,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 8), */
                                 IconButton(
                                   icon: Icon(
                                     Icons.delete,
