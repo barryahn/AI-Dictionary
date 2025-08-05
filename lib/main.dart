@@ -183,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: colors.background,
+          backgroundColor: colors.white,
         ),
       ),
     );
@@ -240,18 +240,18 @@ class _HomeTabState extends State<_HomeTab> {
     final colors = themeService.colors;
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: colors.white,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).get('app_title'),
           style: TextStyle(
-            color: colors.text,
+            color: colors.primary,
             fontSize: 24,
             fontWeight: FontWeight.bold,
             fontFamily: 'SunBatang',
           ),
         ),
-        backgroundColor: colors.background,
+        backgroundColor: colors.white,
         elevation: 0,
       ),
       body: Padding(
@@ -392,7 +392,7 @@ class _HomeTabState extends State<_HomeTab> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: colors.light,
+                  color: colors.extraLight,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: const EdgeInsets.symmetric(
