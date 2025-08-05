@@ -14,7 +14,7 @@ class RecommendedTheme extends AppTheme {
 
     white: Colors.white,
     light: Color(0xFFf9e9db), // 밝은 베이지
-    extraLight: Color.fromARGB(255, 247, 249, 245), // 더 밝은 베이지
+    extraLight: Color.fromARGB(255, 245, 247, 244), // 더 밝은 베이지
     dark: Color.fromARGB(255, 100, 97, 96), // 어두운 베이지
     accent: Color(0xFFE8DCC0), // 액센트 베이지
     // 텍스트 색상들
