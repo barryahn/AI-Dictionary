@@ -392,7 +392,7 @@ class _HomeTabState extends State<_HomeTab> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: colors.extraLight,
+                  color: colors.background,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: const EdgeInsets.symmetric(
