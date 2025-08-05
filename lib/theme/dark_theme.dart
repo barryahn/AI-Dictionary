@@ -9,6 +9,8 @@ class DarkTheme extends AppTheme {
   CustomColors get customColors => const CustomColors(
     // 기본 다크 색상들 - 어두운 회색과 검정 계열
     primary: Color(0xFF4A5568), // 메인 어두운 회색
+    secondary: Color(0xFF1A202C), // 메인 베이지
+    white: Colors.black,
     extraLight: Color(0xFF1A202C), // 매우 어두운 회색
     light: Color(0xFF2D3748), // 어두운 회색
     dark: Color(0xFF5A6166), // 살짝 어두운 회색

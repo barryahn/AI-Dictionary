@@ -8,11 +8,13 @@ abstract class AppTheme {
 
 class CustomColors {
   final Color primary;
+  final Color secondary;
   final Color background;
   final Color text;
   final Color accent;
 
   // 베이지 색상 팔레트 추가
+  final Color white;
   final Color extraLight;
   final Color light;
   final Color dark;
@@ -32,10 +34,12 @@ class CustomColors {
 
   const CustomColors({
     required this.primary,
+    required this.secondary,
+    required this.white,
+    required this.extraLight,
     required this.background,
     required this.text,
     required this.accent,
-    required this.extraLight,
     required this.light,
     required this.dark,
     required this.textLight,
@@ -69,6 +73,7 @@ class CustomColors {
   /// 색상 팔레트 정보를 반환합니다.
   Map<String, Color> get palette => {
     'primary': primary,
+    'secondary': secondary,
     'extraLight': extraLight,
     'light': light,
     'dark': dark,

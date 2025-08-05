@@ -9,6 +9,8 @@ class LightTheme extends AppTheme {
   CustomColors get customColors => const CustomColors(
     // 기본 회색 색상들
     primary: Color(0xFF6B7280), // 메인 회색
+    secondary: Color(0xFFF5F1E8), // 메인 베이지
+    white: Colors.white,
     extraLight: Color(0xFFF9FAFB), // 매우 밝은 회색
     light: Color(0xFFF3F4F6), // 밝은 회색
     dark: Color(0xFF4B5563), // 어두운 회색
@@ -17,7 +19,7 @@ class LightTheme extends AppTheme {
     text: Color(0xFF1F2937), // 주요 텍스트 색상
     textLight: Color(0xFF6B7280), // 보조 텍스트 색상
     // 배경 색상들
-    background: Color(0xFFFFFFFF), // 순백 배경색
+    background: Color(0xFFf5f5f5), // 순백 배경색
     surface: Color(0xFFF9FAFB), // 카드/표면 배경색
     // 강조 색상들
     divider: Color(0xFF3B82F6), // 구분선 색상

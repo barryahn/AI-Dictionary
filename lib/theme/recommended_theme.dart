@@ -8,17 +8,21 @@ class RecommendedTheme extends AppTheme {
   @override
   CustomColors get customColors => const CustomColors(
     // 기본 베이지 색상들
-    primary: Color(0xFFD4C4A8), // 메인 베이지
-    extraLight: Color(0xFFF9F5ED), // 더 밝은 베이지
-    light: Color(0xFFF5F1E8), // 밝은 베이지
-    dark: Color.fromARGB(255, 151, 138, 124), // 어두운 베이지
+    primary: Color(0xFFE07A5F), // 메인 베이지
+    // Secondary
+    secondary: Color(0xFFf3bcae), // 메인 베이지
+
+    white: Colors.white,
+    light: Color(0xFFf9e9db), // 밝은 베이지
+    extraLight: Color(0xFFfcf6f0), // 더 밝은 베이지
+    dark: Color(0xFF6d2d21), // 어두운 베이지
     accent: Color(0xFFE8DCC0), // 액센트 베이지
     // 텍스트 색상들
-    text: Color(0xFF5D4E37), // 주요 텍스트 색상
-    textLight: Color(0xFF8B7355), // 보조 텍스트 색상
+    text: Color(0xFF3a1510), // 주요 텍스트 색상
+    textLight: Color(0xFF7a5b56), // 보조 텍스트 색상
     // 배경 색상들
-    background: Color(0xFFFDFBF7), // 메인 배경색
-    surface: Color(0xFFF5F1E8), // 카드/표면 배경색
+    background: Color(0xFFfcf6f0), // 메인 배경색
+    surface: Colors.white, // 카드/표면 배경색
     // 강조 색상들
     divider: Color(0xFFE07A5F), // 구분선 색상
     highlight: Color(0xFFE07A5F), // 하이라이트 색상
@@ -40,8 +44,10 @@ class RecommendedTheme extends AppTheme {
     scaffoldBackgroundColor: customColors.background,
     primaryColor: customColors.primary,
     appBarTheme: AppBarTheme(
-      backgroundColor: customColors.light,
+      backgroundColor: customColors.background,
       foregroundColor: customColors.text,
+      surfaceTintColor: customColors.background,
+      shadowColor: customColors.background,
     ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: customColors.text),
