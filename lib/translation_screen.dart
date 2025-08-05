@@ -175,7 +175,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: colors.primary,
+      backgroundColor: colors.light,
       textColor: colors.text,
     );
   }
@@ -215,7 +215,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 LanguageService.getLocalizedTranslationLanguages(
                   AppLocalizations.of(context),
@@ -224,7 +224,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                 )['name']!,
                 style: TextStyle(
                   fontSize: 18,
-                  color: colors.textLight,
+                  color: colors.primary,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -404,7 +404,7 @@ class TranslationScreenState extends State<TranslationScreen> {
           menuItemStyleData: const MenuItemStyleData(height: 40),
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
-              color: colors.light,
+              color: colors.background,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -461,7 +461,7 @@ class TranslationScreenState extends State<TranslationScreen> {
           menuItemStyleData: const MenuItemStyleData(height: 40),
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
-              color: colors.light,
+              color: colors.background,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -474,7 +474,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   Widget _buildTonePicker(CustomColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: colors.light,
+        color: colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -615,7 +615,9 @@ class TranslationScreenState extends State<TranslationScreen> {
                               width: 48,
                               height: 8,
                               decoration: BoxDecoration(
-                                color: isSelected ? colors.text : colors.dark,
+                                color: isSelected
+                                    ? colors.primary
+                                    : colors.textLight,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -628,7 +630,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                     ? FontWeight.bold
                                     : FontWeight.w500,
                                 color: isSelected
-                                    ? colors.text
+                                    ? colors.primary
                                     : colors.textLight,
                               ),
                             ),
@@ -663,7 +665,7 @@ class TranslationScreenState extends State<TranslationScreen> {
     return Container(
       height: _inputFieldHeight,
       decoration: BoxDecoration(
-        color: colors.light,
+        color: colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -809,18 +811,15 @@ class TranslationScreenState extends State<TranslationScreen> {
       height: 56,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
+        /* color: colors.primary, */
         gradient: LinearGradient(
-          colors: [colors.primary.withValues(alpha: 0.8), colors.light],
+          colors: [
+            colors.primary.withValues(alpha: 0.9),
+            colors.secondary.withValues(alpha: 0.9),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.dark.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -833,20 +832,28 @@ class TranslationScreenState extends State<TranslationScreen> {
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(colors.text),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        colors.background,
+                      ),
                       strokeWidth: 2,
                     ),
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.translate, color: colors.text, size: 20),
+                      Icon(
+                        Icons.translate,
+                        color: colors.background,
+                        size: 20,
+                        weight: 800,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         AppLocalizations.of(context).translate_button,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: colors.text,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: colors.background,
                         ),
                       ),
                     ],
@@ -863,7 +870,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       height: _resultFieldHeight,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: colors.light,
+        color: colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
