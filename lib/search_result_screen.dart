@@ -803,7 +803,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, colors.background],
+                      colors: [
+                        colors.white.withValues(alpha: 0.0),
+                        colors.background,
+                      ],
                     ),
                   ),
                   child: bottomBar,
