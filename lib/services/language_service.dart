@@ -93,23 +93,26 @@ class LanguageService {
   }
 
   // 번역 언어 변경
-  static Future<void> setTranslationLanguages(
-    String fromLang,
-    String toLang,
-  ) async {
-    // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
-    if (fromLang == toLang) {
-      final temp = _fromLanguage;
-      _fromLanguage = _toLanguage;
-      _toLanguage = temp;
-    } else {
-      _fromLanguage = fromLang;
-      _toLanguage = toLang;
+  /// fromLang 또는 toLang만 입력될 수도 있으므로, null 허용 및 분기 처리
+  static Future<void> setTranslationLanguages([
+    String? fromLang,
+    String? toLang,
+  ]) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // 둘 다 null이면 아무것도 하지 않음
+    if (fromLang == null && toLang == null) {
+      return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_fromLanguageKey, _fromLanguage);
-    await prefs.setString(_toLanguageKey, _toLanguage);
+    if (fromLang != null) {
+      _fromLanguage = fromLang;
+      await prefs.setString(_fromLanguageKey, _fromLanguage);
+    }
+    if (toLang != null) {
+      _toLanguage = toLang;
+      await prefs.setString(_toLanguageKey, _toLanguage);
+    }
 
     // 언어 변경 알림 전송
     _languageController.add({
@@ -164,17 +167,17 @@ class LanguageService {
 
   static String getLanguageNameInKorean(String languageCode) {
     switch (languageCode) {
-      case korean || 'ko':
+      case korean || 'ko' || '한국어':
         return '한국어';
-      case english || 'en':
+      case english || 'en' || 'English':
         return '영어';
-      case chinese || 'zh':
+      case chinese || 'zh' || '中文':
         return '중국어';
-      case taiwanese || 'zh-TW':
+      case taiwanese || 'zh-TW' || '繁體中文':
         return '대만어';
-      case french || 'fr':
+      case french || 'fr' || 'Français':
         return '프랑스어';
-      case spanish || 'es':
+      case spanish || 'es' || 'Español':
         return '스페인어';
       default:
         return 'nothing';

@@ -510,6 +510,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // 포커스 해제하여 키보드가 나타나지 않도록 함
                 FocusScope.of(context).unfocus();
                 await LanguageService.setLanguage(language['code']!);
+                await LanguageService.setTranslationLanguages(
+                  LanguageService.getLanguageNameInKorean(language['code']!),
+                  LanguageService.toLanguage,
+                );
                 setState(() {}); // UI 업데이트
                 Navigator.pop(context);
                 _showLanguageChangedDialog(language['name']!);
