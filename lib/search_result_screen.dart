@@ -12,6 +12,7 @@ import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'package:google_mlkit_language_id/google_mlkit_language_id.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -978,6 +979,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final statusBarHeight = MediaQuery.of(context).padding.top;
     final appBarHeight = statusBarHeight + 56;
 
+    // 스트리밍 중인지 확인 (마지막 검색이고 아직 로딩 중인 경우)
+    final bool isStreaming =
+        index == _searchQueries.length - 1 && _isLoading[index];
+
     // NDJSON 파싱 시도 (여러 JSON 객체를 하나로 합치기)
     Map<String, dynamic>? parsedData;
     try {
@@ -1024,12 +1029,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         //print('파싱된 데이터: $parsedData');
       } else {
         //print('=== NDJSON 파싱 실패 - 빈 데이터 (인덱스: $index) ===');
-        return _buildFallbackResultSection(query, aiResponse, index);
+        return _buildFallbackResultSection(
+          query,
+          aiResponse,
+          index,
+          isStreaming,
+        );
       }
     } catch (e) {
       print('=== NDJSON 파싱 실패 (인덱스: $index) ===');
       print('파싱 오류: $e');
-      return _buildFallbackResultSection(query, aiResponse, index);
+      return _buildFallbackResultSection(query, aiResponse, index, isStreaming);
     }
 
     // L1 형식인지 L2 형식인지 판별
@@ -1042,6 +1052,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         index,
         colors,
         appBarHeight,
+        isStreaming,
       );
     } else {
       return _buildL2ResultSection(
@@ -1050,6 +1061,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         index,
         colors,
         appBarHeight,
+        isStreaming,
       );
     }
   }
@@ -1082,6 +1094,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     int index,
     CustomColors colors,
     double appBarHeight,
+    bool isStreaming,
   ) {
     return AutoScrollTag(
       key: Key(index.toString()),
@@ -1132,42 +1145,62 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 8),
 
               // 사전적 뜻 (L1 형식에서는 각 뜻마다 뉘앙스가 포함됨)
+              _buildSectionTitle(
+                AppLocalizations.of(context).dictionary_meaning,
+                colors,
+              ),
+              const SizedBox(height: 12),
               if (parsedData['사전적_뜻'] != null) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).dictionary_meaning,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
-                const SizedBox(height: 12),
+              ] else if (isStreaming) ...[
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildL1DictionaryMeanings(null, colors),
+                ),
               ],
+              const SizedBox(height: 12),
 
               // 대화 예시
+              _buildSectionTitle(
+                AppLocalizations.of(context).conversation_examples,
+                colors,
+              ),
+              const SizedBox(height: 12),
               if (parsedData['대화_예시'] != null) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).conversation_examples,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 _buildConversationExamples(
                   parsedData['대화_예시'],
                   _fromLanguage,
                   _toLanguage,
                   colors,
                 ),
-                const SizedBox(height: 36),
+              ] else if (isStreaming) ...[
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildConversationExamples(
+                    null,
+                    _fromLanguage,
+                    _toLanguage,
+                    colors,
+                  ),
+                ),
               ],
+              const SizedBox(height: 36),
 
               // 비슷한 표현
+              _buildSectionTitle(
+                AppLocalizations.of(context).similar_expressions,
+                colors,
+              ),
+              const SizedBox(height: 12),
               if (parsedData['비슷한_표현'] != null) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).similar_expressions,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
-                const SizedBox(height: 48),
+              ] else if (isStreaming) ...[
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildSimilarExpressions(null, colors),
+                ),
               ],
+              const SizedBox(height: 48),
 
               Divider(thickness: 2, color: colors.primary),
             ],
@@ -1183,6 +1216,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     int index,
     CustomColors colors,
     double appBarHeight,
+    bool isStreaming,
   ) {
     return AutoScrollTag(
       key: Key(index.toString()),
@@ -1240,6 +1274,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 const SizedBox(height: 12),
                 _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
                 const SizedBox(height: 24),
+              ] else if (isStreaming) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).dictionary_meaning,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildL1DictionaryMeanings(null, colors),
+                ),
+                const SizedBox(height: 24),
               ],
 
               // 대화 예시
@@ -1256,6 +1301,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   colors,
                 ),
                 const SizedBox(height: 24),
+              ] else if (isStreaming) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).conversation_examples,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildConversationExamples(
+                    null,
+                    _fromLanguage,
+                    _toLanguage,
+                    colors,
+                  ),
+                ),
+                const SizedBox(height: 24),
               ],
 
               // 비슷한 표현
@@ -1266,6 +1327,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
                 const SizedBox(height: 12),
                 _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
+                const SizedBox(height: 48),
+              ] else if (isStreaming) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).similar_expressions,
+                  colors,
+                ),
+                const SizedBox(height: 12),
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildSimilarExpressions(null, colors),
+                ),
                 const SizedBox(height: 48),
               ],
 
@@ -1281,6 +1353,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     String query,
     String aiResponse,
     int index,
+    bool isStreaming,
   ) {
     final themeService = context.read<ThemeService>();
     final colors = themeService.colors;
@@ -1315,18 +1388,29 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ],
               ),
               Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
-              Text(
-                query,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: colors.text,
+              Skeletonizer(
+                enabled: isStreaming,
+                child: Text(
+                  query,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: colors.text,
+                  ),
                 ),
               ),
+
               const SizedBox(height: 20),
-              GptMarkdown(
-                aiResponse,
-                style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
+              Skeletonizer(
+                enabled: isStreaming,
+                child: GptMarkdown(
+                  aiResponse,
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                    color: colors.text,
+                  ),
+                ),
               ),
               const SizedBox(height: 4),
               Divider(thickness: 2, color: colors.primary),
@@ -1445,6 +1529,41 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget _buildL1DictionaryMeanings(dynamic meanings, CustomColors colors) {
     // L1 형식에 맞게 처리
+    if (meanings == null) {
+      // 스켈레톤용 더미 데이터 생성
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '명사',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: colors.textLight,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildSingleL1DictionaryMeaning(
+            {
+              '번역': {
+                '번역단어': 'example',
+                '뉘앙스': 'This is a sample translation with nuance',
+              },
+            },
+            colors,
+            0,
+          ),
+          _buildSingleL1DictionaryMeaning(
+            {
+              '번역': {'번역단어': 'sample', '뉘앙스': 'Another example translation'},
+            },
+            colors,
+            1,
+          ),
+        ],
+      );
+    }
+
     if (meanings is Map<String, dynamic>) {
       // 단일 사전적 뜻 객체 처리
       return _buildSingleL1DictionaryMeaning(meanings, colors, 0);
@@ -1607,6 +1726,46 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     String toLanguage,
     CustomColors colors,
   ) {
+    // 스켈레톤용 더미 데이터 처리
+    if (examples == null) {
+      return Column(
+        children: [
+          _buildSingleConversationExample(
+            {
+              '중국어': [
+                {'speaker': 'A', 'line': '안녕하세요, 어떻게 지내세요?'},
+                {'speaker': 'B', 'line': '네, 잘 지내고 있습니다. 감사합니다.'},
+              ],
+              '영어': [
+                {'speaker': 'A', 'line': 'Hello, how are you?'},
+                {'speaker': 'B', 'line': 'I\'m doing well, thank you.'},
+              ],
+            },
+            fromLanguage,
+            toLanguage,
+            colors,
+            0,
+          ),
+          _buildSingleConversationExample(
+            {
+              '중국어': [
+                {'speaker': 'A', 'line': '오늘 날씨가 좋네요.'},
+                {'speaker': 'B', 'line': '네, 정말 맑고 따뜻해요.'},
+              ],
+              '영어': [
+                {'speaker': 'A', 'line': 'The weather is nice today.'},
+                {'speaker': 'B', 'line': 'Yes, it\'s really clear and warm.'},
+              ],
+            },
+            fromLanguage,
+            toLanguage,
+            colors,
+            1,
+          ),
+        ],
+      );
+    }
+
     // NDJSON 형식에 맞게 처리
     if (examples is Map<String, dynamic>) {
       // 단일 대화 예시 객체 처리
@@ -1814,6 +1973,29 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildSimilarExpressions(dynamic expressions, CustomColors colors) {
+    // 스켈레톤용 더미 데이터 처리
+    if (expressions == null) {
+      return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          _buildSingleSimilarExpression({
+            '단어': 'example',
+            '뜻': '예시, 표본',
+          }, colors),
+          _buildSingleSimilarExpression({
+            '단어': 'sample',
+            '뜻': '샘플, 견본',
+          }, colors),
+          _buildSingleSimilarExpression({
+            '단어': 'instance',
+            '뜻': '사례, 예',
+          }, colors),
+          _buildSingleSimilarExpression({'단어': 'case', '뜻': '경우, 사례'}, colors),
+        ],
+      );
+    }
+
     // NDJSON 형식에 맞게 처리
     if (expressions is Map<String, dynamic>) {
       // 단일 비슷한 표현 객체 처리
