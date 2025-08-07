@@ -208,14 +208,63 @@ class LanguageService {
   // 번역 지원 언어 목록 (다국어 지원)
   static List<Map<String, String>> getLocalizedTranslationLanguages(
     AppLocalizations loc,
-  ) => [
-    {'code': '영어', 'name': loc.english},
-    {'code': '한국어', 'name': loc.korean},
-    {'code': '중국어', 'name': loc.chinese},
-    {'code': '대만어', 'name': loc.taiwanese},
-    {'code': '스페인어', 'name': loc.spanish},
-    {'code': '프랑스어', 'name': loc.french},
-  ];
+  ) {
+    final List<Map<String, String>> languages = [
+      {'code': '영어', 'name': loc.english},
+      {'code': '한국어', 'name': loc.korean},
+      {'code': '중국어', 'name': loc.chinese},
+      {'code': '대만어', 'name': loc.taiwanese},
+      {'code': '스페인어', 'name': loc.spanish},
+      {'code': '프랑스어', 'name': loc.french},
+    ];
+
+    // 사용자의 시스템 로케일 확인
+    try {
+      final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+      final langCode = systemLocale.languageCode;
+      final countryCode = systemLocale.countryCode;
+
+      // 시스템 로케일에 해당하는 언어 코드 찾기
+      String? userLanguageCode;
+      if (langCode == 'ko') {
+        userLanguageCode = '한국어';
+      } else if (langCode == 'en') {
+        userLanguageCode = '영어';
+      } else if (langCode == 'zh' && countryCode == 'TW') {
+        userLanguageCode = '대만어';
+      } else if (langCode == 'zh') {
+        userLanguageCode = '중국어';
+      } else if (langCode == 'fr') {
+        userLanguageCode = '프랑스어';
+      } else if (langCode == 'es') {
+        userLanguageCode = '스페인어';
+      }
+
+      // 사용자 언어를 가장 위로 정렬
+      if (userLanguageCode != null) {
+        final userLanguage = languages.firstWhere(
+          (lang) => lang['code'] == userLanguageCode,
+          orElse: () => languages.first,
+        );
+
+        final sortedLanguages = <Map<String, String>>[];
+        sortedLanguages.add(userLanguage);
+
+        for (final lang in languages) {
+          if (lang['code'] != userLanguageCode) {
+            sortedLanguages.add(lang);
+          }
+        }
+
+        return sortedLanguages;
+      }
+    } catch (e) {
+      // 에러 발생 시 기본 순서 반환
+      print('언어 정렬 중 오류 발생: $e');
+    }
+
+    return languages;
+  }
 
   // 번역 지원 언어 목록 (기본 - 하위 호환성)
   static List<String> get translationLanguages => [

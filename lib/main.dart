@@ -259,123 +259,136 @@ class _HomeTabState extends State<_HomeTab> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // 언어 선택 영역
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // 출발 언어 선택 드롭다운
-                SizedBox(
-                  width: 140,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        'Select Item',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).hintColor,
-                        ),
-                      ),
-                      items:
-                          LanguageService.getLocalizedTranslationLanguages(
-                                AppLocalizations.of(context),
-                              )
-                              .map(
-                                (Map<String, String> item) =>
-                                    DropdownMenuItem<String>(
-                                      value: item['code']!,
-                                      child: Text(
-                                        item['name']!,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: colors.text,
-                                        ),
-                                      ),
-                                    ),
-                              )
-                              .toList(),
-                      value: selectedFromLanguage,
-                      onChanged: (String? newValue) {
-                        if (newValue == null) return;
-                        _updateLanguages(newValue, selectedToLanguage);
-                      },
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        height: 40,
-                        width: 140,
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(height: 40),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          color: colors.light,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '어떤 언어',
+                      style: TextStyle(fontSize: 20, color: colors.primary),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                GestureDetector(
-                  onTap: () {
-                    _updateLanguages(selectedToLanguage, selectedFromLanguage);
-                  },
-                  child: Icon(Icons.arrow_forward_ios, color: colors.text),
-                ),
-                const SizedBox(width: 20),
-                // 도착 언어 선택 드롭다운
-                SizedBox(
-                  width: 140,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        'Select Item',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).hintColor,
-                        ),
-                      ),
-                      items:
-                          LanguageService.getLocalizedTranslationLanguages(
-                                AppLocalizations.of(context),
-                              )
-                              // .where((item) => item != selectedFromLanguage) // 이 부분을 잠시 제거하여 모든 언어 표시
-                              .map(
-                                (Map<String, String> item) =>
-                                    DropdownMenuItem<String>(
-                                      value: item['code']!,
-                                      child: Text(
-                                        item['name']!,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: colors.text,
-                                        ),
-                                      ),
-                                    ),
-                              )
-                              .toList(),
-                      value: selectedToLanguage,
-                      onChanged: (String? newValue) {
-                        if (newValue == null) return;
-                        _updateLanguages(selectedFromLanguage, newValue);
-                      },
-                      buttonStyleData: const ButtonStyleData(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        height: 40,
-                        width: 140,
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(height: 40),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          color: colors.light,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+                    TextSpan(
+                      text: '가 궁금하세요?',
+                      style: TextStyle(fontSize: 20, color: colors.text),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
+            const SizedBox(height: 20),
+
+            // 언어 선택 영역
+            // 도착 언어 선택 드롭다운
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder: (context) {
+                    return SizedBox(
+                      height: 600,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Container(
+                            width: 40,
+                            height: 5,
+                            margin: const EdgeInsets.only(top: 8, bottom: 12),
+                            decoration: BoxDecoration(
+                              color: colors.dark.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          const SizedBox(height: 20), // 위쪽 여백 추가
+                          Expanded(
+                            child: ListView(
+                              children:
+                                  LanguageService.getLocalizedTranslationLanguages(
+                                        AppLocalizations.of(context),
+                                      )
+                                      .map(
+                                        (Map<String, String> item) => Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                Navigator.pop(context); // 모달 닫기
+                                                _updateLanguages(
+                                                  selectedFromLanguage,
+                                                  item['code']!,
+                                                );
+                                              },
+                                              child: Container(
+                                                width: double.infinity,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 14.0,
+                                                      horizontal: 36.0,
+                                                    ),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  item['name']!,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: colors.text,
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              ),
+                                            ),
+                                            Divider(
+                                              height: 1,
+                                              thickness: 1,
+                                              color: colors.dark.withValues(
+                                                alpha: 0.1,
+                                              ),
+                                              indent: 24,
+                                              endIndent: 24,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                      .toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(width: 12),
+                    Text(
+                      LanguageService.getLocalizedTranslationLanguages(
+                        AppLocalizations.of(context),
+                      ).firstWhere(
+                        (item) => item['code'] == selectedToLanguage,
+                      )['name']!,
+                      style: TextStyle(fontSize: 18, color: colors.primary),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: colors.dark.withValues(alpha: 0.4),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             const SizedBox(height: 20),
             // 검색창 영역 수정
             GestureDetector(
