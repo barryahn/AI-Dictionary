@@ -285,14 +285,15 @@ class _HomeTabState extends State<_HomeTab> {
                 showModalBottomSheet(
                   context: context,
                   backgroundColor: Colors.white,
+                  isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(20),
                     ),
                   ),
                   builder: (context) {
-                    return SizedBox(
-                      height: 600,
+                    return FractionallySizedBox(
+                      heightFactor: 0.6,
                       child: Column(
                         children: [
                           const SizedBox(height: 12),
@@ -301,11 +302,21 @@ class _HomeTabState extends State<_HomeTab> {
                             height: 5,
                             margin: const EdgeInsets.only(top: 8, bottom: 12),
                             decoration: BoxDecoration(
-                              color: colors.dark.withOpacity(0.2),
+                              color: colors.dark.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          const SizedBox(height: 20), // 위쪽 여백 추가
+                          Text(
+                            '언어',
+                            style: TextStyle(fontSize: 16, color: colors.text),
+                          ),
+                          const SizedBox(height: 12),
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: colors.dark.withValues(alpha: 0.1),
+                          ),
+
                           Expanded(
                             child: ListView(
                               children:
@@ -344,9 +355,8 @@ class _HomeTabState extends State<_HomeTab> {
                                             Divider(
                                               height: 1,
                                               thickness: 1,
-                                              color: colors.dark.withValues(
-                                                alpha: 0.1,
-                                              ),
+                                              color: colors.textLight
+                                                  .withValues(alpha: 0.1),
                                               indent: 24,
                                               endIndent: 24,
                                             ),
@@ -377,7 +387,7 @@ class _HomeTabState extends State<_HomeTab> {
                       ).firstWhere(
                         (item) => item['code'] == selectedToLanguage,
                       )['name']!,
-                      style: TextStyle(fontSize: 18, color: colors.primary),
+                      style: TextStyle(fontSize: 22, color: colors.primary),
                     ),
                     const SizedBox(width: 8),
                     Icon(
