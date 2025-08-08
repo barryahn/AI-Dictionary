@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: colors.light,
+                  color: colors.white,
                   shape: BoxShape.circle,
                 ),
                 child:
@@ -164,18 +164,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               if (!authService.isLoggedIn) ...[
                 const SizedBox(height: 16),
-                ElevatedButton(
+                OutlinedButton(
                   onPressed: () {
                     _showLoginDialog(loc);
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.light,
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: colors.white,
                     foregroundColor: colors.text,
+                    side: BorderSide(
+                      color: colors.text.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: Text(loc.get('login')),
+                  child: Text(
+                    loc.get('login'),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: colors.primary,
+                    ),
+                  ),
                 ),
               ],
               /*
@@ -404,7 +414,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: isSelected ? colors.textLight : colors.textLight,
+                color: isSelected
+                    ? colors.textLight.withValues(alpha: 0.6)
+                    : colors.textLight.withValues(alpha: 0.2),
                 width: isSelected ? 2 : 1.4,
               ),
               color: isSelected ? colors.white : Colors.transparent,
