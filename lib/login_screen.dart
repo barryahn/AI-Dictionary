@@ -351,26 +351,59 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildGoogleLoginButton(AppLocalizations loc, CustomColors colors) {
-    return OutlinedButton.icon(
-      onPressed: _isLoading ? null : () => _handleGoogleLogin(loc),
-      style: OutlinedButton.styleFrom(
-        backgroundColor: colors.google_login,
-        foregroundColor: colors.text,
-        side: BorderSide(color: colors.text.withValues(alpha: 0.2), width: 1.5),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [colors.primary, colors.secondary],
+        ),
       ),
-      icon: Image.asset(
-        'assets/google_logo_new.png',
-        height: 20,
-        width: 20,
-        errorBuilder: (context, error, stackTrace) {
-          return Icon(Icons.g_mobiledata, size: 20, color: colors.text);
-        },
-      ),
-      label: Text(
-        loc.get('google_login') ?? 'Google로 로그인',
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      child: Container(
+        margin: const EdgeInsets.all(1.5), // gradient border width
+        decoration: BoxDecoration(
+          color: colors.google_login,
+          borderRadius: BorderRadius.circular(
+            10.5,
+          ), // inner radius slightly smaller
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: _isLoading ? null : () => _handleGoogleLogin(loc),
+            borderRadius: BorderRadius.circular(10.5),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/google_logo_new.png',
+                    height: 20,
+                    width: 20,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.g_mobiledata,
+                        size: 20,
+                        color: colors.text,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    loc.get('google_login') ?? 'Google로 로그인',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: colors.text,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
