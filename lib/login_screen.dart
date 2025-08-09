@@ -173,18 +173,24 @@ class _LoginScreenState extends State<LoginScreen> {
         prefixIcon: Icon(Icons.email, color: colors.text),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colors.dark),
+          borderSide: BorderSide(
+            color: colors.text.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colors.dark),
+          borderSide: BorderSide(
+            color: colors.text.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colors.accent, width: 2),
+          borderSide: BorderSide(color: colors.text, width: 1.5),
         ),
         filled: true,
-        fillColor: colors.light,
+        fillColor: colors.white,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -220,18 +226,24 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colors.dark),
+          borderSide: BorderSide(
+            color: colors.text.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colors.dark),
+          borderSide: BorderSide(
+            color: colors.text.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colors.accent, width: 2),
+          borderSide: BorderSide(color: colors.text, width: 1.5),
         ),
         filled: true,
-        fillColor: colors.light,
+        fillColor: colors.white,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -255,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Text(
           loc.get('forgot_password'),
           style: TextStyle(
-            color: colors.text,
+            color: colors.textLight,
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -268,8 +280,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return ElevatedButton(
       onPressed: _isLoading ? null : () => _handleSubmit(loc),
       style: ElevatedButton.styleFrom(
-        backgroundColor: colors.accent,
-        foregroundColor: colors.text,
+        backgroundColor: colors.text.withValues(alpha: 0.9),
+        foregroundColor: colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 2,
@@ -285,7 +297,11 @@ class _LoginScreenState extends State<LoginScreen> {
             )
           : Text(
               _isLoginMode ? loc.get('login') : loc.get('register'),
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
     );
   }
@@ -312,7 +328,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       children: [
         Expanded(
-          child: Divider(color: colors.dark.withOpacity(0.3), thickness: 1),
+          child: Divider(
+            color: colors.text.withValues(alpha: 0.3),
+            thickness: 1,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -322,7 +341,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         Expanded(
-          child: Divider(color: colors.dark.withOpacity(0.3), thickness: 1),
+          child: Divider(
+            color: colors.text.withValues(alpha: 0.3),
+            thickness: 1,
+          ),
         ),
       ],
     );
@@ -334,7 +356,7 @@ class _LoginScreenState extends State<LoginScreen> {
       style: OutlinedButton.styleFrom(
         backgroundColor: colors.google_login,
         foregroundColor: colors.text,
-        side: BorderSide(color: colors.dark),
+        side: BorderSide(color: colors.text.withValues(alpha: 0.2), width: 1.5),
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
