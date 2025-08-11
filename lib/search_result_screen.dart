@@ -648,9 +648,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
           ),
           title: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              // 출발 언어 드롭다운
+              /* // 출발 언어 드롭다운
               SizedBox(
                 width: 108,
                 child: DropdownButtonHideUnderline(
@@ -707,26 +706,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              // 화살표 버튼 (언어 위치 바꾸기)
-              GestureDetector(
-                onTap: () {
-                  _updateLanguages(_toLanguage, _fromLanguage);
-                },
-                child: Container(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12,
-                    color: colors.text,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
+              ), */
               // 도착 언어 드롭다운
               SizedBox(
                 width: 108,
