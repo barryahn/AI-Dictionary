@@ -739,12 +739,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     value: _toLanguage,
                     onChanged: (String? newValue) {
                       if (newValue != null) {
-                        // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
-                        if (newValue == _fromLanguage) {
-                          _updateLanguages(_toLanguage, _fromLanguage);
-                        } else {
-                          _updateLanguages(_fromLanguage, newValue);
-                        }
+                        _updateLanguages(_fromLanguage, newValue);
                       }
                     },
                     buttonStyleData: ButtonStyleData(
