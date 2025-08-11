@@ -47,7 +47,7 @@ class AppLocalizations {
       'french': '프랑스어',
 
       // 검색 결과
-      'dictionary_meaning': '사전적 뜻',
+      'dictionary_meaning': '뜻',
       'nuance': '뉘앙스',
       'conversation_examples': '대화 예시',
       'similar_expressions': '비슷한 표현',
@@ -266,7 +266,7 @@ class AppLocalizations {
       'french': 'French',
 
       // Search Results
-      'dictionary_meaning': 'Dictionary Meaning',
+      'dictionary_meaning': 'Meaning',
       'nuance': 'Nuance',
       'conversation_examples': 'Conversation Examples',
       'similar_expressions': 'Similar Expressions',
@@ -498,7 +498,7 @@ class AppLocalizations {
       'french': '法语',
 
       // 搜索结果
-      'dictionary_meaning': '词典含义',
+      'dictionary_meaning': '含义',
       'nuance': '细微差别',
       'conversation_examples': '对话示例',
       'similar_expressions': '相似表达',
@@ -713,7 +713,7 @@ class AppLocalizations {
       'french': '法語',
 
       // 搜尋結果
-      'dictionary_meaning': '辭典含義',
+      'dictionary_meaning': '含義',
       'nuance': '細微差別',
       'conversation_examples': '對話範例',
       'similar_expressions': '相似表達',
@@ -928,7 +928,7 @@ class AppLocalizations {
       'french': 'Français',
 
       // Résultats de recherche
-      'dictionary_meaning': 'Signification du dictionnaire',
+      'dictionary_meaning': 'Signification',
       'nuance': 'Nuance',
       'conversation_examples': 'Exemples de conversation',
       'similar_expressions': 'Expressions similaires',
@@ -1169,7 +1169,7 @@ class AppLocalizations {
       'french': 'Francés',
 
       // Resultados de búsqueda
-      'dictionary_meaning': 'Significado del diccionario',
+      'dictionary_meaning': 'Significado',
       'nuance': 'Matiz',
       'conversation_examples': 'Ejemplos de conversación',
       'similar_expressions': 'Expresiones similares',
