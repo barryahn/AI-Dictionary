@@ -281,6 +281,7 @@ class _HomeTabState extends State<_HomeTab> {
             // 언어 선택 영역
             // 도착 언어 선택 드롭다운
             GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 showModalBottomSheet(
                   context: context,
