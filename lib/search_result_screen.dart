@@ -1136,12 +1136,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 12),
 
               // 대화 예시
-              _buildSectionTitle(
-                AppLocalizations.of(context).conversation_examples,
-                colors,
-              ),
-              const SizedBox(height: 12),
               if (parsedData['대화_예시'] != null) ...[
+                _buildSectionTitle(
+                  AppLocalizations.of(context).conversation_examples,
+                  colors,
+                ),
+                const SizedBox(height: 12),
                 _buildConversationExamples(
                   parsedData['대화_예시'],
                   _fromLanguage,
