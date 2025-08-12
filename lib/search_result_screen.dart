@@ -1136,12 +1136,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 12),
 
               // 대화 예시
+              _buildSectionTitle(
+                AppLocalizations.of(context).conversation_examples,
+                colors,
+              ),
+              const SizedBox(height: 12),
               if (parsedData['대화_예시'] != null) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).conversation_examples,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 _buildConversationExamples(
                   parsedData['대화_예시'],
                   _fromLanguage,
@@ -1241,20 +1241,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 12),
 
               // 사전적 뜻 (L2 형식에서도 각 뜻마다 뉘앙스가 포함됨)
+              _buildSectionTitle(
+                AppLocalizations.of(context).dictionary_meaning,
+                colors,
+              ),
+              const SizedBox(height: 12),
               if (parsedData['사전적_뜻'] != null) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).dictionary_meaning,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
                 const SizedBox(height: 24),
               ] else if (isStreaming) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).dictionary_meaning,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 Skeletonizer(
                   enabled: true,
                   child: _buildL1DictionaryMeanings(null, colors),
@@ -1263,12 +1258,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ],
 
               // 대화 예시
+              _buildSectionTitle(
+                AppLocalizations.of(context).conversation_examples,
+                colors,
+              ),
+              const SizedBox(height: 12),
               if (parsedData['대화_예시'] != null) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).conversation_examples,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 _buildConversationExamples(
                   parsedData['대화_예시'],
                   _fromLanguage,
@@ -1277,11 +1272,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 ),
                 const SizedBox(height: 24),
               ] else if (isStreaming) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).conversation_examples,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 Skeletonizer(
                   enabled: true,
                   child: _buildConversationExamples(
@@ -1295,20 +1285,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ],
 
               // 비슷한 표현
+              _buildSectionTitle(
+                AppLocalizations.of(context).similar_expressions,
+                colors,
+              ),
+              const SizedBox(height: 12),
               if (parsedData['비슷한_표현'] != null) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).similar_expressions,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
                 const SizedBox(height: 48),
               ] else if (isStreaming) ...[
-                _buildSectionTitle(
-                  AppLocalizations.of(context).similar_expressions,
-                  colors,
-                ),
-                const SizedBox(height: 12),
                 Skeletonizer(
                   enabled: true,
                   child: _buildSimilarExpressions(null, colors),
