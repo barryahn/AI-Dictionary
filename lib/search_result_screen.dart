@@ -1786,23 +1786,36 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     List<dynamic> l2Lines = [];
     List<dynamic> l1Lines = [];
 
-    // 모든 키를 확인하여 언어별 대화 찾기
-    example.forEach((key, value) {
-      if (value is List) {
-        // 키가 언어명인지 확인 (간단한 체크)
-        if (key.contains(toLanguage) ||
-            key.contains('중국어') ||
-            key.contains('영어') ||
-            key.contains('한국어')) {
-          l2Lines = value;
-        } else if (key.contains(fromLanguage) ||
-            key.contains('중국어') ||
-            key.contains('영어') ||
-            key.contains('한국어')) {
-          l1Lines = value;
-        }
+    // 같은 언어일 때의 처리 추가
+    if (_fromLanguage == _toLanguage) {
+      // 같은 언어일 때는 첫 번째 리스트를 L2, 두 번째 리스트를 L1으로 사용
+      final lists = example.values.whereType<List>().toList();
+      if (lists.length >= 2) {
+        l2Lines = lists[0];
+        l1Lines = lists[1];
+      } else if (lists.length == 1) {
+        // 리스트가 하나만 있으면 L2에만 할당
+        l2Lines = lists[0];
       }
-    });
+    } else {
+      // 모든 키를 확인하여 언어별 대화 찾기
+      example.forEach((key, value) {
+        if (value is List) {
+          // 키가 언어명인지 확인 (간단한 체크)
+          if (key.contains(toLanguage) ||
+              key.contains('중국어') ||
+              key.contains('영어') ||
+              key.contains('한국어')) {
+            l2Lines = value;
+          } else if (key.contains(fromLanguage) ||
+              key.contains('중국어') ||
+              key.contains('영어') ||
+              key.contains('한국어')) {
+            l1Lines = value;
+          }
+        }
+      });
+    }
 
     // 만약 위 방법으로 찾지 못했다면, 첫 번째와 두 번째 리스트를 사용
     if (l2Lines.isEmpty || l1Lines.isEmpty) {
@@ -1884,10 +1897,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       ),
                     );
                   }),
-                  Divider(
-                    height: 16,
-                    color: colors.dark.withValues(alpha: 0.4),
-                  ),
+                  fromLanguage == toLanguage
+                      ? const SizedBox.shrink()
+                      : Divider(
+                          height: 16,
+                          color: colors.dark.withValues(alpha: 0.4),
+                        ),
                 ],
                 // L1 언어 대화 (예: 영어)
                 if (l1Lines.isNotEmpty) ...[
