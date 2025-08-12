@@ -166,6 +166,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         _isSearching = true;
       });
       _addSearchResult(query);
+      _searchController.clear();
       _focusNode.unfocus();
     }
   }
