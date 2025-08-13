@@ -142,11 +142,10 @@ class OpenAIService {
 
       final prompt =
           '''
-단어 '$word'를 $l2로 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해 주세요.
-단, 모든 설명은 $l1로 하세요.
+단어 '$word'를 $l2로 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해주세요.
+단, 모든 설명은 $l1로 해주세요.
 
 [출력 형식 규칙]
-
 1. NDJSON은 반드시 아래의 형식으로 출력한다.
 2. "단어"에 '$word'를 넣는다. 단, '$word'에 오타가 있으면 오타를 수정해서 "단어"에 표기한다.
 3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
@@ -155,7 +154,7 @@ class OpenAIService {
 6. "비슷한_표현"은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성한다.
 7. 중국어의 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기한다.
 
-아래는 영어 단어 'change'를 검색하고 중국어로 설명한 예시입니다. 형식만 참고해서 출력하세요.
+아래는 영어 단어 'change'를 검색하고 중국어로 설명한 예시입니다. 형식만 참고해서 출력해주세요.
 
 {"단어": "change"}
 {"사전적_뜻": {"품사": "($l1로 작성)", "번역": {"번역단어": "($l2로 작성)", "뉘앙스": "($word의 뉘앙스와 사용하는 상황을 $l1로 친절하게 설명)"}}}
@@ -176,7 +175,7 @@ class OpenAIService {
       final systemMessage = OpenAIChatCompletionChoiceMessageModel(
         content: [
           OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            '당신은 $l1 사용자에게 $l2 학습을 돕는 언어 전문가입니다.',
+            '\'$word\'가 $l2로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
           ),
         ],
         role: OpenAIChatMessageRole.system,
@@ -238,11 +237,10 @@ class OpenAIService {
 
       final prompt =
           '''
-단어 '$word'의 $l1 뜻을 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해 주세요.
-단, 모든 설명은 $l1로 하세요.
+단어 '$word'의 $l1 뜻을 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해주세요.
+단, 모든 설명은 $l1로 해주세요.
 
 [출력 형식 규칙]
-
 1. NDJSON은 반드시 아래의 형식으로 출력한다.
 2. 검색 단어에 오타가 있으면 오타를 수정해서 "단어"에 표기한다.
 3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
@@ -270,7 +268,7 @@ class OpenAIService {
       final systemMessage = OpenAIChatCompletionChoiceMessageModel(
         content: [
           OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            '당신은 $l1 사용자에게 $l2 학습을 돕는 언어 전문가입니다.',
+            '\'$word\'가 무슨 뜻인지 궁금해요. $l1로 친절하게 설명해주세요.',
           ),
         ],
         role: OpenAIChatMessageRole.system,
