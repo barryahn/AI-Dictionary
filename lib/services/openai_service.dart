@@ -32,6 +32,96 @@ class OpenAIService {
   L1 단어 정의 생성
   ===============================================*/
 
+  static void getL1EqualsToL2WordDefinition(
+    String word,
+    String l1,
+    ChatDeltaCallback onDelta,
+    ChatCompleteCallback onComplete,
+    ChatErrorCallback onError,
+  ) async {
+    try {
+      await initialize();
+
+      // 언어 설정 확인을 위한 로그
+      print('=== OpenAI 서비스 언어 설정 ===');
+      print('검색 단어: $word');
+      print('출발 언어: $l1');
+      print('도착 언어: $l1');
+      print('==============================');
+
+      final prompt =
+          '''
+단어 '$word'에 대해서 자세히 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해주세요.
+단, 모든 설명은 $l1로 해주세요.
+
+[출력 형식 규칙]
+1. NDJSON은 반드시 아래의 형식으로 출력한다.
+2. "단어"에 '$word'를 넣는다. 단, '$word'에 오타가 있으면 오타를 수정해서 "단어"에 표기한다.
+3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
+5. "대화_예시"는 총 2세트.
+6. "비슷한_표현"은 총 최대 4개.
+7. 중국어의 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기한다.
+
+{"단어": "$word"}
+{"뜻": "이 표현을 언제 쓰는지, 어떤 느낌이 있는지 다른 단어들과 비교해서 자세하게 $l1로 설명"}
+{"대화_예시": {"대화": [{"speaker": "A", "line": "($l1 대화)"}, {"speaker": "B", "line": "($l1 대화)"}]}}
+(대화_예시 한 세트 더 추가)
+{"비슷한_표현": {"단어": "($l1 단어)", "뜻": "($l1 뜻)"}}
+{"비슷한_표현": {"단어": "($l1 단어)", "뜻": "($l1 뜻)"}}
+(만약 다른 비슷한 표현이 있다면 최대 4개까지만 추가)
+
+''';
+
+      // 생성된 프롬프트 확인
+      print('=== 생성된 프롬프트 ===');
+      print(prompt);
+      print('======================');
+
+      final systemMessage = OpenAIChatCompletionChoiceMessageModel(
+        content: [
+          OpenAIChatCompletionChoiceMessageContentItemModel.text(
+            '\'$word\'가 $l1로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
+          ),
+        ],
+        role: OpenAIChatMessageRole.system,
+      );
+
+      // the user message that will be sent to the request.
+      final userMessage = OpenAIChatCompletionChoiceMessageModel(
+        content: [
+          OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt),
+        ],
+        role: OpenAIChatMessageRole.user,
+      );
+
+      // all messages to be sent.
+      final requestMessages = [systemMessage, userMessage];
+
+      // the actual request.
+      final stream = OpenAI.instance.chat.createStream(
+        model: "gpt-4.1-mini",
+        messages: requestMessages,
+        temperature: 0.1,
+        maxTokens: 700,
+      );
+
+      _subscription = stream.listen(
+        (event) {
+          final deltaText = event.choices.first.delta.content![0]?.text ?? '';
+          if (deltaText != '') onDelta(deltaText.toString());
+        },
+        onDone: onComplete,
+        onError: onError,
+      );
+    } catch (e) {
+      print('OpenAI API 호출 오류: $e');
+    }
+  }
+
+  /*===============================================
+  L1 단어 정의 생성
+  ===============================================*/
+
   static void getL1WordDefinition(
     String word,
     String l1,

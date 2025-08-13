@@ -285,24 +285,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       String result = '';
       bool isCompleted = false;
 
-      if (languages.first == LanguageService.getLanguageCode(_toLanguage) ||
-          languages.contains(LanguageService.getLanguageCode(_toLanguage))) {
-        OpenAIService.getL2WordDefinition(
+      // fromLanguage와 toLanguage가 같은 경우
+      bool isSameLanguage = _fromLanguage == _toLanguage;
+
+      if (isSameLanguage) {
+        OpenAIService.getL1EqualsToL2WordDefinition(
           query,
-          _fromLanguage,
           _toLanguage,
           (delta) {
             if (!mounted || !_isFetching) return;
             setState(() {
               result += delta;
-              // 실시간으로 결과 업데이트
-              if (index < _searchResults.length) {
-                _searchResults[index] = _buildResultSection(
-                  query,
-                  result,
-                  index,
-                );
-              }
             });
           },
           () {
@@ -326,87 +319,132 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             });
           },
         );
-      } else if (languages.first ==
-          LanguageService.getLanguageCode(_fromLanguage)) {
-        OpenAIService.getL1WordDefinition(
-          query,
-          _fromLanguage,
-          _toLanguage,
-          (delta) {
-            if (!mounted || !_isFetching) return;
-            setState(() {
-              result += delta;
-              // 실시간으로 결과 업데이트
-              if (index < _searchResults.length) {
-                _searchResults[index] = _buildResultSection(
-                  query,
-                  result,
-                  index,
-                );
-              }
-            });
-          },
-          () {
-            if (!mounted || !_isFetching) return;
-            isCompleted = true;
-            _handleSearchComplete(query, result, index);
-          },
-          (error) {
-            if (!mounted || !_isFetching) return;
-            print('OpenAI API 오류: $error');
-            setState(() {
-              if (index < _isLoading.length) {
-                _isLoading[index] = false;
-              }
-              if (index < _searchResults.length) {
-                _searchResults[index] = _buildErrorSection(query, index);
-              }
-              if (index == _searchQueries.length - 1) {
-                _isFetching = false;
-              }
-            });
-          },
-        );
-      } else {
-        OpenAIService.getL2WordDefinition(
-          query,
-          _fromLanguage,
-          LanguageService.getLanguageNameInKorean(languages.first),
-          (delta) {
-            if (!mounted || !_isFetching) return;
-            setState(() {
-              result += delta;
-              // 실시간으로 결과 업데이트
-              if (index < _searchResults.length) {
-                _searchResults[index] = _buildResultSection(
-                  query,
-                  result,
-                  index,
-                );
-              }
-            });
-          },
-          () {
-            if (!mounted || !_isFetching) return;
-            isCompleted = true;
-            _handleSearchComplete(query, result, index);
-          },
-          (error) {
-            if (!mounted || !_isFetching) return;
-            print('OpenAI API 오류: $error');
-            setState(() {
-              if (index < _isLoading.length) {
-                _isLoading[index] = false;
-              }
-              if (index < _searchResults.length) {
-                _searchResults[index] = _buildErrorSection(query, index);
-              }
-              if (index == _searchQueries.length - 1) {
-                _isFetching = false;
-              }
-            });
-          },
-        );
+      }
+      // fromLanguage와 toLanguage가 다른 경우
+      else {
+        if (languages.first == LanguageService.getLanguageCode(_toLanguage) ||
+            languages.contains(LanguageService.getLanguageCode(_toLanguage))) {
+          OpenAIService.getL2WordDefinition(
+            query,
+            _fromLanguage,
+            _toLanguage,
+            (delta) {
+              if (!mounted || !_isFetching) return;
+              setState(() {
+                result += delta;
+                // 실시간으로 결과 업데이트
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildResultSection(
+                    query,
+                    result,
+                    index,
+                  );
+                }
+              });
+            },
+            () {
+              if (!mounted || !_isFetching) return;
+              isCompleted = true;
+              _handleSearchComplete(query, result, index);
+            },
+            (error) {
+              if (!mounted || !_isFetching) return;
+              print('OpenAI API 오류: $error');
+              setState(() {
+                if (index < _isLoading.length) {
+                  _isLoading[index] = false;
+                }
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildErrorSection(query, index);
+                }
+                if (index == _searchQueries.length - 1) {
+                  _isFetching = false;
+                }
+              });
+            },
+          );
+        } else if (languages.first ==
+            LanguageService.getLanguageCode(_fromLanguage)) {
+          OpenAIService.getL1WordDefinition(
+            query,
+            _fromLanguage,
+            _toLanguage,
+            (delta) {
+              if (!mounted || !_isFetching) return;
+              setState(() {
+                result += delta;
+                // 실시간으로 결과 업데이트
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildResultSection(
+                    query,
+                    result,
+                    index,
+                  );
+                }
+              });
+            },
+            () {
+              if (!mounted || !_isFetching) return;
+              isCompleted = true;
+              _handleSearchComplete(query, result, index);
+            },
+            (error) {
+              if (!mounted || !_isFetching) return;
+              print('OpenAI API 오류: $error');
+              setState(() {
+                if (index < _isLoading.length) {
+                  _isLoading[index] = false;
+                }
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildErrorSection(query, index);
+                }
+                if (index == _searchQueries.length - 1) {
+                  _isFetching = false;
+                }
+              });
+            },
+          );
+        } else {
+          OpenAIService.getL2WordDefinition(
+            query,
+            _fromLanguage,
+            LanguageService.getLanguageNameInKorean(languages.first),
+            (delta) {
+              if (!mounted || !_isFetching) return;
+              setState(() {
+                result += delta;
+                // 실시간으로 결과 업데이트
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildResultSection(
+                    query,
+                    result,
+                    index,
+                  );
+                }
+              });
+            },
+            () {
+              if (!mounted || !_isFetching) return;
+              isCompleted = true;
+              _handleSearchComplete(query, result, index);
+            },
+            (error) {
+              if (!mounted || !_isFetching) return;
+              print('OpenAI API 오류: $error');
+              setState(() {
+                if (index < _isLoading.length) {
+                  _isLoading[index] = false;
+                }
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildErrorSection(query, index);
+                }
+                if (index == _searchQueries.length - 1) {
+                  _isFetching = false;
+                }
+              });
+            },
+          );
+        }
       }
 
       // 스트리밍 방식이므로 여기서는 즉시 반환
