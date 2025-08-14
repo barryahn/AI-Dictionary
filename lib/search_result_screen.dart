@@ -933,6 +933,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             ],
           ),
           Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
+          const SizedBox(height: 24),
           // 에러 메시지
           Center(
             child: Text(
@@ -944,7 +945,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 64),
           Divider(thickness: 2, color: colors.primary),
         ],
       ),
