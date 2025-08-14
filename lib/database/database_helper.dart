@@ -130,40 +130,27 @@ class DatabaseHelper {
     return await db.insert('search_sessions', session.toMap());
   }
 
-  // 검색 카드 추가 (중복 확인 후 추가)
+  // 검색 카드 추가 (항상 새 레코드로 추가)
   Future<int> addSearchCard(int sessionId, SearchCard card) async {
     final db = await database;
+    // 항상 새로운 카드로 추가
+    final cardMap = card.toMap();
+    cardMap['session_id'] = sessionId;
+    return await db.insert('search_cards', cardMap);
+  }
 
-    // 같은 세션에서 같은 검색어가 있는지 확인
-    final existingCards = await db.query(
+  // 기존 검색 카드 업데이트 (id 기준)
+  Future<int> updateSearchCardById(int id, SearchCard card) async {
+    final db = await database;
+    final updatedMap = Map<String, dynamic>.from(card.toMap());
+    // id는 변경하지 않음
+    updatedMap.remove('id');
+    return await db.update(
       'search_cards',
-      where: 'session_id = ? AND query = ?',
-      whereArgs: [sessionId, card.query],
+      updatedMap,
+      where: 'id = ?',
+      whereArgs: [id],
     );
-
-    if (existingCards.isNotEmpty) {
-      // 기존 카드가 있으면 업데이트
-      final existingCard = existingCards.first;
-      final updatedCard = SearchCard(
-        id: existingCard['id'] as int?,
-        query: card.query,
-        result: card.result,
-        isLoading: card.isLoading,
-        createdAt: DateTime.parse(existingCard['created_at'] as String),
-      );
-
-      return await db.update(
-        'search_cards',
-        updatedCard.toMap(),
-        where: 'id = ?',
-        whereArgs: [existingCard['id']],
-      );
-    } else {
-      // 새로운 카드 추가
-      final cardMap = card.toMap();
-      cardMap['session_id'] = sessionId;
-      return await db.insert('search_cards', cardMap);
-    }
   }
 
   // 세션의 모든 카드 가져오기
