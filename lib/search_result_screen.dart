@@ -2060,7 +2060,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     List<dynamic> l1Lines = [];
 
     // 같은 언어일 때의 처리 추가
-    if (_fromLanguage == _toLanguage) {
+    if (example.keys.first == example.keys.last) {
       // 같은 언어일 때는 첫 번째 리스트를 L2, 두 번째 리스트를 L1으로 사용
       final lists = example.values.whereType<List>().toList();
       if (lists.length >= 2) {
@@ -2144,7 +2144,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: colors.conversation_A,
+                              color: l2Lines.indexOf(line) % 2 == 1
+                                  ? colors.conversation_B
+                                  : colors.conversation_A,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -2170,7 +2172,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       ),
                     );
                   }),
-                  fromLanguage == toLanguage
+                  // 같은 언어일 때는 구분선 없음
+                  example.keys.first == example.keys.last
                       ? const SizedBox.shrink()
                       : Divider(
                           height: 16,
@@ -2199,7 +2202,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: colors.conversation_B,
+                              color: l1Lines.indexOf(line) % 2 == 1
+                                  ? colors.conversation_B
+                                  : colors.conversation_A,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
