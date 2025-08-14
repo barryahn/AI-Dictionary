@@ -1013,7 +1013,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           if (jsonData is Map<String, dynamic>) {
             // 각 키-값을 처리
             jsonData.forEach((key, value) {
-              if (key == '사전적_뜻' || key == '대화_예시' || key == '비슷한_표현') {
+              if (key == '단어_뜻' || key == '대화_예시' || key == '비슷한_표현') {
                 // 리스트로 처리해야 하는 키들은 별도로 수집
                 if (!listData.containsKey(key)) {
                   listData[key] = [];
@@ -1082,9 +1082,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   bool _isL1Format(Map<String, dynamic> parsedData) {
     // L1 형식은 "번역" 키가 있고 그 안에 "번역단어"가 있는 구조
-    if (parsedData['사전적_뜻'] != null) {
-      if (parsedData['사전적_뜻'] is List) {
-        for (var meaning in parsedData['사전적_뜻']) {
+    if (parsedData['단어_뜻'] != null) {
+      if (parsedData['단어_뜻'] is List) {
+        for (var meaning in parsedData['단어_뜻']) {
           if (meaning is Map<String, dynamic> &&
               meaning['번역'] != null &&
               meaning['번역'] is Map<String, dynamic> &&
@@ -1092,10 +1092,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             return true;
           }
         }
-      } else if (parsedData['사전적_뜻'] is Map<String, dynamic> &&
-          parsedData['사전적_뜻']['번역'] != null &&
-          parsedData['사전적_뜻']['번역'] is Map<String, dynamic> &&
-          parsedData['사전적_뜻']['번역']['번역단어'] != null) {
+      } else if (parsedData['단어_뜻'] is Map<String, dynamic> &&
+          parsedData['단어_뜻']['번역'] != null &&
+          parsedData['단어_뜻']['번역'] is Map<String, dynamic> &&
+          parsedData['단어_뜻']['번역']['번역단어'] != null) {
         return true;
       }
     }
@@ -1164,8 +1164,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 colors,
               ),
               const SizedBox(height: 12),
-              if (parsedData['사전적_뜻'] != null) ...[
-                _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
+              if (parsedData['단어_뜻'] != null) ...[
+                _buildL1DictionaryMeanings(parsedData['단어_뜻'], colors),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
@@ -1285,8 +1285,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 colors,
               ),
               const SizedBox(height: 12),
-              if (parsedData['사전적_뜻'] != null) ...[
-                _buildL1DictionaryMeanings(parsedData['사전적_뜻'], colors),
+              if (parsedData['단어_뜻'] != null) ...[
+                _buildL1DictionaryMeanings(parsedData['단어_뜻'], colors),
                 const SizedBox(height: 24),
               ] else if (isStreaming) ...[
                 Skeletonizer(
