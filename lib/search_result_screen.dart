@@ -283,7 +283,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       }
 
       String result = '';
-      bool isCompleted = false;
 
       // fromLanguage와 toLanguage가 같은 경우
       bool isSameLanguage = _fromLanguage == _toLanguage;
@@ -296,11 +295,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             if (!mounted || !_isFetching) return;
             setState(() {
               result += delta;
+              // 실시간으로 결과 업데이트 (스켈레톤 → 점진 채움)
+              if (index < _searchResults.length) {
+                _searchResults[index] = _buildResultSection(
+                  query,
+                  result,
+                  index,
+                );
+              }
             });
           },
           () {
             if (!mounted || !_isFetching) return;
-            isCompleted = true;
             _handleSearchComplete(query, result, index);
           },
           (error) {
@@ -344,7 +350,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
             () {
               if (!mounted || !_isFetching) return;
-              isCompleted = true;
               _handleSearchComplete(query, result, index);
             },
             (error) {
@@ -385,7 +390,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
             () {
               if (!mounted || !_isFetching) return;
-              isCompleted = true;
               _handleSearchComplete(query, result, index);
             },
             (error) {
@@ -425,7 +429,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
             () {
               if (!mounted || !_isFetching) return;
-              isCompleted = true;
               _handleSearchComplete(query, result, index);
             },
             (error) {
@@ -542,10 +545,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       controller: _scrollController,
       padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 96),
       children: _searchResults.asMap().entries.map((entry) {
-        final index = entry.key;
-        final widget = entry.value;
-        //print('결과 위젯 $index: ${widget.runtimeType}');
-        return widget;
+        final item = entry.value;
+        return item;
       }).toList(),
     );
   }
@@ -1056,8 +1057,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       return _buildFallbackResultSection(query, aiResponse, index, isStreaming);
     }
 
+    // 동일 언어 여부 확인
+    final bool isSameLanguage = _fromLanguage == _toLanguage;
+
+    if (isSameLanguage) {
+      return _buildSameLanguageResultSection(
+        query,
+        parsedData,
+        index,
+        colors,
+        appBarHeight,
+        isStreaming,
+      );
+    }
+
     // L1 형식인지 L2 형식인지 판별
-    bool isL1Format = _isL1Format(parsedData!);
+    bool isL1Format = _isL1Format(parsedData);
 
     if (isL1Format) {
       return _buildL1ResultSection(
@@ -1348,6 +1363,193 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
+  Widget _buildSameLanguageResultSection(
+    String query,
+    Map<String, dynamic> parsedData,
+    int index,
+    CustomColors colors,
+    double appBarHeight,
+    bool isStreaming,
+  ) {
+    return AutoScrollTag(
+      key: Key(index.toString()),
+      controller: _scrollController,
+      index: index,
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height - appBarHeight,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              // 검색 입력창(읽기 전용)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: TextEditingController(text: query),
+                      style: TextStyle(fontSize: 28, color: colors.text),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
+
+              // NDJSON의 "단어"가 있고 검색어와 다르면 크게 표기
+              if (parsedData['단어'] != null &&
+                  parsedData['단어'].toString().trim() != '' &&
+                  parsedData['단어'].toString().trim() != query.trim()) ...[
+                SelectableText(
+                  parsedData['단어'].toString(),
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: colors.text,
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+
+              // 사전적 뜻 (동일 언어: 문자열 또는 문자열 리스트)
+              _buildSectionTitle(
+                AppLocalizations.of(context).dictionary_meaning,
+                colors,
+              ),
+              const SizedBox(height: 12),
+              if (parsedData['단어_뜻'] != null) ...[
+                _buildSameLanguageMeanings(parsedData['단어_뜻'], colors),
+                const SizedBox(height: 24),
+              ] else if (isStreaming) ...[
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildSameLanguageMeanings(null, colors),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 대화 예시 (한 세트당 동일 언어 대화 리스트)
+              _buildSectionTitle(
+                AppLocalizations.of(context).conversation_examples,
+                colors,
+              ),
+              const SizedBox(height: 12),
+              if (parsedData['대화_예시'] != null) ...[
+                _buildConversationExamples(
+                  parsedData['대화_예시'],
+                  _fromLanguage,
+                  _toLanguage,
+                  colors,
+                ),
+                const SizedBox(height: 24),
+              ] else if (isStreaming) ...[
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildConversationExamples(
+                    null,
+                    _fromLanguage,
+                    _toLanguage,
+                    colors,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // 비슷한 표현
+              _buildSectionTitle(
+                AppLocalizations.of(context).similar_expressions,
+                colors,
+              ),
+              const SizedBox(height: 12),
+              if (parsedData['비슷한_표현'] != null) ...[
+                _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
+                const SizedBox(height: 48),
+              ] else if (isStreaming) ...[
+                Skeletonizer(
+                  enabled: true,
+                  child: _buildSimilarExpressions(null, colors),
+                ),
+                const SizedBox(height: 48),
+              ],
+
+              Divider(thickness: 2, color: colors.primary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSameLanguageMeanings(dynamic meanings, CustomColors colors) {
+    // 스켈레톤/더미
+    if (meanings == null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 16,
+            margin: const EdgeInsets.only(bottom: 8),
+            color: colors.text.withValues(alpha: 0.08),
+          ),
+          Container(
+            height: 16,
+            margin: const EdgeInsets.only(bottom: 8),
+            color: colors.text.withValues(alpha: 0.08),
+          ),
+          Container(
+            height: 16,
+            width: 180,
+            color: colors.text.withValues(alpha: 0.08),
+          ),
+        ],
+      );
+    }
+
+    // 문자열 하나인 경우
+    if (meanings is String) {
+      return SelectableText(
+        meanings,
+        style: TextStyle(fontSize: 16, height: 1.5, color: colors.text),
+      );
+    }
+
+    // 여러 줄(리스트)인 경우
+    if (meanings is List) {
+      final List<String> lines = meanings.map((e) => e.toString()).toList();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: lines.map<Widget>((line) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SelectableText(
+                    line,
+                    style: TextStyle(
+                      fontSize: 16,
+                      height: 1.5,
+                      color: colors.text,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      );
+    }
+
+    // 예기치 않은 타입은 무시
+    return const SizedBox.shrink();
+  }
+
   Widget _buildFallbackResultSection(
     String query,
     String aiResponse,
@@ -1431,6 +1633,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
+  // 사용되지 않는 레거시 빌더 (현재 미사용) - 유지 필요 없으면 제거 가능
   Widget _buildDictionaryMeanings(dynamic meanings, CustomColors colors) {
     // NDJSON 형식에 맞게 처리
     if (meanings is Map<String, dynamic>) {
