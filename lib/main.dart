@@ -265,11 +265,11 @@ class _HomeTabState extends State<_HomeTab> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: '어떤 언어',
+                      text: AppLocalizations.of(context).which_language_part1,
                       style: TextStyle(fontSize: 20, color: colors.primary),
                     ),
                     TextSpan(
-                      text: '가 궁금하세요?',
+                      text: AppLocalizations.of(context).which_language_part2,
                       style: TextStyle(fontSize: 20, color: colors.text),
                     ),
                   ],

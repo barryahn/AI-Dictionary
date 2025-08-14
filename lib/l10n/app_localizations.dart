@@ -232,6 +232,10 @@ class AppLocalizations {
       'tutorial_dont_show_again': '다시 보지 않기',
       'tutorial_show_again': '다시 보기',
       'tutorial_show_again_desc': '설정에서 언제든지 다시 볼 수 있어요.',
+      // 홈 화면 문구
+      'which_language_question': '어떤 언어가 궁금하세요?',
+      'which_language_part1': '어떤 언어',
+      'which_language_part2': '가 궁금하세요?',
     },
     'en': {
       // App Title
@@ -464,6 +468,10 @@ class AppLocalizations {
       'tutorial_show_again': 'Show again',
       'tutorial_show_again_desc':
           'You can view this tutorial again anytime in settings.',
+      // Home screen phrase
+      'which_language_question': 'Which language are you curious about?',
+      'which_language_part1': 'Which language ',
+      'which_language_part2': 'are you curious about?',
     },
     'zh': {
       // 应用标题
@@ -679,6 +687,10 @@ class AppLocalizations {
       'tutorial_dont_show_again': '不再显示',
       'tutorial_show_again': '再次查看',
       'tutorial_show_again_desc': '你可以随时在设置中再次查看本教程。',
+      // 首页文案
+      'which_language_question': '您对哪种语言感兴趣？',
+      'which_language_part1': '您对哪种语言',
+      'which_language_part2': '感兴趣？',
     },
     'zh-TW': {
       // 應用標題
@@ -894,6 +906,10 @@ class AppLocalizations {
       'tutorial_dont_show_again': '不再顯示',
       'tutorial_show_again': '再次查看',
       'tutorial_show_again_desc': '你可以隨時在設定中再次查看本教學。',
+      // 首頁文案
+      'which_language_question': '您對哪種語言感興趣？',
+      'which_language_part1': '您對哪種語言',
+      'which_language_part2': '感興趣？',
     },
     'fr': {
       // Titre de l'application
@@ -1134,6 +1150,10 @@ class AppLocalizations {
       'tutorial_show_again': 'Afficher à nouveau',
       'tutorial_show_again_desc':
           'Vous pouvez revoir ce tutoriel à tout moment dans les paramètres.',
+      // Accueil
+      'which_language_question': 'Quelle langue vous intéresse ?',
+      'which_language_part1': 'Quelle langue ',
+      'which_language_part2': 'vous intéresse ?',
     },
     'es': {
       // Título de la aplicación
@@ -1372,6 +1392,10 @@ class AppLocalizations {
       'tutorial_show_again': 'Ver de nuevo',
       'tutorial_show_again_desc':
           'Puedes ver este tutorial de nuevo en la configuración en cualquier momento.',
+      // Inicio
+      'which_language_question': '¿Qué idioma le interesa?',
+      'which_language_part1': '¿Qué idioma ',
+      'which_language_part2': 'le interesa?',
     },
   };
 
@@ -1407,6 +1431,9 @@ class AppLocalizations {
   String get search_stopped => get('search_stopped');
   String get no_search_result => get('no_search_result');
   String get main_search_hint => get('main_search_hint');
+  String get which_language_part1 => get('which_language_part1');
+  String get which_language_part2 => get('which_language_part2');
+  String get which_language_question => get('which_language_question');
 
   // 언어 선택
   String get from_language => get('from_language');
