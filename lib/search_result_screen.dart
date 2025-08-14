@@ -826,7 +826,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               child: IgnorePointer(
                 ignoring: false,
                 child: Container(
-                  padding: const EdgeInsets.only(top: 200),
+                  padding: const EdgeInsets.only(top: 20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
