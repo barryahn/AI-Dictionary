@@ -308,7 +308,7 @@ class _HomeTabState extends State<_HomeTab> {
                             ),
                           ),
                           Text(
-                            '언어',
+                            AppLocalizations.of(context).language,
                             style: TextStyle(fontSize: 16, color: colors.text),
                           ),
                           const SizedBox(height: 12),
