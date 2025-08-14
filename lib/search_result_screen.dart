@@ -688,6 +688,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
           ),
           title: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               /* // 출발 언어 드롭다운
               SizedBox(
@@ -747,9 +749,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ),
               ), */
+              Icon(Icons.translate, color: colors.primary),
+              const SizedBox(width: 4),
               // 도착 언어 드롭다운
               SizedBox(
-                width: 108,
+                width: 140,
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<String>(
                     isExpanded: true,
@@ -787,8 +791,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       height: 36,
                       width: 80,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: colors.textLight),
+                        border: Border(
+                          bottom: BorderSide(color: colors.primary),
+                        ),
                       ),
                     ),
                     menuItemStyleData: const MenuItemStyleData(height: 48),
@@ -800,8 +805,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ),
               ),
+              const SizedBox(width: 12),
             ],
           ),
+          centerTitle: true,
           elevation: 0,
         ),
         body: Stack(
@@ -814,7 +821,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               child: IgnorePointer(
                 ignoring: false,
                 child: Container(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(top: 200),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
