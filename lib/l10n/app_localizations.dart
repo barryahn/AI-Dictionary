@@ -210,7 +210,7 @@ class AppLocalizations {
 
       // 도움말 관련
       'welcome_tutorial': '앱 사용법 안내',
-      'tutorial_welcome': '${appName}에 오신 것을\n환영합니다!',
+      'tutorial_welcome': '$appName에 오신 것을\n환영합니다!',
       'tutorial_welcome_desc': '앱의 주요 기능들을\n간단히 안내해드릴게요.',
       'tutorial_search_title': '단어 검색하기',
       'tutorial_search_desc': '의미나 뉘앙스가 헷갈리거나\n모르는 단어를 검색해보세요!',
@@ -435,7 +435,7 @@ class AppLocalizations {
 
       // Help / Tutorial
       'welcome_tutorial': 'App Tutorial',
-      'tutorial_welcome': 'Welcome to ${appName}!',
+      'tutorial_welcome': 'Welcome to $appName!',
       'tutorial_welcome_desc':
           'We\'ll briefly guide you through the main features of the app.',
       'tutorial_search_title': 'Searching Words',
@@ -659,7 +659,7 @@ class AppLocalizations {
 
       // 帮助 / 教程
       'welcome_tutorial': '应用使用教程',
-      'tutorial_welcome': '欢迎来到${appName}！',
+      'tutorial_welcome': '欢迎来到$appName！',
       'tutorial_welcome_desc': '我们将简要介绍应用的主要功能。',
       'tutorial_search_title': '单词搜索',
       'tutorial_search_desc': '如果对含义或语感感到困惑，\n请尝试搜索单词！',
@@ -874,7 +874,7 @@ class AppLocalizations {
 
       // 幫助 / 教學
       'welcome_tutorial': '歡迎使用教學',
-      'tutorial_welcome': '歡迎來到${appName}！',
+      'tutorial_welcome': '歡迎來到$appName！',
       'tutorial_welcome_desc': '我們將簡單介紹應用的主要功能。',
       'tutorial_search_title': '單字搜尋',
       'tutorial_search_desc': '如果對意思或語感感到困惑，\n請嘗試搜尋單字！',
@@ -1105,7 +1105,7 @@ class AppLocalizations {
 
       // Aide / Tutoriel
       'welcome_tutorial': 'Tutoriel de l\'application',
-      'tutorial_welcome': 'Bienvenue sur ${appName} !',
+      'tutorial_welcome': 'Bienvenue sur $appName !',
       'tutorial_welcome_desc':
           'Nous allons vous présenter brièvement les principales fonctionnalités de l\'application.',
       'tutorial_search_title': 'Rechercher un mot',
@@ -1343,7 +1343,7 @@ class AppLocalizations {
 
       // Ayuda / Tutorial
       'welcome_tutorial': 'Tutorial de la aplicación',
-      'tutorial_welcome': '¡Bienvenido a ${appName}!',
+      'tutorial_welcome': '¡Bienvenido a $appName!',
       'tutorial_welcome_desc':
           'Te guiaremos brevemente por las funciones principales de la app.',
       'tutorial_search_title': 'Buscar palabras',

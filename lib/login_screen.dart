@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildHeader(AppLocalizations loc, CustomColors colors) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: 100,
           height: 100,
           child: ColorFiltered(

@@ -45,8 +45,8 @@ class LanguageService {
 
       // 시스템 로케일 출력
       print('systemLocale: \\${systemLocale.toString()}');
-      print('langCode: \\${langCode}');
-      print('countryCode: \\${countryCode}');
+      print('langCode: \\$langCode');
+      print('countryCode: \\$countryCode');
 
       if (langCode == 'ko') {
         _currentLanguage = korean;
