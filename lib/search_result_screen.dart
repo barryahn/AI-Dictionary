@@ -785,6 +785,29 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                   ),
                             )
                             .toList(),
+                    selectedItemBuilder: (BuildContext context) {
+                      final items =
+                          LanguageService.getLocalizedTranslationLanguages(
+                            AppLocalizations.of(context),
+                          );
+                      return items
+                          .map(
+                            (Map<String, String> item) => Center(
+                              child: Text(
+                                item['name']!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: colors.text,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList();
+                    },
                     value: _toLanguage,
                     onChanged: (String? newValue) {
                       if (newValue != null) {
@@ -799,6 +822,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         border: Border(
                           bottom: BorderSide(color: colors.primary),
                         ),
+                      ),
+                    ),
+                    iconStyleData: IconStyleData(
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: colors.textLight,
                       ),
                     ),
                     menuItemStyleData: const MenuItemStyleData(height: 48),
