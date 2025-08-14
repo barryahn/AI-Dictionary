@@ -61,6 +61,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     // 검색어 변경 리스너 추가
     _searchController.addListener(_onSearchTextChanged);
 
+    // fromLanguage를 현재 언어로 설정
+    _fromLanguage = LanguageService.getLanguageNameInKorean(
+      LanguageService.currentLanguage,
+    );
+
     // 백그라운드에서 캐시 초기화
     _initializeBackgroundCache();
 
@@ -1065,7 +1070,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     }
 
     // 동일 언어 여부 확인
-    final bool isSameLanguage = _fromLanguage == _toLanguage;
+    final bool isSameLanguage =
+        LanguageService.getLanguageNameInKorean(
+          LanguageService.currentLanguage,
+        ) ==
+        _toLanguage;
 
     if (isSameLanguage) {
       return _buildSameLanguageResultSection(
