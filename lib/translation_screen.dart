@@ -1133,29 +1133,34 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
         body: Stack(
           children: [
             // 전체 화면 텍스트 에디터 영역
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  TextField(
-                    style: TextStyle(color: colors.text),
-                    controller: _controller,
-                    autofocus: true,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction: TextInputAction.newline,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context).input_text_hint,
-                      filled: true,
-                      fillColor: colors.white,
-                      contentPadding: const EdgeInsets.only(
-                        top: 20,
-                        left: 20,
-                        right: 20,
-                        bottom: 100,
-                      ),
+            Container(
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(bottom: 64),
+              color: colors.white,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  bottom: 64 + MediaQuery.of(context).viewInsets.bottom + 20,
+                ),
+                child: TextField(
+                  style: TextStyle(color: colors.text),
+                  controller: _controller,
+                  autofocus: true,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: AppLocalizations.of(context).input_text_hint,
+                    filled: true,
+                    fillColor: colors.white,
+                    contentPadding: const EdgeInsets.only(
+                      top: 20,
+                      left: 20,
+                      right: 20,
+                      bottom: 20,
                     ),
                   ),
-                ],
+                ),
               ),
             ),
             // 하단바 영역: search_result_screen.dart의 초기 하단바 디자인을 참고
