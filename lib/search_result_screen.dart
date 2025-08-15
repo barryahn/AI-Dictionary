@@ -770,8 +770,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                     child: Text(
                                       item['name']!,
                                       style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
                                         color: colors.text,
                                       ),
                                     ),
@@ -792,8 +792,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
                                   color: colors.text,
                                 ),
                               ),

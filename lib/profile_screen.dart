@@ -160,6 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 authService.isLoggedIn
                     ? (authService.userEmail ?? 'user@example.com')
                     : loc.get('guest_description'),
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14, color: colors.textLight),
               ),
               if (!authService.isLoggedIn) ...[
