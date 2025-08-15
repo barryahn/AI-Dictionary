@@ -1262,8 +1262,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   enabled: true,
                   child: _buildSimilarExpressions(null, colors),
                 ),
+                const SizedBox(height: 48),
               ],
-              const SizedBox(height: 48),
 
               Divider(thickness: 2, color: colors.primary),
             ],
@@ -1458,13 +1458,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 12),
               if (parsedData['단어_뜻'] != null) ...[
                 _buildSameLanguageMeanings(parsedData['단어_뜻'], colors),
-                const SizedBox(height: 24),
+                const SizedBox(height: 40),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
                   child: _buildSameLanguageMeanings(null, colors),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 40),
               ],
 
               // 대화 예시 (한 세트당 동일 언어 대화 리스트)
