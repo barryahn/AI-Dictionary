@@ -1051,7 +1051,7 @@ class TranslationScreenState extends State<TranslationScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: SingleChildScrollView(
-                child: Text(
+                child: SelectableText(
                   _translatedText.isEmpty
                       ? AppLocalizations.of(context).translation_result_hint
                       : _translatedText,
@@ -1133,24 +1133,29 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
         body: Stack(
           children: [
             // 전체 화면 텍스트 에디터 영역
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0.0),
-                child: TextField(
-                  style: TextStyle(color: colors.text),
-                  controller: _controller,
-                  autofocus: true,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.newline,
-                  maxLines: null,
-                  expands: true,
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context).input_text_hint,
-                    filled: true,
-                    fillColor: colors.white,
-                    contentPadding: const EdgeInsets.all(20.0),
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextField(
+                    style: TextStyle(color: colors.text),
+                    controller: _controller,
+                    autofocus: true,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context).input_text_hint,
+                      filled: true,
+                      fillColor: colors.white,
+                      contentPadding: const EdgeInsets.only(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                        bottom: 100,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
             // 하단바 영역: search_result_screen.dart의 초기 하단바 디자인을 참고
@@ -1161,46 +1166,31 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
               bottom: 0,
               child: IgnorePointer(
                 ignoring: false,
-                child: Container(
-                  // 콘텐츠와 자연스럽게 이어지도록 상단 그라데이션 처리
-                  padding: const EdgeInsets.only(top: 20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        colors.white.withValues(alpha: 0.0),
-                        colors.background,
-                      ],
-                    ),
-                  ),
-                  child: BottomAppBar(
-                    color: colors.background,
-                    height: 64,
-                    child: Row(
-                      children: [
-                        const Spacer(),
-                        // 체크 버튼: 원형 버튼 스타일, 누르면 작성한 텍스트를 반환하고 닫습니다.
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(
-                            context,
-                          ).pop<String>(_controller.text),
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(2),
-                            backgroundColor: colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 2),
-                            child: Icon(
-                              Icons.check,
-                              color: colors.text,
-                              size: 24,
-                            ),
+                child: BottomAppBar(
+                  color: colors.background,
+                  height: 64,
+                  child: Row(
+                    children: [
+                      const Spacer(),
+                      // 체크 버튼: 원형 버튼 스타일, 누르면 작성한 텍스트를 반환하고 닫습니다.
+                      ElevatedButton(
+                        onPressed: () =>
+                            Navigator.of(context).pop<String>(_controller.text),
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(2),
+                          backgroundColor: colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 2),
+                          child: Icon(
+                            Icons.check,
+                            color: colors.text,
+                            size: 24,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
