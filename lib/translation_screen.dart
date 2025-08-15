@@ -1117,8 +1117,16 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
   Widget build(BuildContext context) {
     final themeService = context.watch<ThemeService>();
     final colors = themeService.colors;
-    return WillPopScope(
-      onWillPop: _handleWillPop,
+    return PopScope(
+      canPop: false, // 직접 제어하므로 false
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return; // 이미 pop 된 경우 추가 처리 X
+
+        final shouldPop = await _handleWillPop();
+        if (shouldPop) {
+          Navigator.of(context).pop(result);
+        }
+      },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(title: Text(AppLocalizations.of(context).input_text)),
