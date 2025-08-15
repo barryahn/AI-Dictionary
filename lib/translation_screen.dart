@@ -1138,9 +1138,6 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
               padding: EdgeInsets.only(bottom: 64),
               color: colors.white,
               child: SingleChildScrollView(
-                padding: EdgeInsets.only(
-                  bottom: 64 + MediaQuery.of(context).viewInsets.bottom + 20,
-                ),
                 child: TextField(
                   style: TextStyle(color: colors.text),
                   controller: _controller,
