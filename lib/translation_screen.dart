@@ -350,13 +350,13 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 언어 선택 영역
   Widget _buildLanguageSelector(CustomColors colors) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        _buildFromLanguageDropdown(colors),
-        const SizedBox(width: 14),
-        _buildLanguageSwapButton(colors),
-        const SizedBox(width: 14),
-        _buildToLanguageDropdown(colors),
+        Expanded(flex: 5, child: _buildFromLanguageDropdown(colors)),
+        Expanded(
+          flex: 2,
+          child: Center(child: _buildLanguageSwapButton(colors)),
+        ),
+        Expanded(flex: 5, child: _buildToLanguageDropdown(colors)),
       ],
     );
   }
@@ -364,7 +364,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 출발 언어 선택 드롭다운
   Widget _buildFromLanguageDropdown(CustomColors colors) {
     return SizedBox(
-      width: 144,
+      width: double.infinity,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           isExpanded: true,
@@ -438,7 +438,6 @@ class TranslationScreenState extends State<TranslationScreen> {
           buttonStyleData: ButtonStyleData(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             height: 40,
-            width: 140,
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: colors.primary)),
             ),
@@ -479,7 +478,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 도착 언어 선택 드롭다운
   Widget _buildToLanguageDropdown(CustomColors colors) {
     return SizedBox(
-      width: 144,
+      width: double.infinity,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           isExpanded: true,
@@ -553,7 +552,6 @@ class TranslationScreenState extends State<TranslationScreen> {
           buttonStyleData: ButtonStyleData(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             height: 40,
-            width: 140,
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: colors.primary)),
             ),
