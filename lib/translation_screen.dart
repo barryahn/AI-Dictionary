@@ -384,6 +384,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                         style: TextStyle(
                           fontSize: _getDropdownFontSize(item['name']!),
                           color: colors.text,
+                          height: 1.1,
                         ),
                       ),
                     ),
@@ -405,6 +406,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                           isSelected: true,
                         ),
                         color: colors.text,
+                        height: 1.1,
                       ),
                     ),
                   ),
@@ -498,6 +500,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                         style: TextStyle(
                           fontSize: _getDropdownFontSize(item['name']!),
                           color: colors.text,
+                          height: 1.1,
                         ),
                       ),
                     ),
@@ -519,6 +522,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                           isSelected: true,
                         ),
                         color: colors.text,
+                        height: 1.1,
                       ),
                     ),
                   ),
