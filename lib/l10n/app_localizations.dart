@@ -42,7 +42,7 @@ class AppLocalizations {
       'english': '영어',
       'korean': '한국어',
       'chinese': '중국어',
-      'taiwanese': '대만어',
+      'taiwanese': '대만 중국어',
       'spanish': '스페인어',
       'french': '프랑스어',
 

@@ -130,7 +130,7 @@ class LanguageService {
         return 'en';
       case '중국어':
         return 'zh';
-      case '대만어':
+      case '대만 중국어':
         return 'zh-TW';
       case '프랑스어':
         return 'fr';
@@ -174,7 +174,7 @@ class LanguageService {
       case chinese || 'zh' || '中文':
         return '중국어';
       case taiwanese || 'zh-TW' || '繁體中文':
-        return '대만어';
+        return '대만 중국어';
       case french || 'fr' || 'Français':
         return '프랑스어';
       case spanish || 'es' || 'Español':
@@ -213,7 +213,7 @@ class LanguageService {
       {'code': '영어', 'name': loc.english},
       {'code': '한국어', 'name': loc.korean},
       {'code': '중국어', 'name': loc.chinese},
-      {'code': '대만어', 'name': loc.taiwanese},
+      {'code': '대만 중국어', 'name': loc.taiwanese},
       {'code': '스페인어', 'name': loc.spanish},
       {'code': '프랑스어', 'name': loc.french},
     ];
@@ -231,7 +231,7 @@ class LanguageService {
       } else if (langCode == 'en') {
         userLanguageCode = '영어';
       } else if (langCode == 'zh' && countryCode == 'TW') {
-        userLanguageCode = '대만어';
+        userLanguageCode = '대만 중국어';
       } else if (langCode == 'zh') {
         userLanguageCode = '중국어';
       } else if (langCode == 'fr') {
@@ -271,7 +271,7 @@ class LanguageService {
     '영어',
     '한국어',
     '중국어',
-    '대만어',
+    '대만 중국어',
     '스페인어',
     '프랑스어',
   ];
