@@ -410,10 +410,13 @@ class TranslationScreenState extends State<TranslationScreen> {
             if (newValue == null) return;
             _updateLanguages(newValue, selectedToLanguage);
           },
-          buttonStyleData: const ButtonStyleData(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+          buttonStyleData: ButtonStyleData(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             height: 40,
             width: 140,
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: colors.primary)),
+            ),
           ),
           menuItemStyleData: const MenuItemStyleData(height: 40),
           dropdownStyleData: DropdownStyleData(
@@ -513,10 +516,13 @@ class TranslationScreenState extends State<TranslationScreen> {
             if (newValue == null) return;
             _updateLanguages(selectedFromLanguage, newValue);
           },
-          buttonStyleData: const ButtonStyleData(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+          buttonStyleData: ButtonStyleData(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             height: 40,
             width: 140,
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: colors.primary)),
+            ),
           ),
           menuItemStyleData: const MenuItemStyleData(height: 40),
           dropdownStyleData: DropdownStyleData(
