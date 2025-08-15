@@ -7,6 +7,9 @@ class LanguageService {
   static const String _languageKey = 'app_language';
   static const String _fromLanguageKey = 'from_language';
   static const String _toLanguageKey = 'to_language';
+  // 번역 화면(TranslationScreen) 전용 키: 전역 from/to와 분리 보관
+  static const String _tsFromLanguageKey = 'ts_from_language';
+  static const String _tsToLanguageKey = 'ts_to_language';
   static const String korean = 'ko';
   static const String english = 'en';
   static const String chinese = 'zh';
@@ -119,6 +122,33 @@ class LanguageService {
       'fromLanguage': _fromLanguage,
       'toLanguage': _toLanguage,
     });
+  }
+
+  // 번역 화면(TranslationScreen) 전용 언어 저장/로드 (전역 from/to와 분리)
+  static Future<String> getTranslationScreenFromLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_tsFromLanguageKey) ?? '영어';
+  }
+
+  static Future<String> getTranslationScreenToLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_tsToLanguageKey) ?? '한국어';
+  }
+
+  static Future<void> setTranslationScreenLanguages([
+    String? fromLang,
+    String? toLang,
+  ]) async {
+    // 둘 다 null이면 아무것도 하지 않음
+    if (fromLang == null && toLang == null) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    if (fromLang != null) {
+      await prefs.setString(_tsFromLanguageKey, fromLang);
+    }
+    if (toLang != null) {
+      await prefs.setString(_tsToLanguageKey, toLang);
+    }
   }
 
   // 언어 코드 가져오기

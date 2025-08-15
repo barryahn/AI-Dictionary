@@ -23,7 +23,6 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 언어 선택을 위한 상태 변수들 (드롭다운과 연동)
   String selectedFromLanguage = '영어';
   String selectedToLanguage = '한국어';
-  StreamSubscription? _languageSubscription;
 
   // 번역 분위기 설정
   double selectedToneLevel = 1.0; // 0: 친함, 1: 기본, 2: 공손, 3: 격식
@@ -57,17 +56,8 @@ class TranslationScreenState extends State<TranslationScreen> {
   @override
   void initState() {
     super.initState();
-    // LanguageService에서 저장된 언어 설정 불러오기
-    selectedFromLanguage = LanguageService.fromLanguage;
-    selectedToLanguage = LanguageService.toLanguage;
-
-    // 언어 변경 스트림 구독
-    _languageSubscription = LanguageService.languageStream.listen((languages) {
-      setState(() {
-        selectedFromLanguage = languages['fromLanguage']!;
-        selectedToLanguage = languages['toLanguage']!;
-      });
-    });
+    // 번역 화면 전용 언어 설정 불러오기 (전역 from/to와 분리)
+    _loadTranslationScreenLanguages();
 
     // 언어 감지 라이브러리 초기화 (입력 언어 확인용)
     initLanguageDetector();
@@ -78,7 +68,6 @@ class TranslationScreenState extends State<TranslationScreen> {
 
   @override
   void dispose() {
-    _languageSubscription?.cancel();
     _inputController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -137,8 +126,19 @@ class TranslationScreenState extends State<TranslationScreen> {
       selectedFromLanguage = fromLang;
       selectedToLanguage = toLang;
     });
-    // LanguageService에 저장
-    LanguageService.setTranslationLanguages(fromLang, toLang);
+    // 번역 화면 전용 저장소에 저장 (전역 from/to와 분리)
+    LanguageService.setTranslationScreenLanguages(fromLang, toLang);
+  }
+
+  // 번역 화면 전용 언어 설정 로딩
+  Future<void> _loadTranslationScreenLanguages() async {
+    final from = await LanguageService.getTranslationScreenFromLanguage();
+    final to = await LanguageService.getTranslationScreenToLanguage();
+    if (!mounted) return;
+    setState(() {
+      selectedFromLanguage = from;
+      selectedToLanguage = to;
+    });
   }
 
   // 텍스트 복사 함수
