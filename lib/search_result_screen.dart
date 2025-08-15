@@ -765,7 +765,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 const SizedBox(width: 4),
                 // 도착 언어 드롭다운
                 SizedBox(
-                  width: 140,
+                  width: 180,
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(
                       isExpanded: true,

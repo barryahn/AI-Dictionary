@@ -501,7 +501,7 @@ class AppLocalizations {
       'english': '英语',
       'korean': '韩语',
       'chinese': '中文',
-      'taiwanMandarin': '中文（台湾）',
+      'taiwanMandarin': '中文 (台湾)',
       'spanish': '西班牙语',
       'french': '法语',
 
@@ -720,7 +720,7 @@ class AppLocalizations {
       'english': '英語',
       'korean': '韓語',
       'chinese': '簡體中文',
-      'taiwanMandarin': '中文（台灣）',
+      'taiwanMandarin': '中文 (台灣)',
       'spanish': '西班牙語',
       'french': '法語',
 

@@ -141,6 +141,22 @@ class TranslationScreenState extends State<TranslationScreen> {
     });
   }
 
+  // 드롭다운 아이템 길이에 따라 폰트 크기를 조정합니다.
+  double _getDropdownFontSize(String text, {bool isSelected = false}) {
+    final int length = text.length;
+    if (isSelected) {
+      if (length > 18) return 14.0;
+      if (length > 12) return 14.0;
+      if (length > 8) return 16.0;
+      return 18.0;
+    } else {
+      if (length > 18) return 12.0;
+      if (length > 12) return 14.0;
+      if (length > 8) return 15.0;
+      return 16.0;
+    }
+  }
+
   // 텍스트 복사 함수
   // 공용 복사 함수: 텍스트를 클립보드에 복사하고 토스트 메시지를 표시합니다.
   void _copyToClipboard(String text, String message) {
@@ -337,9 +353,9 @@ class TranslationScreenState extends State<TranslationScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         _buildFromLanguageDropdown(colors),
-        const SizedBox(width: 20),
+        const SizedBox(width: 14),
         _buildLanguageSwapButton(colors),
-        const SizedBox(width: 20),
+        const SizedBox(width: 14),
         _buildToLanguageDropdown(colors),
       ],
     );
@@ -348,7 +364,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 출발 언어 선택 드롭다운
   Widget _buildFromLanguageDropdown(CustomColors colors) {
     return SizedBox(
-      width: 140,
+      width: 144,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           isExpanded: true,
@@ -365,7 +381,10 @@ class TranslationScreenState extends State<TranslationScreen> {
                       value: item['code']!,
                       child: Text(
                         item['name']!,
-                        style: TextStyle(fontSize: 18, color: colors.text),
+                        style: TextStyle(
+                          fontSize: _getDropdownFontSize(item['name']!),
+                          color: colors.text,
+                        ),
                       ),
                     ),
                   )
@@ -380,7 +399,13 @@ class TranslationScreenState extends State<TranslationScreen> {
                     child: Text(
                       item['name']!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18, color: colors.text),
+                      style: TextStyle(
+                        fontSize: _getDropdownFontSize(
+                          item['name']!,
+                          isSelected: true,
+                        ),
+                        color: colors.text,
+                      ),
                     ),
                   ),
                 )
@@ -454,7 +479,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   // 도착 언어 선택 드롭다운
   Widget _buildToLanguageDropdown(CustomColors colors) {
     return SizedBox(
-      width: 140,
+      width: 144,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           isExpanded: true,
@@ -471,7 +496,10 @@ class TranslationScreenState extends State<TranslationScreen> {
                       value: item['code']!,
                       child: Text(
                         item['name']!,
-                        style: TextStyle(fontSize: 18, color: colors.text),
+                        style: TextStyle(
+                          fontSize: _getDropdownFontSize(item['name']!),
+                          color: colors.text,
+                        ),
                       ),
                     ),
                   )
@@ -486,7 +514,13 @@ class TranslationScreenState extends State<TranslationScreen> {
                     child: Text(
                       item['name']!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18, color: colors.text),
+                      style: TextStyle(
+                        fontSize: _getDropdownFontSize(
+                          item['name']!,
+                          isSelected: true,
+                        ),
+                        color: colors.text,
+                      ),
                     ),
                   ),
                 )
