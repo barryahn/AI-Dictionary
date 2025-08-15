@@ -13,7 +13,7 @@ class LanguageService {
   static const String korean = 'ko';
   static const String english = 'en';
   static const String chinese = 'zh';
-  static const String taiwanese = 'zh-TW';
+  static const String taiwanMandarin = 'zh-TW';
   static const String french = 'fr';
   static const String spanish = 'es';
 
@@ -56,7 +56,7 @@ class LanguageService {
       } else if (langCode == 'en') {
         _currentLanguage = english;
       } else if (langCode == 'zh' && countryCode == 'TW') {
-        _currentLanguage = taiwanese;
+        _currentLanguage = taiwanMandarin;
       } else if (langCode == 'zh') {
         _currentLanguage = chinese;
       } else if (langCode == 'fr') {
@@ -80,7 +80,7 @@ class LanguageService {
       korean,
       english,
       chinese,
-      taiwanese,
+      taiwanMandarin,
       french,
       spanish,
     ].contains(language)) {
@@ -184,7 +184,7 @@ class LanguageService {
         return 'English';
       case chinese || 'zh':
         return '中文';
-      case taiwanese || 'zh-TW':
+      case taiwanMandarin || 'zh-TW':
         return '繁體中文';
       case french || 'fr':
         return 'Français';
@@ -203,7 +203,7 @@ class LanguageService {
         return '영어';
       case chinese || 'zh' || '中文':
         return '중국어';
-      case taiwanese || 'zh-TW' || '繁體中文':
+      case taiwanMandarin || 'zh-TW' || '繁體中文':
         return '대만 중국어';
       case french || 'fr' || 'Français':
         return '프랑스어';
@@ -230,7 +230,7 @@ class LanguageService {
     {'code': korean, 'name': '한국어'},
     {'code': english, 'name': 'English'},
     {'code': chinese, 'name': '中文'},
-    {'code': taiwanese, 'name': '繁體中文'},
+    {'code': taiwanMandarin, 'name': '繁體中文'},
     {'code': french, 'name': 'Français'},
     {'code': spanish, 'name': 'Español'},
   ];
@@ -243,7 +243,7 @@ class LanguageService {
       {'code': '영어', 'name': loc.english},
       {'code': '한국어', 'name': loc.korean},
       {'code': '중국어', 'name': loc.chinese},
-      {'code': '대만 중국어', 'name': loc.taiwanese},
+      {'code': '대만 중국어', 'name': loc.taiwanMandarin},
       {'code': '스페인어', 'name': loc.spanish},
       {'code': '프랑스어', 'name': loc.french},
     ];

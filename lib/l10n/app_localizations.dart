@@ -42,7 +42,7 @@ class AppLocalizations {
       'english': '영어',
       'korean': '한국어',
       'chinese': '중국어',
-      'taiwanese': '대만 중국어',
+      'taiwanMandarin': '대만 중국어',
       'spanish': '스페인어',
       'french': '프랑스어',
 
@@ -265,7 +265,7 @@ class AppLocalizations {
       'english': 'English',
       'korean': 'Korean',
       'chinese': 'Chinese',
-      'taiwanese': 'Taiwanese',
+      'taiwanMandarin': 'Taiwan Mandarin',
       'spanish': 'Spanish',
       'french': 'French',
 
@@ -501,7 +501,7 @@ class AppLocalizations {
       'english': '英语',
       'korean': '韩语',
       'chinese': '中文',
-      'taiwanese': '繁体中文',
+      'taiwanMandarin': '中文（台湾）',
       'spanish': '西班牙语',
       'french': '法语',
 
@@ -720,7 +720,7 @@ class AppLocalizations {
       'english': '英語',
       'korean': '韓語',
       'chinese': '簡體中文',
-      'taiwanese': '繁體中文',
+      'taiwanMandarin': '中文（台灣）',
       'spanish': '西班牙語',
       'french': '法語',
 
@@ -939,7 +939,7 @@ class AppLocalizations {
       'english': 'Anglais',
       'korean': 'Coréen',
       'chinese': 'Chinois',
-      'taiwanese': 'Taiwanais',
+      'taiwanMandarin': 'Mandarin taïwanais',
       'spanish': 'Espagnol',
       'french': 'Français',
 
@@ -1184,7 +1184,7 @@ class AppLocalizations {
       'english': 'Inglés',
       'korean': 'Coreano',
       'chinese': 'Chino',
-      'taiwanese': 'Taiwanés',
+      'taiwanMandarin': 'Mandarín de Taiwán',
       'spanish': 'Español',
       'french': 'Francés',
 
@@ -1442,7 +1442,7 @@ class AppLocalizations {
   String get english => get('english');
   String get korean => get('korean');
   String get chinese => get('chinese');
-  String get taiwanese => get('taiwanese');
+  String get taiwanMandarin => get('taiwanMandarin');
   String get spanish => get('spanish');
   String get french => get('french');
 
