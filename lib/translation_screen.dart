@@ -11,6 +11,7 @@ import 'l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_langdetect/flutter_langdetect.dart' as langdetect;
 
+// 번역 화면의 진입 위젯. 상태를 가지는 화면으로 입력/번역/결과 UI를 포함합니다.
 class TranslationScreen extends StatefulWidget {
   const TranslationScreen({super.key});
 
@@ -19,7 +20,7 @@ class TranslationScreen extends StatefulWidget {
 }
 
 class TranslationScreenState extends State<TranslationScreen> {
-  // 언어 선택을 위한 상태 변수들
+  // 언어 선택을 위한 상태 변수들 (드롭다운과 연동)
   String selectedFromLanguage = '영어';
   String selectedToLanguage = '한국어';
   StreamSubscription? _languageSubscription;
@@ -34,13 +35,14 @@ class TranslationScreenState extends State<TranslationScreen> {
   ];
   bool isTonePickerExpanded = false;
 
-  // 번역 관련 변수들
+  // 번역 관련 변수들 (입력 컨트롤러, 로딩 상태, 스크롤 제어)
   final TextEditingController _inputController = TextEditingController();
   String _translatedText = '';
   bool _isLoading = false;
   final _scrollController = ScrollController();
 
-  // 동적 높이 관리를 위한 변수들
+  // 입력/결과 영역 높이 관리 변수들
+  // 요구사항에 따라 입력창은 고정 높이를 사용합니다(_minFieldHeight).
   double _inputFieldHeight = 200.0;
   double _resultFieldHeight = 200.0;
   static const double _minFieldHeight = 200.0;
@@ -67,10 +69,10 @@ class TranslationScreenState extends State<TranslationScreen> {
       });
     });
 
-    // Language Detector 초기화
+    // 언어 감지 라이브러리 초기화 (입력 언어 확인용)
     initLanguageDetector();
 
-    // 텍스트 변경 리스너 추가
+    // 입력 텍스트 변경 시 높이 업데이트 (고정 높이 유지)
     _inputController.addListener(_updateInputFieldHeight);
   }
 
@@ -91,6 +93,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 입력 필드 높이 업데이트 함수
+  // 고정 높이 정책에 따라 항상 _minFieldHeight로 설정합니다.
   void _updateInputFieldHeight() {
     setState(() {
       _inputFieldHeight = _minFieldHeight;
@@ -139,6 +142,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 텍스트 복사 함수
+  // 공용 복사 함수: 텍스트를 클립보드에 복사하고 토스트 메시지를 표시합니다.
   void _copyToClipboard(String text, String message) {
     final themeService = context.read<ThemeService>();
     final colors = themeService.colors;
@@ -157,7 +161,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   Future<void> _translateText() async {
     if (_inputController.text.trim().isEmpty) return;
 
-    // 키보드 숨기기
+    // 키보드 숨기기: 번역 중 불필요한 포커스 방지
     FocusScope.of(context).unfocus();
 
     final temp = langdetect.detect(_inputController.text.trim());
@@ -170,7 +174,7 @@ class TranslationScreenState extends State<TranslationScreen> {
     );
 
     if (detectedLanguageByLangDetect != selectedLanguageCode) {
-      // 언어 확인 팝업 띄우기
+      // 언어 확인 팝업 띄우기 (감지 언어와 선택 언어가 다를 때 사용자 확인)
       final themeService = context.read<ThemeService>();
       final colors = themeService.colors;
 
@@ -227,7 +231,8 @@ class TranslationScreenState extends State<TranslationScreen> {
 
       // '아니요'를 선택했거나 다이얼로그를 닫았으면 번역 취소
       if (shouldContinue != true) {
-        // 다이얼로그가 닫힌 후에도 입력창에 포커스가 가지 않도록 약간 딜레이를 주고 unfocus를 한 번 더 호출
+        // 다이얼로그가 닫힌 후에도 입력창에 포커스가 가지 않도록
+        // 약간 딜레이를 주고 unfocus를 한 번 더 호출합니다.
         FocusScope.of(context).unfocus();
         Future.delayed(const Duration(milliseconds: 100), () {
           FocusScope.of(context).unfocus();
@@ -270,7 +275,7 @@ class TranslationScreenState extends State<TranslationScreen> {
         _translatedText = translatedText;
       });
 
-      // 번역 결과가 업데이트되면 결과 필드 높이도 업데이트하고 맨 밑으로 스크롤
+      // 번역 결과가 업데이트되면 결과 필드 높이 업데이트 후 맨 밑으로 스크롤합니다.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _updateResultFieldHeight();
         // 맨 밑으로 스크롤
@@ -635,6 +640,7 @@ class TranslationScreenState extends State<TranslationScreen> {
   }
 
   // 입력창
+  // 높이는 고정(_inputFieldHeight)이며, 실제 입력은 전체 화면 에디터에서 수행합니다.
   Widget _buildInputField(CustomColors colors) {
     return Container(
       height: _inputFieldHeight,
@@ -759,6 +765,7 @@ class TranslationScreenState extends State<TranslationScreen> {
               ],
             ),
           ),
+          // 읽기 전용 입력창: 탭하면 전체 화면 에디터를 엽니다.
           Expanded(
             child: TextField(
               controller: _inputController,
@@ -781,6 +788,8 @@ class TranslationScreenState extends State<TranslationScreen> {
     );
   }
 
+  // 전체 화면 에디터로 이동하여 텍스트를 작성/수정하고
+  // 결과 문자열을 받아 현재 입력창 컨트롤러에 반영합니다.
   Future<void> _openFullScreenEditor() async {
     final result = await Navigator.push<String>(
       context,
@@ -1084,6 +1093,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
+      // 라우트 인자로 넘어온 초기 텍스트를 에디터 컨트롤러에 세팅합니다.
       final args = ModalRoute.of(context)?.settings.arguments;
       final initialText = args is String ? args : '';
       _controller.text = initialText;
@@ -1098,6 +1108,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
   }
 
   Future<bool> _handleWillPop() async {
+    // 뒤로가기 시 현재 작성한 텍스트를 호출자에게 반환합니다.
     Navigator.of(context).pop<String>(_controller.text);
     return false;
   }
@@ -1113,6 +1124,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
         appBar: AppBar(title: Text(AppLocalizations.of(context).input_text)),
         body: Stack(
           children: [
+            // 전체 화면 텍스트 에디터 영역
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -1130,6 +1142,8 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
                 ),
               ),
             ),
+            // 하단바 영역: search_result_screen.dart의 초기 하단바 디자인을 참고
+            // 키보드가 올라오면 자동으로 키보드 위로 배치되도록 Stack + Positioned 사용
             Positioned(
               left: 0,
               right: 0,
@@ -1137,6 +1151,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
               child: IgnorePointer(
                 ignoring: false,
                 child: Container(
+                  // 콘텐츠와 자연스럽게 이어지도록 상단 그라데이션 처리
                   padding: const EdgeInsets.only(top: 20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -1154,6 +1169,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
                     child: Row(
                       children: [
                         const Spacer(),
+                        // 체크 버튼: 원형 버튼 스타일, 누르면 작성한 텍스트를 반환하고 닫습니다.
                         ElevatedButton(
                           onPressed: () => Navigator.of(
                             context,
