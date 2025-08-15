@@ -140,6 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onItemTapped(int index) {
+    // 탭 전환 시 다른 페이지의 키보드 포커스가 남지 않도록 전역 포커스 해제
+    FocusManager.instance.primaryFocus?.unfocus();
     // 기록 탭(index 1)을 누를 때마다 새로고침
     if (index == 1) {
       _historyScreenKey.currentState?.refresh();
@@ -158,6 +160,8 @@ class _MyHomePageState extends State<MyHomePage> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (_selectedIndex != 0) {
+          // 메인 탭으로 이동 시 포커스 해제
+          FocusManager.instance.primaryFocus?.unfocus();
           setState(() {
             _selectedIndex = 0;
           });
