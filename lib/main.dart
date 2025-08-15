@@ -247,8 +247,8 @@ class _HomeTabState extends State<_HomeTab> {
           style: TextStyle(
             color: colors.primary,
             fontSize: 24,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'SunBatang',
+            fontFamily: 'MaruBuri',
+            fontWeight: FontWeight.w400,
           ),
         ),
         backgroundColor: colors.white,
