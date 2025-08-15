@@ -251,16 +251,16 @@ class TranslationScreenState extends State<TranslationScreen> {
 
       switch (toneIndex) {
         case 0: // 친구
-          toneInstruction = '친근하고 편안한 톤으로 번역해주세요. 반말로 친구 사이에 사용하는 표현을 사용해주세요.';
+          toneInstruction = '친구에게 말하듯이 친근하고 편안한 말투로 번역해주세요.';
           break;
         case 1: // 기본
           toneInstruction = '기본적이고 중립적인 톤으로 존대말로 번역해주세요.';
           break;
         case 2: // 공손
-          toneInstruction = '공손하고 예의 바른 톤으로 번역해주세요.';
+          toneInstruction = '공적인 자리에서 사용할 수 있도록 공손하고 예의 바른 톤으로 번역해주세요.';
           break;
         case 3: // 격식
-          toneInstruction = '격식 있고 공식적인 톤으로 번역해주세요.';
+          toneInstruction = '문서에서 사용하려고 합니다. 격식 있고 공식적인 톤으로 번역해주세요.';
           break;
       }
 
