@@ -92,6 +92,8 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
         : 0.0;
 
     setState(() {
+      // 키보드 숨기기
+      FocusScope.of(context).unfocus();
       _isLoading = true;
     });
 

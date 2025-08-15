@@ -675,35 +675,28 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       );
     }
 
-    return PopScope(
-      canPop: !_focusNode.hasFocus,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop && _focusNode.hasFocus) {
-          FocusScope.of(context).unfocus();
-        }
-      },
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          resizeToAvoidBottomInset: true,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: colors.white,
+        appBar: AppBar(
+          foregroundColor: colors.text,
           backgroundColor: colors.white,
-          appBar: AppBar(
-            foregroundColor: colors.text,
-            backgroundColor: colors.white,
-            leading: IconButton(
-              icon: Icon(Icons.close, color: colors.text),
-              onPressed: () => {
-                Navigator.pop(context),
+          leading: IconButton(
+            icon: Icon(Icons.close, color: colors.text),
+            onPressed: () => {
+              Navigator.pop(context),
 
-                // 키보드 숨기기
-                FocusScope.of(context).unfocus(),
-              },
-            ),
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                /* // 출발 언어 드롭다운
+              // 키보드 숨기기
+              FocusScope.of(context).unfocus(),
+            },
+          ),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              /* // 출발 언어 드롭다운
                 SizedBox(
                   width: 108,
                   child: DropdownButtonHideUnderline(
@@ -761,131 +754,128 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     ),
                   ),
                 ), */
-                Icon(Icons.translate, color: colors.primary),
-                const SizedBox(width: 4),
-                // 도착 언어 드롭다운
-                SizedBox(
-                  width: 180,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        AppLocalizations.of(context).language,
-                        style: TextStyle(fontSize: 14, color: colors.textLight),
-                      ),
-                      items:
-                          LanguageService.getLocalizedTranslationLanguages(
-                                AppLocalizations.of(context),
-                              )
-                              .map(
-                                (Map<String, String> item) =>
-                                    DropdownMenuItem<String>(
-                                      value: item['code']!,
-                                      child: Text(
-                                        item['name']!,
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500,
-                                          color: colors.text,
-                                        ),
+              Icon(Icons.translate, color: colors.primary),
+              const SizedBox(width: 4),
+              // 도착 언어 드롭다운
+              SizedBox(
+                width: 180,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: Text(
+                      AppLocalizations.of(context).language,
+                      style: TextStyle(fontSize: 14, color: colors.textLight),
+                    ),
+                    items:
+                        LanguageService.getLocalizedTranslationLanguages(
+                              AppLocalizations.of(context),
+                            )
+                            .map(
+                              (Map<String, String> item) =>
+                                  DropdownMenuItem<String>(
+                                    value: item['code']!,
+                                    child: Text(
+                                      item['name']!,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: colors.text,
                                       ),
                                     ),
-                              )
-                              .toList(),
-                      selectedItemBuilder: (BuildContext context) {
-                        final items =
-                            LanguageService.getLocalizedTranslationLanguages(
-                              AppLocalizations.of(context),
-                            );
-                        return items
-                            .map(
-                              (Map<String, String> item) => Center(
-                                child: Text(
-                                  item['name']!,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: colors.text,
                                   ),
+                            )
+                            .toList(),
+                    selectedItemBuilder: (BuildContext context) {
+                      final items =
+                          LanguageService.getLocalizedTranslationLanguages(
+                            AppLocalizations.of(context),
+                          );
+                      return items
+                          .map(
+                            (Map<String, String> item) => Center(
+                              child: Text(
+                                item['name']!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: colors.text,
                                 ),
                               ),
-                            )
-                            .toList();
-                      },
-                      value: _toLanguage,
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          _updateLanguages(_fromLanguage, newValue);
-                        }
-                      },
-                      buttonStyleData: ButtonStyleData(
-                        padding: const EdgeInsets.only(left: 12, right: 6),
-                        height: 36,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(color: colors.primary),
-                          ),
-                        ),
-                      ),
-                      iconStyleData: IconStyleData(
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          color: colors.textLight,
-                        ),
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(height: 48),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                            ),
+                          )
+                          .toList();
+                    },
+                    value: _toLanguage,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        _updateLanguages(_fromLanguage, newValue);
+                      }
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      padding: const EdgeInsets.only(left: 12, right: 6),
+                      height: 36,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: colors.primary),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-              ],
-            ),
-            centerTitle: true,
-            elevation: 0,
-          ),
-          body: Stack(
-            children: [
-              _isSearching
-                  ? _buildResultView(colors)
-                  : _buildInitialView(colors),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: IgnorePointer(
-                  ignoring: false,
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          colors.white.withValues(alpha: 0.0),
-                          colors.background,
-                        ],
+                    iconStyleData: IconStyleData(
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: colors.textLight,
                       ),
                     ),
-                    child: bottomBar,
+                    menuItemStyleData: const MenuItemStyleData(height: 48),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
               ),
+              const SizedBox(width: 12),
             ],
           ),
-          // bottomNavigationBar: Padding(
-          //   padding: MediaQuery.of(context).viewInsets,
-          //   child: bottomBar,
-          // ),
+          centerTitle: true,
+          elevation: 0,
         ),
+        body: Stack(
+          children: [
+            _isSearching ? _buildResultView(colors) : _buildInitialView(colors),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: IgnorePointer(
+                ignoring: false,
+                child: Container(
+                  padding: const EdgeInsets.only(top: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        colors.white.withValues(alpha: 0.0),
+                        colors.background,
+                      ],
+                    ),
+                  ),
+                  child: bottomBar,
+                ),
+              ),
+            ),
+          ],
+        ),
+        // bottomNavigationBar: Padding(
+        //   padding: MediaQuery.of(context).viewInsets,
+        //   child: bottomBar,
+        // ),
       ),
     );
   }
