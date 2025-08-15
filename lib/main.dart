@@ -434,7 +434,7 @@ class _HomeTabState extends State<_HomeTab> {
                       fillColor: colors.light,
                       hintText: AppLocalizations.of(context).main_search_hint,
                       hintStyle: TextStyle(
-                        color: colors.text,
+                        color: colors.textLight,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
