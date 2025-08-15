@@ -1135,17 +1135,20 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
             // 전체 화면 텍스트 에디터 영역
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(vertical: 0.0),
                 child: TextField(
+                  style: TextStyle(color: colors.text),
                   controller: _controller,
                   autofocus: true,
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
                   maxLines: null,
                   expands: true,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: '',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).input_text_hint,
+                    filled: true,
+                    fillColor: colors.white,
+                    contentPadding: const EdgeInsets.all(20.0),
                   ),
                 ),
               ),
