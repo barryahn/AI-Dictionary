@@ -365,18 +365,53 @@ class TranslationScreenState extends State<TranslationScreen> {
                       value: item['code']!,
                       child: Text(
                         item['name']!,
-                        style: TextStyle(fontSize: 20, color: colors.text),
+                        style: TextStyle(fontSize: 18, color: colors.text),
                       ),
                     ),
                   )
                   .toList(),
+          selectedItemBuilder: (context) {
+            final items = LanguageService.getLocalizedTranslationLanguages(
+              AppLocalizations.of(context),
+            );
+            return items
+                .map(
+                  (item) => Center(
+                    child: Text(
+                      item['name']!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, color: colors.text),
+                    ),
+                  ),
+                )
+                .toList();
+          },
+          iconStyleData: IconStyleData(
+            icon: SizedBox(
+              width: 14,
+              child: Icon(
+                Icons.arrow_drop_down,
+                size: 18,
+                color: colors.textLight,
+              ),
+            ),
+            openMenuIcon: SizedBox(
+              width: 14,
+              child: Icon(
+                Icons.arrow_drop_up,
+                size: 18,
+                color: colors.textLight,
+              ),
+            ),
+            iconSize: 18,
+          ),
           value: selectedFromLanguage,
           onChanged: (String? newValue) {
             if (newValue == null) return;
             _updateLanguages(newValue, selectedToLanguage);
           },
           buttonStyleData: const ButtonStyleData(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 10),
             height: 40,
             width: 140,
           ),
@@ -398,7 +433,18 @@ class TranslationScreenState extends State<TranslationScreen> {
       onTap: () {
         _updateLanguages(selectedToLanguage, selectedFromLanguage);
       },
-      child: Icon(Icons.arrow_forward_ios, color: colors.text),
+      child: Container(
+        width: 36,
+        height: 28,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: colors.primary,
+          shape: BoxShape.rectangle,
+        ),
+        child: Center(
+          child: Icon(Icons.arrow_forward_ios, color: colors.white, size: 16),
+        ),
+      ),
     );
   }
 
@@ -422,18 +468,53 @@ class TranslationScreenState extends State<TranslationScreen> {
                       value: item['code']!,
                       child: Text(
                         item['name']!,
-                        style: TextStyle(fontSize: 20, color: colors.text),
+                        style: TextStyle(fontSize: 18, color: colors.text),
                       ),
                     ),
                   )
                   .toList(),
+          selectedItemBuilder: (context) {
+            final items = LanguageService.getLocalizedTranslationLanguages(
+              AppLocalizations.of(context),
+            );
+            return items
+                .map(
+                  (item) => Center(
+                    child: Text(
+                      item['name']!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, color: colors.text),
+                    ),
+                  ),
+                )
+                .toList();
+          },
+          iconStyleData: IconStyleData(
+            icon: SizedBox(
+              width: 14,
+              child: Icon(
+                Icons.arrow_drop_down,
+                size: 18,
+                color: colors.textLight,
+              ),
+            ),
+            openMenuIcon: SizedBox(
+              width: 14,
+              child: Icon(
+                Icons.arrow_drop_up,
+                size: 18,
+                color: colors.textLight,
+              ),
+            ),
+            iconSize: 18,
+          ),
           value: selectedToLanguage,
           onChanged: (String? newValue) {
             if (newValue == null) return;
             _updateLanguages(selectedFromLanguage, newValue);
           },
           buttonStyleData: const ButtonStyleData(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 10),
             height: 40,
             width: 140,
           ),
