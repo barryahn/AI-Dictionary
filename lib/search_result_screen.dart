@@ -1099,14 +1099,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       return _buildFallbackResultSection(query, aiResponse, index, isStreaming);
     }
 
-    // 동일 언어 여부 확인
-    final bool isSameLanguage =
-        LanguageService.getLanguageNameInKorean(
-          LanguageService.currentLanguage,
-        ) ==
-        _toLanguage;
+    // L1 형식인지 L2 형식인지 판별
+    int whichFormat = _whichFormat(parsedData);
 
-    if (isSameLanguage) {
+    if (whichFormat == 0) {
       return _buildSameLanguageResultSection(
         query,
         parsedData,
@@ -1115,12 +1111,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         appBarHeight,
         isStreaming,
       );
-    }
-
-    // L1 형식인지 L2 형식인지 판별
-    bool isL1Format = _isL1Format(parsedData);
-
-    if (isL1Format) {
+    } else if (whichFormat == 1) {
       return _buildL1ResultSection(
         query,
         parsedData,
@@ -1141,26 +1132,31 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     }
   }
 
-  bool _isL1Format(Map<String, dynamic> parsedData) {
+  int _whichFormat(Map<String, dynamic> parsedData) {
     // L1 형식은 "번역" 키가 있고 그 안에 "번역단어"가 있는 구조
     if (parsedData['단어_뜻'] != null) {
-      if (parsedData['단어_뜻'] is List) {
+      if (parsedData['단어_뜻'].first is Map<String, dynamic>) {
         for (var meaning in parsedData['단어_뜻']) {
           if (meaning is Map<String, dynamic> &&
               meaning['번역'] != null &&
               meaning['번역'] is Map<String, dynamic> &&
               meaning['번역']['번역단어'] != null) {
-            return true;
+            return 1;
           }
         }
-      } else if (parsedData['단어_뜻'] is Map<String, dynamic> &&
+      } else if (parsedData['단어_뜻'].first is Map<String, dynamic> &&
           parsedData['단어_뜻']['번역'] != null &&
           parsedData['단어_뜻']['번역'] is Map<String, dynamic> &&
           parsedData['단어_뜻']['번역']['번역단어'] != null) {
-        return true;
+        return 1;
+      }
+      // L1==L2 형식: 단어_뜻이 문자열인 경우
+      else if (parsedData['단어_뜻'].first is String) {
+        return 0;
       }
     }
-    return false;
+    // L2 형식은 이제 안 쓰는 듯?
+    return 2;
   }
 
   Widget _buildL1ResultSection(
