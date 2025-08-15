@@ -22,7 +22,7 @@ class DarkTheme extends AppTheme {
     textLight: Color(0xFF9B9B9B), // 보조 텍스트 색상
     // 배경 색상들
     background: Color(0xFF232323), // 깊이 있는 다크 배경
-    surface: Color(0xFF1A202C), // 카드/표면 배경색
+    surface: Color(0xFF232323), // 카드/표면 배경색
     // 강조 색상들
     divider: Color(0xFFA0AEC0), // 구분선 색상
     highlight: Color(0xFFF9A4A0), // 하이라이트 색상 (밝은 주황색)

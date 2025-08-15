@@ -515,9 +515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 LanguageService.currentLanguage == language['code'];
             return ListTile(
               title: Text(language['name']!),
-              trailing: isSelected
-                  ? const Icon(Icons.check, color: Colors.blue)
-                  : null,
+              trailing: isSelected ? Icon(Icons.check) : null,
               onTap: () async {
                 // 포커스 해제하여 키보드가 나타나지 않도록 함
                 FocusScope.of(context).unfocus();

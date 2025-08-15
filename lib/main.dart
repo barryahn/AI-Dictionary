@@ -285,7 +285,7 @@ class _HomeTabState extends State<_HomeTab> {
               onTap: () {
                 showModalBottomSheet(
                   context: context,
-                  backgroundColor: Colors.white,
+                  backgroundColor: colors.white,
                   isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
@@ -303,7 +303,7 @@ class _HomeTabState extends State<_HomeTab> {
                             height: 5,
                             margin: const EdgeInsets.only(top: 8, bottom: 12),
                             decoration: BoxDecoration(
-                              color: colors.dark.withValues(alpha: 0.2),
+                              color: colors.text.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
@@ -315,7 +315,7 @@ class _HomeTabState extends State<_HomeTab> {
                           Divider(
                             height: 1,
                             thickness: 1,
-                            color: colors.dark.withValues(alpha: 0.1),
+                            color: colors.text.withValues(alpha: 0.1),
                           ),
 
                           Expanded(
@@ -393,7 +393,7 @@ class _HomeTabState extends State<_HomeTab> {
                     const SizedBox(width: 8),
                     Icon(
                       Icons.keyboard_arrow_down,
-                      color: colors.dark.withValues(alpha: 0.4),
+                      color: colors.text.withValues(alpha: 0.4),
                     ),
                   ],
                 ),
