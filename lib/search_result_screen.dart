@@ -509,12 +509,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 child: TextField(
                   controller: _searchController,
                   focusNode: _focusNode,
-                  style: TextStyle(fontSize: 28, color: colors.text),
+                  style: TextStyle(fontSize: 24, color: colors.text),
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context).search_hint,
                     hintStyle: TextStyle(
                       color: colors.textLight,
                       fontWeight: FontWeight.w400,
+                      fontSize: 20, // 힌트 텍스트 크기만 줄임
                     ),
                     border: InputBorder.none,
                   ),
