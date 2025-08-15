@@ -92,34 +92,8 @@ class TranslationScreenState extends State<TranslationScreen> {
 
   // 입력 필드 높이 업데이트 함수
   void _updateInputFieldHeight() {
-    final text = _inputController.text;
-    if (text.isEmpty) {
-      setState(() {
-        _inputFieldHeight = 200.0;
-      });
-      return;
-    }
-
-    // 텍스트의 예상 높이 계산
-    final textStyle = TextStyle(fontSize: 16, height: 1.4);
-    final textSpan = TextSpan(text: text, style: textStyle);
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-      maxLines: null,
-    );
-    textPainter.layout(maxWidth: 300); // 패딩 고려
-
-    final textHeight = textPainter.height;
-    final headerHeight = 60.0; // 헤더 영역 높이
-    final padding = 32.0; // 상하 패딩
-    final totalRequiredHeight = textHeight + headerHeight + padding;
-
     setState(() {
-      _inputFieldHeight = totalRequiredHeight.clamp(
-        _minFieldHeight,
-        _maxFieldHeight,
-      );
+      _inputFieldHeight = _minFieldHeight;
     });
   }
 
@@ -788,6 +762,9 @@ class TranslationScreenState extends State<TranslationScreen> {
           Expanded(
             child: TextField(
               controller: _inputController,
+              readOnly: true,
+              showCursor: false,
+              onTap: _openFullScreenEditor,
               maxLines: null,
               expands: true,
               decoration: InputDecoration(
@@ -802,6 +779,22 @@ class TranslationScreenState extends State<TranslationScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _openFullScreenEditor() async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const _InputFullScreenEditor(),
+        settings: RouteSettings(arguments: _inputController.text),
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        _inputController.text = result;
+      });
+      _updateInputFieldHeight();
+    }
   }
 
   // 번역 버튼
@@ -1065,6 +1058,128 @@ class TranslationScreenState extends State<TranslationScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _InputFullScreenEditor extends StatefulWidget {
+  const _InputFullScreenEditor();
+
+  @override
+  State<_InputFullScreenEditor> createState() => _InputFullScreenEditorState();
+}
+
+class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
+  late final TextEditingController _controller;
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      final initialText = args is String ? args : '';
+      _controller.text = initialText;
+      _initialized = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<bool> _handleWillPop() async {
+    Navigator.of(context).pop<String>(_controller.text);
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+    return WillPopScope(
+      onWillPop: _handleWillPop,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(title: Text(AppLocalizations.of(context).input_text)),
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _controller,
+                  autofocus: true,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  maxLines: null,
+                  expands: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: '',
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: IgnorePointer(
+                ignoring: false,
+                child: Container(
+                  padding: const EdgeInsets.only(top: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        colors.white.withValues(alpha: 0.0),
+                        colors.background,
+                      ],
+                    ),
+                  ),
+                  child: BottomAppBar(
+                    color: colors.background,
+                    height: 64,
+                    child: Row(
+                      children: [
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(
+                            context,
+                          ).pop<String>(_controller.text),
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(2),
+                            backgroundColor: colors.white,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 2),
+                            child: Icon(
+                              Icons.check,
+                              color: colors.text,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
