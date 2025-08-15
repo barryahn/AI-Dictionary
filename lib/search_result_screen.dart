@@ -503,41 +503,33 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PopScope(
-            canPop: true,
-            onPopInvokedWithResult: (didPop, result) async {
-              if (!didPop) {
-                FocusScope.of(context).unfocus();
-              }
-            },
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    focusNode: _focusNode,
-                    style: TextStyle(fontSize: 28, color: colors.text),
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context).search_hint,
-                      hintStyle: TextStyle(
-                        color: colors.textLight,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      border: InputBorder.none,
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  focusNode: _focusNode,
+                  style: TextStyle(fontSize: 28, color: colors.text),
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).search_hint,
+                    hintStyle: TextStyle(
+                      color: colors.textLight,
+                      fontWeight: FontWeight.w400,
                     ),
-                    onSubmitted: (_) => _startSearch(),
+                    border: InputBorder.none,
                   ),
+                  onSubmitted: (_) => _startSearch(),
                 ),
-                if (_showWarningIcon) ...[
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: colors.error,
-                    size: 24,
-                  ),
-                ],
+              ),
+              if (_showWarningIcon) ...[
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: colors.error,
+                  size: 24,
+                ),
               ],
-            ),
+            ],
           ),
           Divider(thickness: 1, color: colors.dark.withValues(alpha: 0.4)),
         ],

@@ -27,9 +27,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _initializeLanguage();
-
-    // 키보드 숨기기
-    FocusScope.of(context).unfocus();
   }
 
   Future<void> _initializeLanguage() async {
