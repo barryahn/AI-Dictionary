@@ -97,19 +97,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 80,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return ColorFiltered(
-                              // 채도를 50% 높인 컬러 매트릭스 적용
-                              colorFilter: const ColorFilter.matrix(<double>[
-                                0.57619, 0.3576, 0.06621, 0, 0, // R
-                                0.17606, 0.8576, -0.03366, 0, 0, // G
-                                0.17606, 0.3576, 0.46634, 0, 0, // B
-                                0, 0, 0, 1, 0, // A
-                              ]),
-                              child: Image.asset(
-                                'assets/WordVibe_appIcon_letters.png',
-                                width: 40,
-                                height: 40,
-                              ),
+                            return Image.asset(
+                              'assets/WordVibe_appIcon_letters.png',
+                              width: 40,
+                              height: 40,
                             );
                           },
                           loadingBuilder: (context, child, loadingProgress) {
@@ -127,19 +118,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                         ),
                       )
-                    : ColorFiltered(
-                        // 채도를 50% 높인 컬러 매트릭스 적용
-                        colorFilter: const ColorFilter.matrix(<double>[
-                          0.57619, 0.3576, 0.06621, 0, 0, // R
-                          0.17606, 0.8576, -0.03366, 0, 0, // G
-                          0.17606, 0.3576, 0.46634, 0, 0, // B
-                          0, 0, 0, 1, 0, // A
-                        ]),
-                        child: Image.asset(
-                          'assets/WordVibe_appIcon_letters.png',
-                          width: 40,
-                          height: 40,
-                        ),
+                    : Image.asset(
+                        'assets/WordVibe_appIcon_letters.png',
+                        width: 40,
+                        height: 40,
                       ),
               ),
               const SizedBox(height: 16),
