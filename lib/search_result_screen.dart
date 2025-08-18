@@ -13,6 +13,8 @@ import 'l10n/app_localizations.dart';
 import 'package:google_mlkit_language_id/google_mlkit_language_id.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'services/tutorial_service.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -32,6 +34,8 @@ class SearchResultScreen extends StatefulWidget {
   @override
   State<SearchResultScreen> createState() => _SearchResultScreenState();
 }
+
+final GlobalKey _toLangKey = GlobalKey();
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
   final TextEditingController _searchController = TextEditingController();
@@ -82,6 +86,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         });
       }
     });
+
+    // 쇼케이스 시작은 ShowCaseWidget 빌더 컨텍스트에서 처리 (여기서 시작하지 않음)
   }
 
   // 백그라운드 캐시 초기화
@@ -668,207 +674,235 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       );
     }
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: colors.white,
-        appBar: AppBar(
-          foregroundColor: colors.text,
-          backgroundColor: colors.white,
-          leading: IconButton(
-            icon: Icon(Icons.close, color: colors.text),
-            onPressed: () => {
-              Navigator.pop(context),
+    return ShowCaseWidget(
+      builder: (ctx) {
+        // 빌더 컨텍스트에서 쇼케이스 트리거를 소모하고 시작해야 함
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          // 이미 한 번 보여줬다면 종료
+          final alreadyShown = await TutorialService.wasSearchShowcaseShown();
+          if (alreadyShown) return;
 
-              // 키보드 숨기기
-              FocusScope.of(context).unfocus(),
-            },
-          ),
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              /* // 출발 언어 드롭다운
-                SizedBox(
-                  width: 108,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Text(
-                        AppLocalizations.of(context).language,
-                        style: TextStyle(fontSize: 14, color: colors.textLight),
-                      ),
-                      items:
-                          LanguageService.getLocalizedTranslationLanguages(
-                                AppLocalizations.of(context),
-                              )
-                              .map(
-                                (Map<String, String> item) =>
-                                    DropdownMenuItem<String>(
-                                      value: item['code']!,
-                                      child: Text(
-                                        item['name']!,
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500,
-                                          color: colors.text,
+          if (TutorialService.consumeSearchShowcaseTrigger()) {
+            ShowCaseWidget.of(ctx).startShowCase([_toLangKey]);
+            await TutorialService.markSearchShowcaseShown();
+          }
+        });
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: colors.white,
+            appBar: AppBar(
+              foregroundColor: colors.text,
+              backgroundColor: colors.white,
+              leading: IconButton(
+                icon: Icon(Icons.close, color: colors.text),
+                onPressed: () => {
+                  Navigator.pop(context),
+
+                  // 키보드 숨기기
+                  FocusScope.of(context).unfocus(),
+                },
+              ),
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  /* // 출발 언어 드롭다운
+                  SizedBox(
+                    width: 108,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Text(
+                          AppLocalizations.of(context).language,
+                          style: TextStyle(fontSize: 14, color: colors.textLight),
+                        ),
+                        items:
+                            LanguageService.getLocalizedTranslationLanguages(
+                                  AppLocalizations.of(context),
+                                )
+                                .map(
+                                  (Map<String, String> item) =>
+                                      DropdownMenuItem<String>(
+                                        value: item['code']!,
+                                        child: Text(
+                                          item['name']!,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color: colors.text,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                              )
-                              .toList(),
-                      value: _fromLanguage,
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
-                          if (newValue == _toLanguage) {
-                            _updateLanguages(_toLanguage, _fromLanguage);
-                          } else {
-                            _updateLanguages(newValue, _toLanguage);
+                                )
+                                .toList(),
+                        value: _fromLanguage,
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            // 같은 언어가 선택된 경우 자동으로 위치를 바꿈
+                            if (newValue == _toLanguage) {
+                              _updateLanguages(_toLanguage, _fromLanguage);
+                            } else {
+                              _updateLanguages(newValue, _toLanguage);
+                            }
                           }
-                        }
-                      },
-                      buttonStyleData: ButtonStyleData(
-                        padding: const EdgeInsets.only(left: 12, right: 6),
-                        height: 36,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: colors.textLight),
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          padding: const EdgeInsets.only(left: 12, right: 6),
+                          height: 36,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: colors.textLight),
+                          ),
                         ),
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(height: 48),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                        menuItemStyleData: const MenuItemStyleData(height: 48),
+                        dropdownStyleData: DropdownStyleData(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ), */
-              Icon(Icons.translate, color: colors.primary),
-              const SizedBox(width: 4),
-              // 도착 언어 드롭다운
-              SizedBox(
-                width: 180,
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    hint: Text(
-                      AppLocalizations.of(context).language,
-                      style: TextStyle(fontSize: 14, color: colors.textLight),
-                    ),
-                    items:
-                        LanguageService.getLocalizedTranslationLanguages(
-                              AppLocalizations.of(context),
-                            )
-                            .map(
-                              (Map<String, String> item) =>
-                                  DropdownMenuItem<String>(
-                                    value: item['code']!,
+                  ), */
+                  Icon(Icons.translate, color: colors.primary),
+                  const SizedBox(width: 4),
+                  // 도착 언어 드롭다운
+                  Showcase(
+                    key: _toLangKey,
+                    title: AppLocalizations.of(context).language,
+                    description: AppLocalizations.of(context).language,
+                    child: SizedBox(
+                      width: 180,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: Text(
+                            AppLocalizations.of(context).language,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colors.textLight,
+                            ),
+                          ),
+                          items:
+                              LanguageService.getLocalizedTranslationLanguages(
+                                    AppLocalizations.of(context),
+                                  )
+                                  .map(
+                                    (Map<String, String> item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item['code']!,
+                                          child: Text(
+                                            item['name']!,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: colors.text,
+                                            ),
+                                          ),
+                                        ),
+                                  )
+                                  .toList(),
+                          selectedItemBuilder: (BuildContext context) {
+                            final items =
+                                LanguageService.getLocalizedTranslationLanguages(
+                                  AppLocalizations.of(context),
+                                );
+                            return items
+                                .map(
+                                  (Map<String, String> item) => Center(
                                     child: Text(
                                       item['name']!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w400,
                                         color: colors.text,
                                       ),
                                     ),
                                   ),
-                            )
-                            .toList(),
-                    selectedItemBuilder: (BuildContext context) {
-                      final items =
-                          LanguageService.getLocalizedTranslationLanguages(
-                            AppLocalizations.of(context),
-                          );
-                      return items
-                          .map(
-                            (Map<String, String> item) => Center(
-                              child: Text(
-                                item['name']!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: colors.text,
-                                ),
+                                )
+                                .toList();
+                          },
+                          value: _toLanguage,
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              _updateLanguages(_fromLanguage, newValue);
+                            }
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            padding: const EdgeInsets.only(left: 12, right: 6),
+                            height: 36,
+                            width: 80,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: colors.primary),
                               ),
                             ),
-                          )
-                          .toList();
-                    },
-                    value: _toLanguage,
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        _updateLanguages(_fromLanguage, newValue);
-                      }
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      padding: const EdgeInsets.only(left: 12, right: 6),
-                      height: 36,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: colors.primary),
+                          ),
+                          iconStyleData: IconStyleData(
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: colors.textLight,
+                            ),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 48,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    iconStyleData: IconStyleData(
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: colors.textLight,
-                      ),
-                    ),
-                    menuItemStyleData: const MenuItemStyleData(height: 48),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                ],
               ),
-              const SizedBox(width: 12),
-            ],
-          ),
-          centerTitle: true,
-          elevation: 0,
-        ),
-        body: Stack(
-          children: [
-            _isSearching ? _buildResultView(colors) : _buildInitialView(colors),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: IgnorePointer(
-                ignoring: false,
-                child: Container(
-                  padding: const EdgeInsets.only(top: 20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        colors.white.withValues(alpha: 0.0),
-                        colors.background,
-                      ],
-                    ),
-                  ),
-                  child: bottomBar,
-                ),
-              ),
+              centerTitle: true,
+              elevation: 0,
             ),
-          ],
-        ),
-        // bottomNavigationBar: Padding(
-        //   padding: MediaQuery.of(context).viewInsets,
-        //   child: bottomBar,
-        // ),
-      ),
+            body: Stack(
+              children: [
+                _isSearching
+                    ? _buildResultView(colors)
+                    : _buildInitialView(colors),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: IgnorePointer(
+                    ignoring: false,
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            colors.white.withValues(alpha: 0.0),
+                            colors.background,
+                          ],
+                        ),
+                      ),
+                      child: bottomBar,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // bottomNavigationBar: Padding(
+            //   padding: MediaQuery.of(context).viewInsets,
+            //   child: bottomBar,
+            // ),
+          ),
+        );
+      },
     );
   }
 

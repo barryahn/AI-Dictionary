@@ -9,8 +9,11 @@ import 'theme/app_theme.dart';
 import 'login_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'search_history_screen.dart';
-import 'tutorial_screen.dart';
+// import 'tutorial_screen.dart';
 import 'terms_of_service_content.dart';
+// import 'package:showcaseview/showcaseview.dart';
+import 'main.dart';
+import 'services/tutorial_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -585,10 +588,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showHelp(AppLocalizations loc) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const TutorialScreen()),
-    );
+    // 메인 홈 탭에서 쇼케이스를 시작하도록 전역 트리거 설정
+    TutorialService.requestMainShowcase();
+    // 메인 홈 탭에서 쇼케이스를 시작하도록 전역 트리거 호출
+    triggerHomeShowCase();
+    // 프로필 탭에서 누른 뒤 홈 탭 쇼케이스가 보이도록 탭 전환은 전역 함수에서 처리
+
+    TutorialService.resetTutorial();
   }
 
   void _showTermsOfService(AppLocalizations loc) {
