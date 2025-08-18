@@ -588,13 +588,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showHelp(AppLocalizations loc) {
+    // 튜토리얼 초기화
+    TutorialService.resetTutorial();
+
     // 메인 홈 탭에서 쇼케이스를 시작하도록 전역 트리거 설정
     TutorialService.requestMainShowcase();
     // 메인 홈 탭에서 쇼케이스를 시작하도록 전역 트리거 호출
     triggerHomeShowCase();
-    // 프로필 탭에서 누른 뒤 홈 탭 쇼케이스가 보이도록 탭 전환은 전역 함수에서 처리
 
-    TutorialService.resetTutorial();
+    // 튜토리얼 완료 표시
+    TutorialService.markTutorialCompleted();
   }
 
   void _showTermsOfService(AppLocalizations loc) {

@@ -557,6 +557,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     if (!isTutorialCompleted && mounted) {
       // 메인 쇼케이스를 한 번 요청
       TutorialService.requestMainShowcase();
+      TutorialService.markTutorialCompleted();
     }
   }
 
