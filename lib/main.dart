@@ -23,6 +23,7 @@ import 'package:showcaseview/showcaseview.dart';
 
 // ShowcaseView 키들
 GlobalKey _one = GlobalKey();
+GlobalKey _two = GlobalKey();
 // 홈 탭의 ShowCaseWidget 컨텍스트 보관용
 BuildContext? homeShowcaseContext;
 // 메인 페이지 상태 접근 키 (탭 전환 및 쇼케이스 시작용)
@@ -177,9 +178,8 @@ class _MyHomePageState extends State<MyHomePage> {
         _selectedIndex = 0;
       });
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        // 현재 활성화된 타겟이 _one 하나이므로 우선 _one만 시작
         if (homeShowcaseContext != null) {
-          ShowCaseWidget.of(homeShowcaseContext!).startShowCase([_one]);
+          ShowCaseWidget.of(homeShowcaseContext!).startShowCase([_one, _two]);
         }
       });
     }
@@ -298,7 +298,7 @@ class _HomeTabState extends State<_HomeTab> {
           // 첫 실행 또는 프로필에서 요청된 경우 홈 쇼케이스 자동 시작
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (TutorialService.consumeMainShowcaseTrigger()) {
-              ShowCaseWidget.of(context).startShowCase([_one]);
+              ShowCaseWidget.of(context).startShowCase([_one, _two]);
             }
           });
           return Padding(
@@ -332,7 +332,7 @@ class _HomeTabState extends State<_HomeTab> {
                 // 언어 선택 영역
                 // 도착 언어 선택 드롭다운
                 Showcase(
-                  key: _one,
+                  key: _two,
                   title: AppLocalizations.of(context).language,
                   description: AppLocalizations.of(context).language,
                   child: GestureDetector(
@@ -473,43 +473,48 @@ class _HomeTabState extends State<_HomeTab> {
 
                 const SizedBox(height: 20),
                 // 검색창 영역 수정
-                GestureDetector(
-                  onTap: () {
-                    // 검색 화면 진입 전 검색 쇼케이스 요청
-                    TutorialService.requestSearchShowcase();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SearchResultScreen(
-                          fromLanguage: selectedFromLanguage,
-                          toLanguage: selectedToLanguage,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: colors.background,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 4,
-                    ),
-                    child: IgnorePointer(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          icon: Icon(Icons.search, color: colors.text),
-                          fillColor: colors.light,
-                          hintText: AppLocalizations.of(
-                            context,
-                          ).main_search_hint,
-                          hintStyle: TextStyle(
-                            color: colors.textLight,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                Showcase(
+                  key: _one,
+                  title: AppLocalizations.of(context).language,
+                  description: AppLocalizations.of(context).language,
+                  child: GestureDetector(
+                    onTap: () {
+                      // 검색 화면 진입 전 검색 쇼케이스 요청
+                      TutorialService.requestSearchShowcase();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SearchResultScreen(
+                            fromLanguage: selectedFromLanguage,
+                            toLanguage: selectedToLanguage,
                           ),
-                          border: InputBorder.none,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colors.background,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 4,
+                      ),
+                      child: IgnorePointer(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.search, color: colors.text),
+                            fillColor: colors.light,
+                            hintText: AppLocalizations.of(
+                              context,
+                            ).main_search_hint,
+                            hintStyle: TextStyle(
+                              color: colors.textLight,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
