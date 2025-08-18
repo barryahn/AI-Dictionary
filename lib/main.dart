@@ -148,7 +148,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _widgetOptions = <Widget>[
       const _HomeTab(),
       SearchHistoryScreen(key: _historyScreenKey),
-      const TranslationScreen(),
+      // const 제거: 상태 접근/리스너가 정상 동작하도록
+      TranslationScreen(),
       const ProfileScreen(),
     ];
   }
@@ -159,6 +160,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // 기록 탭(index 1)을 누를 때마다 새로고침
     if (index == 1) {
       _historyScreenKey.currentState?.refresh();
+    }
+    // 번역 탭(index 2) 진입 시 번역 화면 쇼케이스 요청
+    if (index == 2) {
+      TutorialService.requestTranslationShowcase();
     }
     setState(() {
       _selectedIndex = index;

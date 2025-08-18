@@ -3,6 +3,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'services/theme_service.dart';
@@ -10,6 +11,9 @@ import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_langdetect/flutter_langdetect.dart' as langdetect;
+import 'services/tutorial_service.dart';
+
+final GlobalKey _langSelectorKey = GlobalKey();
 
 // 번역 화면의 진입 위젯. 상태를 가지는 화면으로 입력/번역/결과 UI를 포함합니다.
 class TranslationScreen extends StatefulWidget {
@@ -40,6 +44,9 @@ class TranslationScreenState extends State<TranslationScreen> {
   bool _isLoading = false;
   final _scrollController = ScrollController();
 
+  // ShowCase 빌더 컨텍스트 보관
+  BuildContext? _showcaseContext;
+
   // 입력/결과 영역 높이 관리 변수들
   // 요구사항에 따라 입력창은 고정 높이를 사용합니다(_minFieldHeight).
   double _inputFieldHeight = 200.0;
@@ -64,12 +71,39 @@ class TranslationScreenState extends State<TranslationScreen> {
 
     // 입력 텍스트 변경 시 높이 업데이트 (고정 높이 유지)
     _inputController.addListener(_updateInputFieldHeight);
+
+    // 번역 쇼케이스 노티파이어 구독 (탭 전환 등 런타임 트리거 대응)
+    TutorialService.translationShowcaseNotifier.addListener(
+      _onTranslationShowcaseEvent,
+    );
+  }
+
+  void _onTranslationShowcaseEvent() {
+    _maybeStartTranslationShowcase();
+  }
+
+  void _maybeStartTranslationShowcase() {
+    if (!mounted) return;
+    if (_showcaseContext == null) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final alreadyShown = await TutorialService.wasTranslationShowcaseShown();
+      if (alreadyShown) return;
+      if (TutorialService.consumeTranslationShowcaseTrigger()) {
+        ShowCaseWidget.of(_showcaseContext!).startShowCase([_langSelectorKey]);
+        await TutorialService.markTranslationShowcaseShown();
+      }
+    });
   }
 
   @override
   void dispose() {
     _inputController.dispose();
     _scrollController.dispose();
+    TutorialService.translationShowcaseNotifier.removeListener(
+      _onTranslationShowcaseEvent,
+    );
     super.dispose();
   }
 
@@ -319,45 +353,65 @@ class TranslationScreenState extends State<TranslationScreen> {
     final themeService = context.watch<ThemeService>();
     final colors = themeService.colors;
 
-    return Scaffold(
-      backgroundColor: colors.background,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context).translation,
-          style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: colors.background,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              _buildLanguageSelector(colors),
-              const SizedBox(height: 20),
-              _buildTonePicker(colors),
-              const SizedBox(height: 20),
-              _buildTranslationArea(colors),
-            ],
+    return ShowCaseWidget(
+      builder: (ctx) {
+        _showcaseContext = ctx;
+        // 초기 진입 시에도 한 번 체크
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          final alreadyShown =
+              await TutorialService.wasTranslationShowcaseShown();
+          if (alreadyShown) return;
+          if (TutorialService.consumeTranslationShowcaseTrigger()) {
+            ShowCaseWidget.of(ctx).startShowCase([_langSelectorKey]);
+            await TutorialService.markTranslationShowcaseShown();
+          }
+        });
+        return Scaffold(
+          backgroundColor: colors.background,
+          appBar: AppBar(
+            title: Text(
+              AppLocalizations.of(context).translation,
+              style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: colors.background,
+            elevation: 0,
           ),
-        ),
-      ),
+          body: SingleChildScrollView(
+            controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: <Widget>[
+                  _buildLanguageSelector(colors),
+                  const SizedBox(height: 20),
+                  _buildTonePicker(colors),
+                  const SizedBox(height: 20),
+                  _buildTranslationArea(colors),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
   // 언어 선택 영역
   Widget _buildLanguageSelector(CustomColors colors) {
-    return Row(
-      children: <Widget>[
-        Expanded(flex: 5, child: _buildFromLanguageDropdown(colors)),
-        Expanded(
-          flex: 2,
-          child: Center(child: _buildLanguageSwapButton(colors)),
-        ),
-        Expanded(flex: 5, child: _buildToLanguageDropdown(colors)),
-      ],
+    return Showcase(
+      key: _langSelectorKey,
+      description: AppLocalizations.of(context).language,
+      child: Row(
+        children: <Widget>[
+          Expanded(flex: 5, child: _buildFromLanguageDropdown(colors)),
+          Expanded(
+            flex: 2,
+            child: Center(child: _buildLanguageSwapButton(colors)),
+          ),
+          Expanded(flex: 5, child: _buildToLanguageDropdown(colors)),
+        ],
+      ),
     );
   }
 

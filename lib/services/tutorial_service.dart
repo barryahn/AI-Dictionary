@@ -6,12 +6,18 @@ class TutorialService {
   static const String _tutorialCompletedKey = 'tutorial_completed';
   static const String _dontShowAgainKey = 'tutorial_dont_show_again';
   static const String _searchShowcaseShownKey = 'search_showcase_shown';
+  static const String _translationShowcaseShownKey =
+      'translation_showcase_shown';
 
   // 런타임 트리거 (전역)
   static bool _triggerMainShowcase = false;
   static bool _triggerSearchShowcase = false;
+  static bool _triggerTranslationShowcase = false;
   static final ValueNotifier<bool> mainShowcaseNotifier = ValueNotifier(false);
   static final ValueNotifier<bool> searchShowcaseNotifier = ValueNotifier(
+    false,
+  );
+  static final ValueNotifier<bool> translationShowcaseNotifier = ValueNotifier(
     false,
   );
 
@@ -45,17 +51,20 @@ class TutorialService {
     await prefs.remove(_tutorialCompletedKey);
     await prefs.remove(_dontShowAgainKey);
     await prefs.remove(_searchShowcaseShownKey);
+    await prefs.remove(_translationShowcaseShownKey);
   }
 
   // --- Showcase 트리거 제어 ---
   static void requestMainShowcase() {
     _triggerMainShowcase = true;
-    mainShowcaseNotifier.value = !_triggerMainShowcase; // 리스너 갱신 유도
+    // 항상 토글해서 리스너가 확실히 동작하도록 함
+    mainShowcaseNotifier.value = !mainShowcaseNotifier.value;
   }
 
   static void requestSearchShowcase() {
     _triggerSearchShowcase = true;
-    searchShowcaseNotifier.value = !_triggerSearchShowcase; // 리스너 갱신 유도
+    // 항상 토글해서 리스너가 확실히 동작하도록 함
+    searchShowcaseNotifier.value = !searchShowcaseNotifier.value;
   }
 
   static bool consumeMainShowcaseTrigger() {
@@ -74,6 +83,20 @@ class TutorialService {
     return false;
   }
 
+  static void requestTranslationShowcase() {
+    _triggerTranslationShowcase = true;
+    // 항상 토글해서 리스너가 확실히 동작하도록 함
+    translationShowcaseNotifier.value = !translationShowcaseNotifier.value;
+  }
+
+  static bool consumeTranslationShowcaseTrigger() {
+    if (_triggerTranslationShowcase) {
+      _triggerTranslationShowcase = false;
+      return true;
+    }
+    return false;
+  }
+
   // --- Persisted flags: Search Showcase shown ---
   static Future<bool> wasSearchShowcaseShown() async {
     final prefs = await SharedPreferences.getInstance();
@@ -83,5 +106,15 @@ class TutorialService {
   static Future<void> markSearchShowcaseShown() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_searchShowcaseShownKey, true);
+  }
+
+  static Future<bool> wasTranslationShowcaseShown() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_translationShowcaseShownKey) ?? false;
+  }
+
+  static Future<void> markTranslationShowcaseShown() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_translationShowcaseShownKey, true);
   }
 }
