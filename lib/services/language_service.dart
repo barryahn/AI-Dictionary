@@ -127,12 +127,17 @@ class LanguageService {
   // 번역 화면(TranslationScreen) 전용 언어 저장/로드 (전역 from/to와 분리)
   static Future<String> getTranslationScreenFromLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tsFromLanguageKey) ?? '영어';
+    return prefs.getString(_tsFromLanguageKey) ??
+        getLanguageNameInKorean(_currentLanguage);
   }
 
   static Future<String> getTranslationScreenToLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tsToLanguageKey) ?? '한국어';
+    if (_currentLanguage == english) {
+      return prefs.getString(_tsToLanguageKey) ?? '한국어';
+    } else {
+      return prefs.getString(_tsToLanguageKey) ?? '영어';
+    }
   }
 
   static Future<void> setTranslationScreenLanguages([
