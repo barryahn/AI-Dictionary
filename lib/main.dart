@@ -503,6 +503,13 @@ class _HomeTabState extends State<_HomeTab> {
                   descriptionTextAlign: TextAlign.center,
                   tooltipBackgroundColor: colors.primary,
                   disableMovingAnimation: true,
+                  targetPadding: EdgeInsets.only(
+                    top: 150,
+                    left: 20,
+                    right: 20,
+                    bottom: 20,
+                  ),
+
                   child: GestureDetector(
                     onTap: () {
                       // 검색 화면 진입 전 검색 쇼케이스 요청
