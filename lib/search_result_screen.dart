@@ -705,11 +705,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   FocusScope.of(context).unfocus(),
                 },
               ),
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  /* // 출발 언어 드롭다운
+              title: Showcase(
+                key: _toLangKey,
+                description:
+                    AppLocalizations.of(context).tutorial_search_desc_detail_2 +
+                    "ㅤ",
+                descTextStyle: TextStyle(color: colors.white, fontSize: 14),
+                descriptionPadding: EdgeInsets.only(top: 8),
+                descriptionTextAlign: TextAlign.center,
+                tooltipBackgroundColor: colors.primary,
+                disableMovingAnimation: true,
+                targetPadding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    /* // 출발 언어 드롭다운
                   SizedBox(
                     width: 108,
                     child: DropdownButtonHideUnderline(
@@ -767,14 +778,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       ),
                     ),
                   ), */
-                  Icon(Icons.translate, color: colors.primary),
-                  const SizedBox(width: 4),
-                  // 도착 언어 드롭다운
-                  Showcase(
-                    key: _toLangKey,
-                    title: AppLocalizations.of(context).language,
-                    description: AppLocalizations.of(context).language,
-                    child: SizedBox(
+                    Icon(Icons.translate, color: colors.primary),
+                    const SizedBox(width: 4),
+                    // 도착 언어 드롭다운
+                    SizedBox(
                       width: 180,
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
@@ -860,9 +867,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                ],
+                    const SizedBox(width: 12),
+                  ],
+                ),
               ),
               centerTitle: true,
               elevation: 0,
