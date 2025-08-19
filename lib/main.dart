@@ -333,8 +333,21 @@ class _HomeTabState extends State<_HomeTab> {
                 // 도착 언어 선택 드롭다운
                 Showcase(
                   key: _two,
-                  title: AppLocalizations.of(context).language,
-                  description: AppLocalizations.of(context).language,
+                  title: AppLocalizations.of(context).tutorial_language_title,
+                  description:
+                      AppLocalizations.of(context).tutorial_language_desc + "ㅤ",
+                  titleTextAlign: TextAlign.center,
+                  titleTextStyle: TextStyle(
+                    color: colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  titlePadding: EdgeInsets.only(top: 8),
+                  descTextStyle: TextStyle(color: colors.white, fontSize: 13),
+                  descriptionPadding: EdgeInsets.only(top: 4),
+                  descriptionTextAlign: TextAlign.center,
+                  tooltipBackgroundColor: colors.primary,
+                  disableMovingAnimation: true,
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
@@ -475,8 +488,21 @@ class _HomeTabState extends State<_HomeTab> {
                 // 검색창 영역 수정
                 Showcase(
                   key: _one,
-                  title: AppLocalizations.of(context).language,
-                  description: AppLocalizations.of(context).language,
+                  title: AppLocalizations.of(context).tutorial_search_title,
+                  description:
+                      '${AppLocalizations.of(context).tutorial_search_desc}\n${AppLocalizations.of(context).tutorial_search_desc_detail}ㅤ',
+                  titleTextAlign: TextAlign.center,
+                  titleTextStyle: TextStyle(
+                    color: colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  titlePadding: EdgeInsets.only(top: 8),
+                  descTextStyle: TextStyle(color: colors.white, fontSize: 13),
+                  descriptionPadding: EdgeInsets.only(top: 4),
+                  descriptionTextAlign: TextAlign.center,
+                  tooltipBackgroundColor: colors.primary,
+                  disableMovingAnimation: true,
                   child: GestureDetector(
                     onTap: () {
                       // 검색 화면 진입 전 검색 쇼케이스 요청
