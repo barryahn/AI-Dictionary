@@ -516,7 +516,12 @@ class TranslationScreenState extends State<TranslationScreen> {
           value: selectedFromLanguage,
           onChanged: (String? newValue) {
             if (newValue == null) return;
-            _updateLanguages(newValue, selectedToLanguage);
+            // 동일 언어 선택 시 스왑 처리하여 from/to가 같지 않도록 보장
+            if (newValue == selectedToLanguage) {
+              _updateLanguages(selectedToLanguage, selectedFromLanguage);
+            } else {
+              _updateLanguages(newValue, selectedToLanguage);
+            }
           },
           buttonStyleData: ButtonStyleData(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -633,7 +638,12 @@ class TranslationScreenState extends State<TranslationScreen> {
           value: selectedToLanguage,
           onChanged: (String? newValue) {
             if (newValue == null) return;
-            _updateLanguages(selectedFromLanguage, newValue);
+            // 동일 언어 선택 시 스왑 처리하여 from/to가 같지 않도록 보장
+            if (newValue == selectedFromLanguage) {
+              _updateLanguages(selectedToLanguage, selectedFromLanguage);
+            } else {
+              _updateLanguages(selectedFromLanguage, newValue);
+            }
           },
           buttonStyleData: ButtonStyleData(
             padding: const EdgeInsets.symmetric(horizontal: 10),
