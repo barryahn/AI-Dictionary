@@ -505,7 +505,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget _buildInitialView(CustomColors colors) {
     final double hintTextSize =
-        AppLocalizations.of(context).search_hint.length > 16 ? 20 : 24;
+        AppLocalizations.of(context).search_hint.length > 18 ? 20 : 28;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -517,7 +517,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 child: TextField(
                   controller: _searchController,
                   focusNode: _focusNode,
-                  style: TextStyle(fontSize: 24, color: colors.text),
+                  style: TextStyle(fontSize: 28, color: colors.text),
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context).search_hint,
                     hintStyle: TextStyle(
