@@ -16,6 +16,9 @@ import 'services/tutorial_service.dart';
 final GlobalKey _langSelectorKey = GlobalKey();
 final GlobalKey _tonePickerKey = GlobalKey();
 
+// 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+final int maxInputLengthInFreeVersion = 500;
+
 // 번역 화면의 진입 위젯. 상태를 가지는 화면으로 입력/번역/결과 UI를 포함합니다.
 class TranslationScreen extends StatefulWidget {
   const TranslationScreen({super.key});
@@ -1049,8 +1052,12 @@ class TranslationScreenState extends State<TranslationScreen> {
       ),
     );
     if (result != null) {
+      // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+      final limited = result.length > maxInputLengthInFreeVersion
+          ? result.substring(0, maxInputLengthInFreeVersion)
+          : result;
       setState(() {
-        _inputController.text = result;
+        _inputController.text = limited;
       });
       _updateInputFieldHeight();
     }
@@ -1337,6 +1344,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _controller.addListener(_onTextChanged);
   }
 
   @override
@@ -1353,13 +1361,23 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
 
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     super.dispose();
   }
 
+  void _onTextChanged() {
+    setState(() {});
+  }
+
   Future<bool> _handleWillPop() async {
     // 뒤로가기 시 현재 작성한 텍스트를 호출자에게 반환합니다.
-    Navigator.of(context).pop<String>(_controller.text);
+    // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+    final text = _controller.text;
+    final limited = text.length > maxInputLengthInFreeVersion
+        ? text.substring(0, maxInputLengthInFreeVersion)
+        : text;
+    Navigator.of(context).pop<String>(limited);
     return false;
   }
 
@@ -1395,6 +1413,12 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
                   maxLines: null,
+                  // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(
+                      maxInputLengthInFreeVersion,
+                    ),
+                  ],
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: AppLocalizations.of(context).input_text_hint,
@@ -1423,11 +1447,25 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
                   height: 64,
                   child: Row(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: Text(
+                          "${_controller.text.length} / $maxInputLengthInFreeVersion",
+                          style: TextStyle(color: colors.text, fontSize: 14),
+                        ),
+                      ),
                       const Spacer(),
                       // 체크 버튼: 원형 버튼 스타일, 누르면 작성한 텍스트를 반환하고 닫습니다.
                       ElevatedButton(
-                        onPressed: () =>
-                            Navigator.of(context).pop<String>(_controller.text),
+                        onPressed: () {
+                          // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+                          final text = _controller.text;
+                          final limited =
+                              text.length > maxInputLengthInFreeVersion
+                              ? text.substring(0, maxInputLengthInFreeVersion)
+                              : text;
+                          Navigator.of(context).pop<String>(limited);
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.all(2),
