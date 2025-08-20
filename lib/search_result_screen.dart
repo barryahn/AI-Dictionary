@@ -1252,7 +1252,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: colors.text,
                   ),
@@ -1317,9 +1317,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   enabled: true,
                   child: _buildSimilarExpressions(null, colors),
                 ),
-                const SizedBox(height: 48),
               ],
-
+              const SizedBox(height: 48),
               Divider(thickness: 2, color: colors.primary),
             ],
           ),
@@ -1373,7 +1372,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: colors.text,
                   ),
@@ -1435,15 +1434,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 12),
               if (parsedData['비슷한_표현'] != null) ...[
                 _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
-                const SizedBox(height: 48),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
                   child: _buildSimilarExpressions(null, colors),
                 ),
-                const SizedBox(height: 48),
               ],
-
+              const SizedBox(height: 48),
               Divider(thickness: 2, color: colors.primary),
             ],
           ),
@@ -1497,7 +1494,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: colors.text,
                   ),
@@ -1557,15 +1554,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 12),
               if (parsedData['비슷한_표현'] != null) ...[
                 _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
-                const SizedBox(height: 48),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
                   child: _buildSimilarExpressions(null, colors),
                 ),
-                const SizedBox(height: 48),
               ],
-
+              const SizedBox(height: 48),
               Divider(thickness: 2, color: colors.primary),
             ],
           ),
