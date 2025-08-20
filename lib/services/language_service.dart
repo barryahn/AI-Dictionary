@@ -71,7 +71,11 @@ class LanguageService {
       _currentLanguage = savedLanguage;
     }
     _fromLanguage = prefs.getString(_fromLanguageKey) ?? '영어';
-    _toLanguage = prefs.getString(_toLanguageKey) ?? '한국어';
+    if (_currentLanguage == english) {
+      _toLanguage = prefs.getString(_toLanguageKey) ?? '한국어';
+    } else {
+      _toLanguage = prefs.getString(_toLanguageKey) ?? '영어';
+    }
   }
 
   // 언어 변경
