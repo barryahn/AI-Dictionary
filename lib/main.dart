@@ -422,14 +422,30 @@ class _HomeTabState extends State<_HomeTab> {
                                                           ),
                                                       alignment:
                                                           Alignment.centerLeft,
-                                                      child: Text(
-                                                        item['name']!,
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: colors.text,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.left,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            item['name']!,
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  colors.text,
+                                                            ),
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                          ),
+                                                          if (item['code'] ==
+                                                              selectedToLanguage)
+                                                            Icon(
+                                                              Icons.check,
+                                                              size: 16,
+                                                              color: colors
+                                                                  .primary,
+                                                            ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),

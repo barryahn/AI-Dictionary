@@ -803,13 +803,25 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                     (Map<String, String> item) =>
                                         DropdownMenuItem<String>(
                                           value: item['code']!,
-                                          child: Text(
-                                            item['name']!,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: colors.text,
-                                            ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                item['name']!,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: colors.text,
+                                                ),
+                                              ),
+                                              if (item['code'] == _toLanguage)
+                                                Icon(
+                                                  Icons.check,
+                                                  size: 16,
+                                                  color: colors.primary,
+                                                ),
+                                            ],
                                           ),
                                         ),
                                   )
