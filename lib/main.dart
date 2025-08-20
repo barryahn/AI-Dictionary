@@ -331,22 +331,59 @@ class _HomeTabState extends State<_HomeTab> {
 
                 // 언어 선택 영역
                 // 도착 언어 선택 드롭다운
-                Showcase(
+                Showcase.withWidget(
                   key: _two,
-                  title: AppLocalizations.of(context).tutorial_language_title,
-                  description:
-                      AppLocalizations.of(context).tutorial_language_desc + "ㅤ",
-                  titleTextAlign: TextAlign.center,
-                  titleTextStyle: TextStyle(
-                    color: colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                  width: MediaQuery.of(context).size.width - 24,
+                  height: 100,
+                  container: Container(
+                    decoration: BoxDecoration(
+                      color: colors.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          AppLocalizations.of(context).tutorial_language_title,
+                          style: TextStyle(
+                            color: colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          AppLocalizations.of(context).tutorial_language_desc +
+                              "ㅤ",
+                          style: TextStyle(color: colors.white, fontSize: 13),
+                        ),
+                        const SizedBox(height: 12),
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: colors.white.withValues(alpha: 0.2),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Text('💡'),
+                            const SizedBox(width: 8),
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              ).tutorial_language_desc_detail,
+                              style: TextStyle(
+                                color: colors.white,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  titlePadding: EdgeInsets.only(top: 8),
-                  descTextStyle: TextStyle(color: colors.white, fontSize: 13),
-                  descriptionPadding: EdgeInsets.only(top: 4),
-                  descriptionTextAlign: TextAlign.center,
-                  tooltipBackgroundColor: colors.primary,
                   disableMovingAnimation: true,
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
