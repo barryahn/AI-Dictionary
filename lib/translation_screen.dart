@@ -184,12 +184,12 @@ class TranslationScreenState extends State<TranslationScreen> {
     if (isSelected) {
       if (length > 18) return 14.0;
       if (length > 12) return 14.0;
-      if (length > 8) return 16.0;
+      if (length > 5) return 16.0;
       return 18.0;
     } else {
       if (length > 18) return 12.0;
       if (length > 12) return 14.0;
-      if (length > 8) return 15.0;
+      if (length > 5) return 15.0;
       return 16.0;
     }
   }
