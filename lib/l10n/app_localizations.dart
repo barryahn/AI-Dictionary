@@ -215,17 +215,21 @@ class AppLocalizations {
       'tutorial_search_title': '단어 검색하기',
       'tutorial_search_desc': '의미나 뉘앙스가 헷갈리거나\n모르는 단어를 검색해보세요!',
       'tutorial_search_desc_detail': 'AI가 실제 원어민들이 사용하는 단어를 알려드려요.',
+      'tutorial_search_desc_detail_2': '여기서도 언어를 바꿀 수 있어요.',
       'tutorial_language_title': '언어 선택하기',
-      'tutorial_language_desc': '검색하기 전에\n출발 언어와 도착 언어를 꼭 선택하세요!',
-      'tutorial_language_desc_detail':
-          '출발 언어는 사용자의 모국어로,\n도착 언어는 현재 공부하고 있는 언어로 선택해주세요.',
+      'tutorial_language_desc': '검색하기 전에 언어를 꼭 선택하세요!',
+      'tutorial_language_desc_detail': '영어를 선택하면,\n영어 사전으로 사용이 가능합니다.',
       'tutorial_history_title': '검색 기록',
       'tutorial_history_desc': '검색한 단어들은 여기에 저장됩니다.',
       'tutorial_history_desc_detail': '로그인하면 앱을 재설치해도\n기록을 유지할 수 있어요.',
       'tutorial_translate_title': 'AI 번역',
-      'tutorial_translate_desc': '번역 분위기를 선택하고\n문장을 번역해보세요!',
+      'tutorial_translate_desc': '번역 분위기를 선택하고 문장을 번역해보세요!',
+      'tutorial_translate_language_selector_title': '번역할 언어 선택하기',
+      'tutorial_translate_language_selector_desc': '어떤 언어에서 어떤 언어로 번역할지 선택하세요!',
       'tutorial_translate_desc_detail':
           '상황에 맞는 번역 분위기를 선택해서\n더 자연스러운 번역 결과를 얻어보세요.',
+      'tutorial_translate_tone_picker_title': '번역 분위기',
+      'tutorial_translate_tone_picker_desc': '번역 분위기를 선택해서 상황에 맞게 번역하세요!',
       'tutorial_next': '다음',
       'tutorial_skip': '건너뛰기',
       'tutorial_finish': '시작하기',
@@ -447,11 +451,12 @@ class AppLocalizations {
           'If you\'re confused about a meaning or nuance,\ntry searching for the word!',
       'tutorial_search_desc_detail':
           'AI will show you how native speakers actually use the word.',
+      'tutorial_search_desc_detail_2': 'You can also change the language here.',
       'tutorial_language_title': 'Choosing Languages',
       'tutorial_language_desc':
           'Be sure to select the source and target languages before searching!',
       'tutorial_language_desc_detail':
-          'Set the source language as your native language,\nand the target language as the one you\'re studying.',
+          'If you select Spanish,\nyou can use it as a Spanish dictionary.',
       'tutorial_history_title': 'Search History',
       'tutorial_history_desc': 'Words you search for will be saved here.',
       'tutorial_history_desc_detail':
@@ -459,8 +464,15 @@ class AppLocalizations {
       'tutorial_translate_title': 'AI Translation',
       'tutorial_translate_desc':
           'Select a translation tone and try translating a sentence!',
+      'tutorial_translate_language_selector_title':
+          'Choose translation languages',
+      'tutorial_translate_language_selector_desc':
+          'Select which language to translate from and to!',
       'tutorial_translate_desc_detail':
           'Choose the right tone for the situation\nto get more natural translation results.',
+      'tutorial_translate_tone_picker_title': 'Translation Tone',
+      'tutorial_translate_tone_picker_desc':
+          'Choose a translation tone to suit the situation!',
       'tutorial_next': 'Next',
       'tutorial_skip': 'Skip',
       'tutorial_finish': 'Get Started',
@@ -672,15 +684,20 @@ class AppLocalizations {
       'tutorial_search_title': '单词搜索',
       'tutorial_search_desc': '如果对含义或语感感到困惑，\n请尝试搜索单词！',
       'tutorial_search_desc_detail': 'AI会告诉你母语者实际如何使用这个单词。',
+      'tutorial_search_desc_detail_2': '你也可以在这里更改语言。',
       'tutorial_language_title': '选择语言',
       'tutorial_language_desc': '搜索前请务必选择源语言和目标语言！',
-      'tutorial_language_desc_detail': '源语言请选择你的母语，\n目标语言请选择你正在学习的语言。',
+      'tutorial_language_desc_detail': '如果选择英语，\n就可以作为英语词典使用。',
       'tutorial_history_title': '搜索历史',
       'tutorial_history_desc': '你搜索过的单词会保存在这里。',
       'tutorial_history_desc_detail': '登录后，即使重新安装应用也能保留历史记录。',
       'tutorial_translate_title': 'AI翻译',
       'tutorial_translate_desc': '选择翻译语气，\n尝试翻译句子！',
+      'tutorial_translate_language_selector_title': '选择翻译语言',
+      'tutorial_translate_language_selector_desc': '选择从哪种语言翻译到哪种语言！',
       'tutorial_translate_desc_detail': '根据场景选择合适的语气，\n获得更自然的翻译结果。',
+      'tutorial_translate_tone_picker_title': '翻译语气',
+      'tutorial_translate_tone_picker_desc': '选择合适的翻译语气以匹配场景！',
       'tutorial_next': '下一步',
       'tutorial_skip': '跳过',
       'tutorial_finish': '开始使用',
@@ -891,15 +908,20 @@ class AppLocalizations {
       'tutorial_search_title': '單字搜尋',
       'tutorial_search_desc': '如果對意思或語感感到困惑，\n請嘗試搜尋單字！',
       'tutorial_search_desc_detail': 'AI會告訴你母語者實際如何使用這個單字。',
+      'tutorial_search_desc_detail_2': '你也可以在這裡更改語言。',
       'tutorial_language_title': '選擇語言',
       'tutorial_language_desc': '搜尋前請務必選擇來源語言和目標語言！',
-      'tutorial_language_desc_detail': '來源語言請選擇你的母語，\n目標語言請選擇你正在學習的語言。',
+      'tutorial_language_desc_detail': '選擇英文後，\n即可當作英文字典使用。',
       'tutorial_history_title': '搜尋紀錄',
       'tutorial_history_desc': '你搜尋過的單字會保存在這裡。',
       'tutorial_history_desc_detail': '登入後，即使重新安裝應用也能保留紀錄。',
       'tutorial_translate_title': 'AI翻譯',
       'tutorial_translate_desc': '選擇翻譯語氣，\n嘗試翻譯句子！',
+      'tutorial_translate_language_selector_title': '選擇翻譯語言',
+      'tutorial_translate_language_selector_desc': '選擇從哪種語言翻譯到哪種語言！',
       'tutorial_translate_desc_detail': '根據情境選擇合適的語氣，\n獲得更自然的翻譯結果。',
+      'tutorial_translate_tone_picker_title': '翻譯語氣',
+      'tutorial_translate_tone_picker_desc': '選擇合適的翻譯語氣以符合情境！',
       'tutorial_next': '下一步',
       'tutorial_skip': '跳過',
       'tutorial_finish': '開始使用',
@@ -1129,11 +1151,13 @@ class AppLocalizations {
           'Si vous hésitez sur un sens ou une nuance,\nessayez de rechercher le mot !',
       'tutorial_search_desc_detail':
           'L\'IA vous montrera comment les locuteurs natifs utilisent réellement le mot.',
+      'tutorial_search_desc_detail_2':
+          'Vous pouvez aussi changer la langue ici.',
       'tutorial_language_title': 'Choisir la langue',
       'tutorial_language_desc':
           'Avant de rechercher, sélectionnez la langue source et la langue cible !',
       'tutorial_language_desc_detail':
-          'La langue source est votre langue maternelle,\nla langue cible est celle que vous apprenez.',
+          'Si vous choisissez l\'anglais,\nvous pouvez l\'utiliser comme dictionnaire d\'anglais.',
       'tutorial_history_title': 'Historique des recherches',
       'tutorial_history_desc': 'Les mots recherchés seront enregistrés ici.',
       'tutorial_history_desc_detail':
@@ -1141,8 +1165,15 @@ class AppLocalizations {
       'tutorial_translate_title': 'Traduction IA',
       'tutorial_translate_desc':
           'Choisissez un ton de traduction et essayez de traduire une phrase !',
+      'tutorial_translate_language_selector_title':
+          'Choisir les langues de traduction',
+      'tutorial_translate_language_selector_desc':
+          'Choisissez la langue source et la langue cible !',
       'tutorial_translate_desc_detail':
           'Choisissez le ton adapté à la situation\npour obtenir un résultat plus naturel.',
+      'tutorial_translate_tone_picker_title': 'Ton de traduction',
+      'tutorial_translate_tone_picker_desc':
+          'Choisissez un ton de traduction adapté à la situation !',
       'tutorial_next': 'Suivant',
       'tutorial_skip': 'Passer',
       'tutorial_finish': 'Commencer',
@@ -1371,11 +1402,12 @@ class AppLocalizations {
           'Si tienes dudas sobre el significado o matiz,\n¡intenta buscar la palabra!',
       'tutorial_search_desc_detail':
           'La IA te mostrará cómo usan realmente la palabra los hablantes nativos.',
+      'tutorial_search_desc_detail_2': 'También puedes cambiar el idioma aquí.',
       'tutorial_language_title': 'Elegir idioma',
       'tutorial_language_desc':
           '¡Asegúrate de seleccionar el idioma de origen y destino antes de buscar!',
       'tutorial_language_desc_detail':
-          'El idioma de origen debe ser tu lengua materna,\ny el de destino el que estás aprendiendo.',
+          'Si seleccionas inglés,\npuedes usarlo como diccionario de inglés.',
       'tutorial_history_title': 'Historial de búsqueda',
       'tutorial_history_desc': 'Las palabras que busques se guardarán aquí.',
       'tutorial_history_desc_detail':
@@ -1383,8 +1415,15 @@ class AppLocalizations {
       'tutorial_translate_title': 'Traducción con IA',
       'tutorial_translate_desc':
           'Selecciona un tono de traducción y prueba a traducir una frase.',
+      'tutorial_translate_language_selector_title':
+          'Elegir idiomas de traducción',
+      'tutorial_translate_language_selector_desc':
+          '¡Elige de qué idioma a qué idioma traducir!',
       'tutorial_translate_desc_detail':
           'Elige el tono adecuado para la situación\npara obtener resultados más naturales.',
+      'tutorial_translate_tone_picker_title': 'Tono de traducción',
+      'tutorial_translate_tone_picker_desc':
+          '¡Elige un tono de traducción acorde a la situación!',
       'tutorial_next': 'Siguiente',
       'tutorial_skip': 'Omitir',
       'tutorial_finish': 'Empezar',
@@ -1505,6 +1544,8 @@ class AppLocalizations {
   String get tutorial_search_title => get('tutorial_search_title');
   String get tutorial_search_desc => get('tutorial_search_desc');
   String get tutorial_search_desc_detail => get('tutorial_search_desc_detail');
+  String get tutorial_search_desc_detail_2 =>
+      get('tutorial_search_desc_detail_2');
   String get tutorial_language_title => get('tutorial_language_title');
   String get tutorial_language_desc => get('tutorial_language_desc');
   String get tutorial_language_desc_detail =>
@@ -1515,8 +1556,16 @@ class AppLocalizations {
       get('tutorial_history_desc_detail');
   String get tutorial_translate_title => get('tutorial_translate_title');
   String get tutorial_translate_desc => get('tutorial_translate_desc');
+  String get tutorial_translate_language_selector_title =>
+      get('tutorial_translate_language_selector_title');
+  String get tutorial_translate_language_selector_desc =>
+      get('tutorial_translate_language_selector_desc');
   String get tutorial_translate_desc_detail =>
       get('tutorial_translate_desc_detail');
+  String get tutorial_translate_tone_picker_title =>
+      get('tutorial_translate_tone_picker_title');
+  String get tutorial_translate_tone_picker_desc =>
+      get('tutorial_translate_tone_picker_desc');
   String get tutorial_next => get('tutorial_next');
   String get tutorial_skip => get('tutorial_skip');
   String get tutorial_finish => get('tutorial_finish');
