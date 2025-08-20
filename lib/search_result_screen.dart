@@ -504,6 +504,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   // --- UI Builder Methods ---
 
   Widget _buildInitialView(CustomColors colors) {
+    final double hintTextSize =
+        AppLocalizations.of(context).search_hint.length > 16 ? 20 : 24;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -521,7 +523,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     hintStyle: TextStyle(
                       color: colors.textLight,
                       fontWeight: FontWeight.w400,
-                      fontSize: 20, // 힌트 텍스트 크기만 줄임
+                      fontSize: hintTextSize, // 힌트 텍스트 크기만 줄임
                     ),
                     border: InputBorder.none,
                   ),
