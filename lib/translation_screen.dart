@@ -16,7 +16,7 @@ import 'services/tutorial_service.dart';
 final GlobalKey _langSelectorKey = GlobalKey();
 final GlobalKey _tonePickerKey = GlobalKey();
 
-// 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+// 무료 버전에서는 일정 길이 이상 입력 시 잘라냅니다.
 final int maxInputLengthInFreeVersion = 500;
 
 // 번역 화면의 진입 위젯. 상태를 가지는 화면으로 입력/번역/결과 UI를 포함합니다.
@@ -1052,7 +1052,7 @@ class TranslationScreenState extends State<TranslationScreen> {
       ),
     );
     if (result != null) {
-      // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+      // 무료 버전에서는 일정 길이 이상 입력 시 잘라냅니다.
       final limited = result.length > maxInputLengthInFreeVersion
           ? result.substring(0, maxInputLengthInFreeVersion)
           : result;
@@ -1372,7 +1372,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
 
   Future<bool> _handleWillPop() async {
     // 뒤로가기 시 현재 작성한 텍스트를 호출자에게 반환합니다.
-    // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+    // 무료 버전에서는 일정 길이 이상 입력 시 잘라냅니다.
     final text = _controller.text;
     final limited = text.length > maxInputLengthInFreeVersion
         ? text.substring(0, maxInputLengthInFreeVersion)
@@ -1413,7 +1413,7 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
                   maxLines: null,
-                  // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+                  // 무료 버전에서는 일정 길이 이상 입력 시 잘라냅니다.
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(
                       maxInputLengthInFreeVersion,
@@ -1451,14 +1451,21 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
                         padding: const EdgeInsets.only(left: 16),
                         child: Text(
                           "${_controller.text.length} / $maxInputLengthInFreeVersion",
-                          style: TextStyle(color: colors.text, fontSize: 14),
+                          style: TextStyle(
+                            color:
+                                _controller.text.length >=
+                                    maxInputLengthInFreeVersion
+                                ? colors.error
+                                : colors.text,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                       const Spacer(),
                       // 체크 버튼: 원형 버튼 스타일, 누르면 작성한 텍스트를 반환하고 닫습니다.
                       ElevatedButton(
                         onPressed: () {
-                          // 무료 버전에서는 500자 이상 입력 시 잘라냅니다.
+                          // 무료 버전에서는 일정 길이 이상 입력 시 잘라냅니다.
                           final text = _controller.text;
                           final limited =
                               text.length > maxInputLengthInFreeVersion
