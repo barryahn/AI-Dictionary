@@ -467,7 +467,7 @@ class AppLocalizations {
       'tutorial_translate_language_selector_title':
           'Choose translation languages',
       'tutorial_translate_language_selector_desc':
-          'Select which language to translate from and to!',
+          'Select the languages to translate from and to!',
       'tutorial_translate_desc_detail':
           'Choose the right tone for the situation\nto get more natural translation results.',
       'tutorial_translate_tone_picker_title': 'Translation Tone',
