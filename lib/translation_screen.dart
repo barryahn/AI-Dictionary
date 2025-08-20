@@ -759,7 +759,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                   child: Icon(
                                     Icons.check_circle,
                                     color: colors.textLight,
-                                    size: 16,
+                                    size: 14,
                                   ),
                                 ),
                               ],
