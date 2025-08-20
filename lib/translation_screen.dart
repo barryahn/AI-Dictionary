@@ -459,14 +459,21 @@ class TranslationScreenState extends State<TranslationScreen> {
                   .map(
                     (Map<String, String> item) => DropdownMenuItem<String>(
                       value: item['code']!,
-                      child: Text(
-                        item['name']!,
-                        style: TextStyle(
-                          fontSize: _getDropdownFontSize(item['name']!),
-                          color: colors.text,
-                          height: 1.1,
-                          fontWeight: FontWeight.w400,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            item['name']!,
+                            style: TextStyle(
+                              fontSize: _getDropdownFontSize(item['name']!),
+                              color: colors.text,
+                              height: 1.1,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          if (item['code'] == selectedFromLanguage)
+                            Icon(Icons.check, size: 16, color: colors.primary),
+                        ],
                       ),
                     ),
                   )
@@ -581,14 +588,21 @@ class TranslationScreenState extends State<TranslationScreen> {
                   .map(
                     (Map<String, String> item) => DropdownMenuItem<String>(
                       value: item['code']!,
-                      child: Text(
-                        item['name']!,
-                        style: TextStyle(
-                          fontSize: _getDropdownFontSize(item['name']!),
-                          color: colors.text,
-                          height: 1.1,
-                          fontWeight: FontWeight.w400,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            item['name']!,
+                            style: TextStyle(
+                              fontSize: _getDropdownFontSize(item['name']!),
+                              color: colors.text,
+                              height: 1.1,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          if (item['code'] == selectedToLanguage)
+                            Icon(Icons.check, size: 16, color: colors.primary),
+                        ],
                       ),
                     ),
                   )
