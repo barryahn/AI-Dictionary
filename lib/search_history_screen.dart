@@ -310,7 +310,6 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: colors.primary,
-                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ],
