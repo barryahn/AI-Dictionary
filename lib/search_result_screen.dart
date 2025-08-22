@@ -505,7 +505,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget _buildInitialView(CustomColors colors) {
     final double hintTextSize =
-        AppLocalizations.of(context).search_hint.length > 18 ? 20 : 28;
+        AppLocalizations.of(context).search_hint.length > 18 ? 20 : 26;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -517,7 +517,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 child: TextField(
                   controller: _searchController,
                   focusNode: _focusNode,
-                  style: TextStyle(fontSize: 28, color: colors.text),
+                  style: TextStyle(fontSize: 26, color: colors.text),
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context).search_hint,
                     hintStyle: TextStyle(
@@ -951,7 +951,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 Expanded(
                   child: TextField(
                     controller: TextEditingController(text: query),
-                    style: TextStyle(fontSize: 28, color: colors.text),
+                    style: TextStyle(fontSize: 26, color: colors.text),
                     decoration: const InputDecoration(border: InputBorder.none),
                     readOnly: true,
                   ),
@@ -1001,7 +1001,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: TextStyle(fontSize: 28, color: colors.text),
+                  style: TextStyle(fontSize: 26, color: colors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
@@ -1046,7 +1046,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: TextField(
                   controller: TextEditingController(text: query),
-                  style: TextStyle(fontSize: 28, color: colors.text),
+                  style: TextStyle(fontSize: 26, color: colors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
                 ),
@@ -1233,7 +1233,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   Expanded(
                     child: TextField(
                       controller: TextEditingController(text: query),
-                      style: TextStyle(fontSize: 28, color: colors.text),
+                      style: TextStyle(fontSize: 26, color: colors.text),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                       ),
@@ -1252,7 +1252,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: colors.text,
                   ),
@@ -1354,7 +1354,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   Expanded(
                     child: TextField(
                       controller: TextEditingController(text: query),
-                      style: TextStyle(fontSize: 28, color: colors.text),
+                      style: TextStyle(fontSize: 26, color: colors.text),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                       ),
@@ -1372,7 +1372,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: colors.text,
                   ),
@@ -1476,7 +1476,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   Expanded(
                     child: TextField(
                       controller: TextEditingController(text: query),
-                      style: TextStyle(fontSize: 28, color: colors.text),
+                      style: TextStyle(fontSize: 26, color: colors.text),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                       ),
@@ -1494,7 +1494,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 SelectableText(
                   parsedData['단어'].toString(),
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: colors.text,
                   ),
@@ -1663,7 +1663,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   Expanded(
                     child: TextField(
                       controller: TextEditingController(text: query),
-                      style: TextStyle(fontSize: 28, color: colors.text),
+                      style: TextStyle(fontSize: 26, color: colors.text),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                       ),
