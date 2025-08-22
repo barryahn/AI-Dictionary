@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _isLoginMode = true;
   bool _obscurePassword = true;
+  final _emailFieldKey = GlobalKey();
+  final _passwordFieldKey = GlobalKey();
 
   @override
   void dispose() {
@@ -29,19 +31,19 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    // 키보드가 이미 올라와있는지 확인
+  void _scrollToField(GlobalKey key) {
     final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
-
-    // 키보드가 이미 올라와있으면 딜레이 없이, 아니면 딜레이 후 스크롤
     final delay = keyboardVisible ? 0 : 600;
 
     Future.delayed(Duration(milliseconds: delay), () {
-      if (_scrollController.hasClients && mounted) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+      if (!mounted) return;
+      final fieldContext = key.currentContext;
+      if (fieldContext != null) {
+        Scrollable.ensureVisible(
+          fieldContext,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
+          alignment: 0.35,
         );
       }
     });
@@ -147,9 +149,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildEmailField(AppLocalizations loc, CustomColors colors) {
     return TextFormField(
+      key: _emailFieldKey,
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      onTap: _scrollToBottom,
+      onTap: () => _scrollToField(_emailFieldKey),
       decoration: InputDecoration(
         labelText: loc.get('email'),
         hintText: loc.get('abc@gmail.com'),
@@ -191,9 +194,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildPasswordField(AppLocalizations loc, CustomColors colors) {
     return TextFormField(
+      key: _passwordFieldKey,
       controller: _passwordController,
       obscureText: _obscurePassword,
-      onTap: _scrollToBottom,
+      onTap: () => _scrollToField(_passwordFieldKey),
       decoration: InputDecoration(
         labelText: loc.get('password'),
         hintText: loc.get(''),
@@ -323,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            loc.get('or') ?? '또는',
+            loc.get('or'),
             style: TextStyle(color: colors.textLight, fontSize: 14),
           ),
         ),
@@ -379,7 +383,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    loc.get('google_login') ?? 'Google로 로그인',
+                    loc.get('google_login'),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -414,7 +418,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              loc.get('google_login_failed') ?? 'Google 로그인에 실패했습니다.',
+              loc.get('google_login_failed'),
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: colors.snackbar_text,
@@ -429,7 +433,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              (loc.get('error_occurred') ?? '오류가 발생했습니다: ') + e.toString(),
+              loc.get('error_occurred') + e.toString(),
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: colors.snackbar_text,
