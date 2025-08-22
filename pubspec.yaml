@@ -59,6 +59,7 @@ dependencies:
   gpt_markdown: ^1.1.2
   skeletonizer: ^2.1.0+1
   showcaseview: ^4.0.1
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
