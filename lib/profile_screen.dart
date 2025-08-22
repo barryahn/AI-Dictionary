@@ -134,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? (authService.userName ?? loc.get('ai_dictionary_user'))
                     : loc.get('guest_user'),
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: colors.text,
                 ),
@@ -295,10 +295,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.only(left: 24, top: 40, bottom: 10),
+      padding: const EdgeInsets.only(left: 20, top: 40, bottom: 10),
       child: Text(
         title,
-        style: TextStyle(color: colors.textLight, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: colors.textLight,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
         textAlign: TextAlign.left,
       ),
     );
@@ -314,7 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return ListTile(
       leading: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.only(left: 6, right: 8),
         child: Icon(icon, color: textColor ?? colors.text),
       ),
       title: Text(
@@ -322,6 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         style: TextStyle(
           color: textColor ?? colors.text,
           fontWeight: FontWeight.w500,
+          fontSize: 15,
         ),
       ),
       subtitle: subtitle != null
@@ -340,7 +345,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildThemeItems(AppLocalizations loc, CustomColors colors) {
     return Container(
-      padding: const EdgeInsets.only(left: 24, right: 24, top: 10),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
