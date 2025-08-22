@@ -498,14 +498,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(loc.get('app_language_setting')),
+        title: Text(
+          loc.get('app_language_setting'),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: sortedLanguages.map((language) {
             final isSelected =
                 LanguageService.currentLanguage == language['code'];
             return ListTile(
-              title: Text(language['name']!),
+              title: Text(language['name']!, style: TextStyle(fontSize: 15)),
               trailing: isSelected ? Icon(Icons.check) : null,
               onTap: () async {
                 // 포커스 해제하여 키보드가 나타나지 않도록 함
