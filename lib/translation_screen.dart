@@ -187,7 +187,7 @@ class TranslationScreenState extends State<TranslationScreen> {
     if (isSelected) {
       if (length > 18) return 14.0;
       if (length > 12) return 14.0;
-      if (length > 5) return 16.0;
+      if (length > 5) return 15.0;
       return 18.0;
     } else {
       if (length > 18) return 12.0;
@@ -394,7 +394,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                   _buildLanguageSelector(colors),
                   const SizedBox(height: 20),
                   _buildTonePicker(colors),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   _buildTranslationArea(colors),
                 ],
               ),
@@ -465,13 +465,16 @@ class TranslationScreenState extends State<TranslationScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            item['name']!,
-                            style: TextStyle(
-                              fontSize: _getDropdownFontSize(item['name']!),
-                              color: colors.text,
-                              height: 1.1,
-                              fontWeight: FontWeight.w400,
+                          Expanded(
+                            child: Text(
+                              item['name']!,
+                              softWrap: true,
+                              style: TextStyle(
+                                fontSize: _getDropdownFontSize(item['name']!),
+                                color: colors.text,
+                                height: 1.1,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                           if (item['code'] == selectedFromLanguage)
@@ -540,7 +543,7 @@ class TranslationScreenState extends State<TranslationScreen> {
               border: Border(bottom: BorderSide(color: colors.primary)),
             ),
           ),
-          menuItemStyleData: const MenuItemStyleData(height: 40),
+          menuItemStyleData: const MenuItemStyleData(height: 46),
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
               color: colors.background,
@@ -594,13 +597,16 @@ class TranslationScreenState extends State<TranslationScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            item['name']!,
-                            style: TextStyle(
-                              fontSize: _getDropdownFontSize(item['name']!),
-                              color: colors.text,
-                              height: 1.1,
-                              fontWeight: FontWeight.w400,
+                          Expanded(
+                            child: Text(
+                              item['name']!,
+                              softWrap: true,
+                              style: TextStyle(
+                                fontSize: _getDropdownFontSize(item['name']!),
+                                color: colors.text,
+                                height: 1.1,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                           if (item['code'] == selectedToLanguage)
@@ -669,7 +675,7 @@ class TranslationScreenState extends State<TranslationScreen> {
               border: Border(bottom: BorderSide(color: colors.primary)),
             ),
           ),
-          menuItemStyleData: const MenuItemStyleData(height: 40),
+          menuItemStyleData: const MenuItemStyleData(height: 46),
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
               color: colors.background,
@@ -726,7 +732,12 @@ class TranslationScreenState extends State<TranslationScreen> {
                 });
               },
               child: Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 14,
+                  bottom: 14,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -737,8 +748,8 @@ class TranslationScreenState extends State<TranslationScreen> {
                         Text(
                           AppLocalizations.of(context).translation_tone,
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
                             color: colors.text,
                           ),
                         ),
@@ -751,7 +762,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                                 Text(
                                   toneLabels[selectedToneLevel.round()],
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: colors.textLight,
                                   ),
@@ -884,9 +895,9 @@ class TranslationScreenState extends State<TranslationScreen> {
     return Column(
       children: [
         _buildInputField(colors),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
         _buildTranslateButton(colors),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
         _buildResultField(colors),
       ],
     );
@@ -930,9 +941,8 @@ class TranslationScreenState extends State<TranslationScreen> {
                     Text(
                       AppLocalizations.of(context).input_text,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: colors.textLight,
                       ),
                     ),
                   ],
@@ -1033,7 +1043,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               ),
-              style: TextStyle(color: colors.text, fontSize: 16, height: 1.4),
+              style: TextStyle(color: colors.text, fontSize: 15, height: 1.4),
             ),
           ),
         ],
@@ -1173,7 +1183,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                     Text(
                       AppLocalizations.of(context).translation_result,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: _translatedText.isEmpty
                             ? colors.textLight
@@ -1316,7 +1326,7 @@ class TranslationScreenState extends State<TranslationScreen> {
                     color: _translatedText.isEmpty
                         ? colors.textLight
                         : colors.text,
-                    fontSize: 16,
+                    fontSize: 15,
                     height: 1.4,
                   ),
                 ),
