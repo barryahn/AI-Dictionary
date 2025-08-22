@@ -388,7 +388,7 @@ class TranslationScreenState extends State<TranslationScreen> {
           body: SingleChildScrollView(
             controller: _scrollController,
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: <Widget>[
                   _buildLanguageSelector(colors),

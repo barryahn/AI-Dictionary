@@ -69,9 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
           controller: _scrollController,
           child: Padding(
             padding: const EdgeInsets.only(
-              left: 24,
-              right: 24,
-              top: 40,
+              left: 20,
+              right: 20,
+              top: 20,
               bottom: 96,
             ),
             child: Form(
@@ -82,11 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   // 앱 로고/제목
                   _buildHeader(loc, colors),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
 
                   // 이메일 입력 필드
                   _buildEmailField(loc, colors),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
 
                   // 비밀번호 입력 필드
                   _buildPasswordField(loc, colors),
@@ -125,29 +125,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         SizedBox(
-          width: 100,
-          height: 100,
-          child: ColorFiltered(
-            colorFilter: const ColorFilter.matrix(<double>[
-              0.808, 0.191, 0.001, 0, 0, // R
-              0.161, 0.808, 0.031, 0, 0, // G
-              0.161, 0.191, 0.648, 0, 0, // B
-              0, 0, 0, 1, 0, // A
-            ]),
-            child: Image.asset(
-              'assets/WordVibe_appIcon_letters.png',
-              width: 40,
-              height: 40,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          loc.get('app_title'),
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: colors.text,
+          width: 140,
+          height: 140,
+          child: Image.asset(
+            'assets/WordVibe_appIcon6.png',
+            width: 40,
+            height: 40,
           ),
         ),
         const SizedBox(height: 8),
@@ -171,6 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
         labelText: loc.get('email'),
         hintText: loc.get('abc@gmail.com'),
         prefixIcon: Icon(Icons.email, color: colors.text),
+        labelStyle: TextStyle(fontSize: 15),
+        hintStyle: TextStyle(fontSize: 15),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
@@ -213,6 +198,8 @@ class _LoginScreenState extends State<LoginScreen> {
         labelText: loc.get('password'),
         hintText: loc.get(''),
         prefixIcon: Icon(Icons.lock, color: colors.text),
+        labelStyle: TextStyle(fontSize: 15),
+        hintStyle: TextStyle(fontSize: 15),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility : Icons.visibility_off,
@@ -299,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
               _isLoginMode ? loc.get('login') : loc.get('register'),
               style: TextStyle(
                 color: colors.white,
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -394,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     loc.get('google_login') ?? 'Google로 로그인',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: colors.text,
                     ),
