@@ -2,8 +2,8 @@ flutter_native_splash:
   color: "#ffffff"
   color_dark: "#232323"
   fullscreen: true
-  image: assets/WordVibe_appIcon6.png
+  image: assets/WordVibe_appIcon6_small.png
   android_12:
     color: "#ffffff"
     color_dark: "#232323"
-    image: assets/WordVibe_appIcon6.png
+    image: assets/WordVibe_appIcon6_small.png
