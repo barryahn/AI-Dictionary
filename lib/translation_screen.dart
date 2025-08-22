@@ -1039,7 +1039,7 @@ class TranslationScreenState extends State<TranslationScreen> {
               expands: true,
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context).input_text_hint,
-                hintStyle: TextStyle(color: colors.textLight, fontSize: 16),
+                hintStyle: TextStyle(color: colors.textLight, fontSize: 15),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               ),
