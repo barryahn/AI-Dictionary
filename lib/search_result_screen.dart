@@ -551,8 +551,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final List<Widget> children = [];
     for (int i = 0; i < _searchResults.length; i++) {
       children.add(_searchResults[i]);
-      // 결과 카드 3개마다 광고 카드 삽입
-      if ((i + 1) % 3 == 0) {
+      // 결과 카드 2개마다 광고 카드 삽입
+      if ((i + 1) % 2 == 0) {
         children.add(const AdCard());
       }
     }
