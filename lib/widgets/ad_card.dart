@@ -17,10 +17,10 @@ class _AdCardState extends State<AdCard> {
   String get _adUnitId {
     if (Platform.isAndroid) {
       // Android 테스트 배너 광고 단위 ID
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-4457103331645575/2422281991';
     } else if (Platform.isIOS) {
       // iOS 테스트 배너 광고 단위 ID
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return 'ca-app-pub-4457103331645575/8892305663';
     }
     // 기타 플랫폼은 광고 미지원
     return '';
