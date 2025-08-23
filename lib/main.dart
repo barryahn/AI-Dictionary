@@ -20,6 +20,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 // ShowcaseView 키들
 GlobalKey _one = GlobalKey();
@@ -47,6 +48,9 @@ void main() async {
     AuthService().initialize(),
     ThemeService.initialize(),
   ]);
+
+  // Google Mobile Ads 초기화
+  await MobileAds.instance.initialize();
 
   // Firebase crashlytics 초기화
   FlutterError.onError = (errorDetails) {

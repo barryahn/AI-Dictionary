@@ -2,6 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+        <!-- AdMob App ID (테스트 ID, 실제 배포 시 교체) -->
+        <key>GADApplicationIdentifier</key>
+        <string>ca-app-pub-3940256099942544~1458002511</string>
 		<key>GIDClientID</key>
 		<!--Copied from GoogleService-Info.plist key CLIENT_ID-->
 		<string>401470234441-3hcm26nbrpeo1sr1k5bmoqloftl4i7f2.apps.googleusercontent.com</string>

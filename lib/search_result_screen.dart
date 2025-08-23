@@ -15,6 +15,7 @@ import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'services/tutorial_service.dart';
+import 'widgets/ad_card.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -547,13 +548,19 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildResultView(CustomColors colors) {
+    final List<Widget> children = [];
+    for (int i = 0; i < _searchResults.length; i++) {
+      children.add(_searchResults[i]);
+      // 결과 카드 3개마다 광고 카드 삽입
+      if ((i + 1) % 3 == 0) {
+        children.add(const AdCard());
+      }
+    }
+
     return ListView(
       controller: _scrollController,
       padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 96),
-      children: _searchResults.asMap().entries.map((entry) {
-        final item = entry.value;
-        return item;
-      }).toList(),
+      children: children,
     );
   }
 
