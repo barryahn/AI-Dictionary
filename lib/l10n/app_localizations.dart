@@ -240,6 +240,11 @@ class AppLocalizations {
       'which_language_question': '어떤 언어가 궁금하세요?',
       'which_language_part1': '어떤 언어',
       'which_language_part2': '가 궁금하세요?',
+      // 리뷰 요청
+      'review_thanks_first_search': '첫 검색을 해주셔서 감사합니다!',
+      'review_like_app_question': 'WordVibe 앱이 마음에 드시나요?',
+      'review_recommend_play_store': '플레이 스토어에서 평점을 남겨 다른 분들께 추천해주세요',
+      'review_rate_now': '평가하기',
     },
     'en': {
       // App Title
@@ -484,6 +489,12 @@ class AppLocalizations {
       'which_language_question': 'Which language are you curious about?',
       'which_language_part1': 'Which language ',
       'which_language_part2': 'are you curious about?',
+      // Review prompt
+      'review_thanks_first_search': 'Thanks for your first search!',
+      'review_like_app_question': 'Like using WordVibe app?',
+      'review_recommend_play_store':
+          'Recommend us to others by rating us on Play Store',
+      'review_rate_now': 'RATE US',
     },
     'zh': {
       // 应用标题
@@ -708,6 +719,11 @@ class AppLocalizations {
       'which_language_question': '您对哪种语言感兴趣？',
       'which_language_part1': '您对哪种语言',
       'which_language_part2': '感兴趣？',
+      // 评价提示
+      'review_thanks_first_search': '感谢您的首次搜索！',
+      'review_like_app_question': '喜欢使用 WordVibe 应用吗？',
+      'review_recommend_play_store': '请在 Play 商店给我们评分并推荐给他人',
+      'review_rate_now': '去评分',
     },
     'zh-TW': {
       // 應用標題
@@ -932,6 +948,11 @@ class AppLocalizations {
       'which_language_question': '您對哪種語言感興趣？',
       'which_language_part1': '您對哪種語言',
       'which_language_part2': '感興趣？',
+      // 評分提示
+      'review_thanks_first_search': '感謝您的首次搜尋！',
+      'review_like_app_question': '喜歡使用 WordVibe 應用嗎？',
+      'review_recommend_play_store': '請在 Play 商店為我們評分並推薦給他人',
+      'review_rate_now': '前往評分',
     },
     'fr': {
       // Titre de l'application
@@ -1185,6 +1206,12 @@ class AppLocalizations {
       'which_language_question': 'Quelle langue vous intéresse ?',
       'which_language_part1': 'Quelle langue ',
       'which_language_part2': 'vous intéresse ?',
+      // Demande d’avis
+      'review_thanks_first_search': 'Merci pour votre première recherche !',
+      'review_like_app_question': 'Vous aimez utiliser l’app WordVibe ?',
+      'review_recommend_play_store':
+          'Recommandez-nous en nous notant sur le Play Store',
+      'review_rate_now': 'Noter maintenant',
     },
     'es': {
       // Título de la aplicación
@@ -1435,6 +1462,12 @@ class AppLocalizations {
       'which_language_question': '¿Qué idioma le interesa?',
       'which_language_part1': '¿Qué idioma ',
       'which_language_part2': 'le interesa?',
+      // Solicitud de reseña
+      'review_thanks_first_search': '¡Gracias por tu primera búsqueda!',
+      'review_like_app_question': '¿Te gusta usar la app WordVibe?',
+      'review_recommend_play_store':
+          'Recomiéndanos calificándonos en Play Store',
+      'review_rate_now': 'Calificar ahora',
     },
   };
 
@@ -1473,6 +1506,12 @@ class AppLocalizations {
   String get which_language_part1 => get('which_language_part1');
   String get which_language_part2 => get('which_language_part2');
   String get which_language_question => get('which_language_question');
+
+  // 리뷰 요청
+  String get review_thanks_first_search => get('review_thanks_first_search');
+  String get review_like_app_question => get('review_like_app_question');
+  String get review_recommend_play_store => get('review_recommend_play_store');
+  String get review_rate_now => get('review_rate_now');
 
   // 언어 선택
   String get from_language => get('from_language');

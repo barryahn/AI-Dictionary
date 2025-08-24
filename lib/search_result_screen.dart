@@ -16,6 +16,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'services/tutorial_service.dart';
 import 'widgets/ad_card.dart';
+import 'services/review_service.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -2430,6 +2431,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     print('검색 카드 저장 완료');
 
     print('AI 응답 처리 완료: $query');
+
+    // 첫 검색 완료 후 리뷰 요청(안드로이드, 최초 1회)
+    if (mounted) {
+      // 다음 프레임에 다이얼로그 표시 (빌드 안정화)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ReviewService.maybePromptForReview(context);
+        }
+      });
+    }
   }
 
   void _updateLanguages(String fromLang, String toLang) {
