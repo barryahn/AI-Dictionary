@@ -25,6 +25,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 // ShowcaseView 키들
 GlobalKey _one = GlobalKey();
 GlobalKey _two = GlobalKey();
+GlobalKey _three = GlobalKey();
+GlobalKey _four = GlobalKey();
 // 홈 탭의 ShowCaseWidget 컨텍스트 보관용
 BuildContext? homeShowcaseContext;
 // 메인 페이지 상태 접근 키 (탭 전환 및 쇼케이스 시작용)
@@ -183,7 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (homeShowcaseContext != null) {
-          ShowCaseWidget.of(homeShowcaseContext!).startShowCase([_one, _two]);
+          ShowCaseWidget.of(
+            homeShowcaseContext!,
+          ).startShowCase([_one, _two, _three, _four]);
         }
       });
     }
@@ -208,25 +212,179 @@ class _MyHomePageState extends State<MyHomePage> {
           SystemNavigator.pop();
         }
       },
-      child: Scaffold(
-        backgroundColor: colors.background,
-        body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.history), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.translate), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-          ],
-          selectedItemColor: colors.text,
-          unselectedItemColor: colors.textLight,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: colors.white,
-        ),
+      child: ShowCaseWidget(
+        builder: (context) {
+          // 홈 쇼케이스 컨텍스트 저장 및 트리거 시 자동 실행
+          homeShowcaseContext = context;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (TutorialService.consumeMainShowcaseTrigger() &&
+                _selectedIndex == 0) {
+              ShowCaseWidget.of(
+                context,
+              ).startShowCase([_one, _two, _three, _four]);
+            }
+          });
+          return Scaffold(
+            backgroundColor: colors.background,
+            body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              items: <BottomNavigationBarItem>[
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: Showcase(
+                    key: _three,
+                    title: '기록 탭',
+                    description: '검색했던 단어들은 여기서 확인할 수 있어요.ㅤ',
+                    titleTextAlign: TextAlign.center,
+                    titleTextStyle: TextStyle(
+                      color: colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    titlePadding: EdgeInsets.only(top: 8),
+                    descTextStyle: TextStyle(color: colors.white, fontSize: 13),
+                    descriptionPadding: EdgeInsets.only(top: 4),
+                    descriptionTextAlign: TextAlign.center,
+                    targetPadding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 10,
+                    ),
+                    tooltipBackgroundColor: colors.primary,
+                    tooltipActions: [
+                      TooltipActionButton(
+                        type: TooltipDefaultActionType.skip,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 2,
+                        ),
+                        name: 'Skip All',
+                        textStyle: TextStyle(
+                          color: colors.white.withValues(alpha: 0.5),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      TooltipActionButton(
+                        type: TooltipDefaultActionType.next,
+                        padding: EdgeInsets.only(top: 3, right: 8),
+                        name: '3/4',
+                        textStyle: TextStyle(
+                          color: colors.white.withValues(alpha: 0.5),
+                          fontSize: 12,
+                        ),
+                        backgroundColor: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      TooltipActionButton(
+                        type: TooltipDefaultActionType.next,
+                        padding: EdgeInsets.only(
+                          left: 10,
+                          right: 14,
+                          top: 2,
+                          bottom: 2,
+                        ),
+                        name: 'Next',
+                        textStyle: TextStyle(color: colors.white),
+                        backgroundColor: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ],
+                    tooltipActionConfig: const TooltipActionConfig(
+                      alignment: MainAxisAlignment.spaceBetween,
+                      gapBetweenContentAndAction: 10,
+                      position: TooltipActionPosition.outside,
+                    ),
+                    child: const Icon(Icons.history),
+                  ),
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: Showcase(
+                    key: _four,
+                    title: '번역 탭',
+                    description: '긴 문장은 여기서 번역해보세요.ㅤ',
+                    titleTextAlign: TextAlign.center,
+                    titleTextStyle: TextStyle(
+                      color: colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    titlePadding: EdgeInsets.only(top: 8),
+                    targetPadding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 10,
+                    ),
+                    descTextStyle: TextStyle(color: colors.white, fontSize: 13),
+                    descriptionPadding: EdgeInsets.only(top: 4),
+                    descriptionTextAlign: TextAlign.center,
+                    tooltipBackgroundColor: colors.primary,
+                    tooltipActions: [
+                      TooltipActionButton(
+                        type: TooltipDefaultActionType.skip,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 2,
+                        ),
+                        name: 'Skip All',
+                        textStyle: TextStyle(
+                          color: colors.white.withValues(alpha: 0.5),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      TooltipActionButton(
+                        type: TooltipDefaultActionType.next,
+                        padding: EdgeInsets.only(top: 3, right: 2),
+                        name: '4/4',
+                        textStyle: TextStyle(
+                          color: colors.white.withValues(alpha: 0.5),
+                          fontSize: 12,
+                        ),
+                        backgroundColor: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      TooltipActionButton(
+                        type: TooltipDefaultActionType.next,
+                        padding: EdgeInsets.only(
+                          left: 10,
+                          right: 14,
+                          top: 2,
+                          bottom: 2,
+                        ),
+                        name: 'Next',
+                        textStyle: TextStyle(color: colors.white),
+                        backgroundColor: Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ],
+                    tooltipActionConfig: const TooltipActionConfig(
+                      alignment: MainAxisAlignment.spaceBetween,
+                      gapBetweenContentAndAction: 10,
+                      position: TooltipActionPosition.outside,
+                    ),
+                    child: const Icon(Icons.translate),
+                  ),
+                  label: '',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: '',
+                ),
+              ],
+              selectedItemColor: colors.text,
+              unselectedItemColor: colors.textLight,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: colors.white,
+            ),
+          );
+        },
       ),
     );
   }
@@ -296,325 +454,375 @@ class _HomeTabState extends State<_HomeTab> {
         backgroundColor: colors.white,
         elevation: 0,
       ),
-      body: ShowCaseWidget(
-        builder: (context) {
-          homeShowcaseContext = context;
-          // 첫 실행 또는 프로필에서 요청된 경우 홈 쇼케이스 자동 시작
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (TutorialService.consumeMainShowcaseTrigger()) {
-              ShowCaseWidget.of(context).startShowCase([_one, _two]);
-            }
-          });
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: RichText(
-                    text: TextSpan(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: AppLocalizations.of(context).which_language_part1,
+                      style: TextStyle(fontSize: 20, color: colors.primary),
+                    ),
+                    TextSpan(
+                      text: AppLocalizations.of(context).which_language_part2,
+                      style: TextStyle(fontSize: 20, color: colors.text),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // 언어 선택 영역
+            // 도착 언어 선택 드롭다운
+            Showcase.withWidget(
+              key: _two,
+              width: MediaQuery.of(context).size.width - 32,
+              height: 100,
+              container: Container(
+                decoration: BoxDecoration(
+                  color: colors.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context).tutorial_language_title,
+                      style: TextStyle(
+                        color: colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      AppLocalizations.of(context).tutorial_language_desc + "ㅤ",
+                      style: TextStyle(color: colors.white, fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: colors.white.withValues(alpha: 0.2),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
                       children: [
-                        TextSpan(
-                          text: AppLocalizations.of(
+                        Text('💡'),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppLocalizations.of(
                             context,
-                          ).which_language_part1,
-                          style: TextStyle(fontSize: 20, color: colors.primary),
-                        ),
-                        TextSpan(
-                          text: AppLocalizations.of(
-                            context,
-                          ).which_language_part2,
-                          style: TextStyle(fontSize: 20, color: colors.text),
+                          ).tutorial_language_desc_detail,
+                          style: TextStyle(color: colors.white, fontSize: 13),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 20),
+              ),
+              tooltipActions: [
+                TooltipActionButton(
+                  type: TooltipDefaultActionType.skip,
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  name: 'Skip All',
+                  textStyle: TextStyle(
+                    color: colors.white.withValues(alpha: 0.5),
+                  ),
+                  backgroundColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                TooltipActionButton(
+                  type: TooltipDefaultActionType.next,
+                  padding: EdgeInsets.only(top: 3, right: 8),
+                  name: '2/4',
+                  textStyle: TextStyle(
+                    color: colors.white.withValues(alpha: 0.5),
+                    fontSize: 12,
+                  ),
+                  backgroundColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                TooltipActionButton(
+                  type: TooltipDefaultActionType.next,
+                  padding: EdgeInsets.only(
+                    left: 10,
+                    right: 14,
+                    top: 2,
+                    bottom: 2,
+                  ),
+                  name: 'Next',
+                  textStyle: TextStyle(color: colors.white),
+                  backgroundColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ],
+              tooltipActionConfig: const TooltipActionConfig(
+                alignment: MainAxisAlignment.spaceBetween,
+                gapBetweenContentAndAction: 10,
+                position: TooltipActionPosition.outside,
+              ),
 
-                // 언어 선택 영역
-                // 도착 언어 선택 드롭다운
-                Showcase.withWidget(
-                  key: _two,
-                  width: MediaQuery.of(context).size.width - 24,
-                  height: 100,
-                  container: Container(
-                    decoration: BoxDecoration(
-                      color: colors.primary,
-                      borderRadius: BorderRadius.circular(8),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: colors.white,
+                    isScrollControlled: true,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          AppLocalizations.of(context).tutorial_language_title,
-                          style: TextStyle(
-                            color: colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          AppLocalizations.of(context).tutorial_language_desc +
-                              "ㅤ",
-                          style: TextStyle(color: colors.white, fontSize: 13),
-                        ),
-                        const SizedBox(height: 12),
-                        Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: colors.white.withValues(alpha: 0.2),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
+                    builder: (context) {
+                      return FractionallySizedBox(
+                        heightFactor: 0.6,
+                        child: Column(
                           children: [
-                            Text('💡'),
-                            const SizedBox(width: 8),
+                            const SizedBox(height: 12),
+                            Container(
+                              width: 40,
+                              height: 5,
+                              margin: const EdgeInsets.only(top: 8, bottom: 12),
+                              decoration: BoxDecoration(
+                                color: colors.text.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                             Text(
-                              AppLocalizations.of(
-                                context,
-                              ).tutorial_language_desc_detail,
+                              AppLocalizations.of(context).language,
                               style: TextStyle(
-                                color: colors.white,
-                                fontSize: 13,
+                                fontSize: 16,
+                                color: colors.text,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: colors.text.withValues(alpha: 0.1),
+                            ),
+
+                            Expanded(
+                              child: ListView(
+                                children:
+                                    LanguageService.getLocalizedTranslationLanguages(
+                                          AppLocalizations.of(context),
+                                        )
+                                        .map(
+                                          (Map<String, String> item) => Column(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.pop(
+                                                    context,
+                                                  ); // 모달 닫기
+                                                  _updateLanguages(
+                                                    selectedFromLanguage,
+                                                    item['code']!,
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 14.0,
+                                                        horizontal: 36.0,
+                                                      ),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        item['name']!,
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: colors.text,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.left,
+                                                      ),
+                                                      if (item['code'] ==
+                                                          selectedToLanguage)
+                                                        Icon(
+                                                          Icons.check,
+                                                          size: 16,
+                                                          color: colors.primary,
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Divider(
+                                                height: 1,
+                                                thickness: 1,
+                                                color: colors.textLight
+                                                    .withValues(alpha: 0.1),
+                                                indent: 24,
+                                                endIndent: 24,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                        .toList(),
                               ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  disableMovingAnimation: true,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        backgroundColor: colors.white,
-                        isScrollControlled: true,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
-                        ),
-                        builder: (context) {
-                          return FractionallySizedBox(
-                            heightFactor: 0.6,
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 12),
-                                Container(
-                                  width: 40,
-                                  height: 5,
-                                  margin: const EdgeInsets.only(
-                                    top: 8,
-                                    bottom: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: colors.text.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                Text(
-                                  AppLocalizations.of(context).language,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: colors.text,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Divider(
-                                  height: 1,
-                                  thickness: 1,
-                                  color: colors.text.withValues(alpha: 0.1),
-                                ),
-
-                                Expanded(
-                                  child: ListView(
-                                    children:
-                                        LanguageService.getLocalizedTranslationLanguages(
-                                              AppLocalizations.of(context),
-                                            )
-                                            .map(
-                                              (
-                                                Map<String, String> item,
-                                              ) => Column(
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      Navigator.pop(
-                                                        context,
-                                                      ); // 모달 닫기
-                                                      _updateLanguages(
-                                                        selectedFromLanguage,
-                                                        item['code']!,
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      width: double.infinity,
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 14.0,
-                                                            horizontal: 36.0,
-                                                          ),
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            item['name']!,
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              color:
-                                                                  colors.text,
-                                                            ),
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                          ),
-                                                          if (item['code'] ==
-                                                              selectedToLanguage)
-                                                            Icon(
-                                                              Icons.check,
-                                                              size: 16,
-                                                              color: colors
-                                                                  .primary,
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Divider(
-                                                    height: 1,
-                                                    thickness: 1,
-                                                    color: colors.textLight
-                                                        .withValues(alpha: 0.1),
-                                                    indent: 24,
-                                                    endIndent: 24,
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                            .toList(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 16,
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(width: 12),
+                      Text(
+                        LanguageService.getLocalizedTranslationLanguages(
+                          AppLocalizations.of(context),
+                        ).firstWhere(
+                          (item) => item['code'] == selectedToLanguage,
+                        )['name']!,
+                        style: TextStyle(fontSize: 22, color: colors.primary),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(width: 12),
-                          Text(
-                            LanguageService.getLocalizedTranslationLanguages(
-                              AppLocalizations.of(context),
-                            ).firstWhere(
-                              (item) => item['code'] == selectedToLanguage,
-                            )['name']!,
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: colors.primary,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: colors.text.withValues(alpha: 0.4),
-                          ),
-                        ],
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: colors.text.withValues(alpha: 0.4),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-
-                const SizedBox(height: 20),
-                // 검색창 영역 수정
-                Showcase(
-                  key: _one,
-                  title: AppLocalizations.of(context).tutorial_search_title,
-                  description:
-                      '${AppLocalizations.of(context).tutorial_search_desc}\n${AppLocalizations.of(context).tutorial_search_desc_detail}ㅤ',
-                  titleTextAlign: TextAlign.center,
-                  titleTextStyle: TextStyle(
-                    color: colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  titlePadding: EdgeInsets.only(top: 8),
-                  descTextStyle: TextStyle(color: colors.white, fontSize: 13),
-                  descriptionPadding: EdgeInsets.only(top: 4),
-                  descriptionTextAlign: TextAlign.center,
-                  tooltipBackgroundColor: colors.primary,
-                  disableMovingAnimation: true,
-                  targetPadding: EdgeInsets.only(
-                    top: 150,
-                    left: 20,
-                    right: 20,
-                    bottom: 20,
-                  ),
-
-                  child: GestureDetector(
-                    onTap: () {
-                      // 검색 화면 진입 전 검색 쇼케이스 요청
-                      TutorialService.requestSearchShowcase();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SearchResultScreen(
-                            fromLanguage: selectedFromLanguage,
-                            toLanguage: selectedToLanguage,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: colors.background,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 4,
-                      ),
-                      child: IgnorePointer(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            icon: Icon(Icons.search, color: colors.text),
-                            fillColor: colors.light,
-                            hintText: AppLocalizations.of(
-                              context,
-                            ).main_search_hint,
-                            hintStyle: TextStyle(
-                              color: colors.textLight,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 80),
-              ],
+              ),
             ),
-          );
-        },
+
+            const SizedBox(height: 20),
+            // 검색창 영역 수정
+            Showcase(
+              key: _one,
+              title: AppLocalizations.of(context).tutorial_search_title,
+              description:
+                  '${AppLocalizations.of(context).tutorial_search_desc}\n${AppLocalizations.of(context).tutorial_search_desc_detail}ㅤ',
+              titleTextAlign: TextAlign.center,
+              titleTextStyle: TextStyle(
+                color: colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+              titlePadding: EdgeInsets.only(top: 8),
+              descTextStyle: TextStyle(color: colors.white, fontSize: 13),
+              descriptionPadding: EdgeInsets.only(top: 4),
+              descriptionTextAlign: TextAlign.center,
+              tooltipBackgroundColor: colors.primary,
+              targetPadding: EdgeInsets.only(
+                top: 150,
+                left: 20,
+                right: 20,
+                bottom: 20,
+              ),
+              tooltipActions: [
+                TooltipActionButton(
+                  type: TooltipDefaultActionType.skip,
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  name: 'Skip All',
+                  textStyle: TextStyle(
+                    color: colors.white.withValues(alpha: 0.5),
+                  ),
+                  backgroundColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                TooltipActionButton(
+                  type: TooltipDefaultActionType.next,
+                  padding: EdgeInsets.only(top: 3, right: 8),
+                  name: '1/4',
+                  textStyle: TextStyle(
+                    color: colors.white.withValues(alpha: 0.5),
+                    fontSize: 12,
+                  ),
+                  backgroundColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                TooltipActionButton(
+                  type: TooltipDefaultActionType.next,
+                  padding: EdgeInsets.only(
+                    left: 10,
+                    right: 14,
+                    top: 2,
+                    bottom: 2,
+                  ),
+                  name: 'Next',
+                  textStyle: TextStyle(color: colors.white),
+                  backgroundColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ],
+              tooltipActionConfig: const TooltipActionConfig(
+                alignment: MainAxisAlignment.spaceBetween,
+                gapBetweenContentAndAction: 10,
+                position: TooltipActionPosition.outside,
+              ),
+
+              child: GestureDetector(
+                onTap: () {
+                  // 검색 화면 진입 전 검색 쇼케이스 요청
+                  TutorialService.requestSearchShowcase();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchResultScreen(
+                        fromLanguage: selectedFromLanguage,
+                        toLanguage: selectedToLanguage,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colors.background,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 4,
+                  ),
+                  child: IgnorePointer(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        icon: Icon(Icons.search, color: colors.text),
+                        fillColor: colors.light,
+                        hintText: AppLocalizations.of(context).main_search_hint,
+                        hintStyle: TextStyle(
+                          color: colors.textLight,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 80),
+          ],
+        ),
       ),
     );
   }

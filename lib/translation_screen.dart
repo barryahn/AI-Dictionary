@@ -430,6 +430,40 @@ class TranslationScreenState extends State<TranslationScreen> {
       tooltipBackgroundColor: colors.primary,
       disableMovingAnimation: true,
       targetPadding: EdgeInsets.all(10),
+      tooltipActions: [
+        TooltipActionButton(
+          type: TooltipDefaultActionType.skip,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          name: 'Skip All',
+          textStyle: TextStyle(color: colors.white.withValues(alpha: 0.5)),
+          backgroundColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        TooltipActionButton(
+          type: TooltipDefaultActionType.next,
+          padding: EdgeInsets.only(top: 3, right: 8),
+          name: '1/4',
+          textStyle: TextStyle(
+            color: colors.white.withValues(alpha: 0.5),
+            fontSize: 12,
+          ),
+          backgroundColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        TooltipActionButton(
+          type: TooltipDefaultActionType.next,
+          padding: EdgeInsets.only(left: 10, right: 14, top: 2, bottom: 2),
+          name: 'Next',
+          textStyle: TextStyle(color: colors.white),
+          backgroundColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ],
+      tooltipActionConfig: const TooltipActionConfig(
+        alignment: MainAxisAlignment.spaceBetween,
+        gapBetweenContentAndAction: 10,
+        position: TooltipActionPosition.outside,
+      ),
 
       child: Row(
         children: <Widget>[
@@ -708,6 +742,40 @@ class TranslationScreenState extends State<TranslationScreen> {
       tooltipBackgroundColor: colors.primary,
       disableMovingAnimation: true,
       targetPadding: EdgeInsets.all(10),
+      tooltipActions: [
+        TooltipActionButton(
+          type: TooltipDefaultActionType.skip,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          name: 'Skip All',
+          textStyle: TextStyle(color: colors.white.withValues(alpha: 0.5)),
+          backgroundColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        TooltipActionButton(
+          type: TooltipDefaultActionType.next,
+          padding: EdgeInsets.only(top: 3, right: 8),
+          name: '2/4',
+          textStyle: TextStyle(
+            color: colors.white.withValues(alpha: 0.5),
+            fontSize: 12,
+          ),
+          backgroundColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        TooltipActionButton(
+          type: TooltipDefaultActionType.next,
+          padding: EdgeInsets.only(left: 10, right: 14, top: 2, bottom: 2),
+          name: 'Next',
+          textStyle: TextStyle(color: colors.white),
+          backgroundColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ],
+      tooltipActionConfig: const TooltipActionConfig(
+        alignment: MainAxisAlignment.spaceBetween,
+        gapBetweenContentAndAction: 10,
+        position: TooltipActionPosition.outside,
+      ),
 
       child: Container(
         decoration: BoxDecoration(

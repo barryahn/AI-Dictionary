@@ -741,12 +741,47 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 description:
                     AppLocalizations.of(context).tutorial_search_desc_detail_2 +
                     "ㅤ",
-                descTextStyle: TextStyle(color: colors.white, fontSize: 14),
+                descTextStyle: TextStyle(
+                  color: colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
                 descriptionPadding: EdgeInsets.only(top: 8),
                 descriptionTextAlign: TextAlign.center,
                 tooltipBackgroundColor: colors.primary,
                 disableMovingAnimation: true,
                 targetPadding: EdgeInsets.all(10),
+                tooltipActions: [
+                  TooltipActionButton(
+                    type: TooltipDefaultActionType.skip,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    name: 'Skip All',
+                    textStyle: TextStyle(
+                      color: colors.white.withValues(alpha: 0.5),
+                    ),
+                    backgroundColor: Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  TooltipActionButton(
+                    type: TooltipDefaultActionType.next,
+                    padding: EdgeInsets.only(
+                      left: 10,
+                      right: 14,
+                      top: 2,
+                      bottom: 2,
+                    ),
+                    name: 'Next',
+                    textStyle: TextStyle(color: colors.white),
+                    backgroundColor: Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ],
+                tooltipActionConfig: const TooltipActionConfig(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  gapBetweenContentAndAction: 10,
+                  position: TooltipActionPosition.outside,
+                ),
+
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
