@@ -305,9 +305,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           query,
           _toLanguage,
           (delta) {
-            if (!mounted || !_isFetching) return;
+            if (!_isFetching) return;
+            // 위젯이 없어도 결과는 계속 축적
+            result += delta;
+            if (!mounted) return;
             setState(() {
-              result += delta;
               // 실시간으로 결과 업데이트 (스켈레톤 → 점진 채움)
               if (index < _searchResults.length) {
                 _searchResults[index] = _buildResultSection(
@@ -319,8 +321,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             });
           },
           () {
-            if (!mounted || !_isFetching) return;
-            _handleSearchComplete(query, result, index);
+            if (!_isFetching) return;
+            if (mounted) {
+              _handleSearchComplete(query, result, index);
+            } else {
+              _saveInBackground(query, result, _currentSessionId);
+            }
           },
           (error) {
             if (!mounted || !_isFetching) return;
@@ -348,9 +354,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             _fromLanguage,
             _toLanguage,
             (delta) {
-              if (!mounted || !_isFetching) return;
+              if (!_isFetching) return;
+              result += delta;
+              if (!mounted) return;
               setState(() {
-                result += delta;
                 // 실시간으로 결과 업데이트
                 if (index < _searchResults.length) {
                   _searchResults[index] = _buildResultSection(
@@ -362,8 +369,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               });
             },
             () {
-              if (!mounted || !_isFetching) return;
-              _handleSearchComplete(query, result, index);
+              if (!_isFetching) return;
+              if (mounted) {
+                _handleSearchComplete(query, result, index);
+              } else {
+                _saveInBackground(query, result, _currentSessionId);
+              }
             },
             (error) {
               if (!mounted || !_isFetching) return;
@@ -388,9 +399,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             _fromLanguage,
             _toLanguage,
             (delta) {
-              if (!mounted || !_isFetching) return;
+              if (!_isFetching) return;
+              result += delta;
+              if (!mounted) return;
               setState(() {
-                result += delta;
                 // 실시간으로 결과 업데이트
                 if (index < _searchResults.length) {
                   _searchResults[index] = _buildResultSection(
@@ -402,8 +414,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               });
             },
             () {
-              if (!mounted || !_isFetching) return;
-              _handleSearchComplete(query, result, index);
+              if (!_isFetching) return;
+              if (mounted) {
+                _handleSearchComplete(query, result, index);
+              } else {
+                _saveInBackground(query, result, _currentSessionId);
+              }
             },
             (error) {
               if (!mounted || !_isFetching) return;
@@ -427,9 +443,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             _fromLanguage,
             LanguageService.getLanguageNameInKorean(languages.first),
             (delta) {
-              if (!mounted || !_isFetching) return;
+              if (!_isFetching) return;
+              result += delta;
+              if (!mounted) return;
               setState(() {
-                result += delta;
                 // 실시간으로 결과 업데이트
                 if (index < _searchResults.length) {
                   _searchResults[index] = _buildResultSection(
@@ -441,8 +458,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               });
             },
             () {
-              if (!mounted || !_isFetching) return;
-              _handleSearchComplete(query, result, index);
+              if (!_isFetching) return;
+              if (mounted) {
+                _handleSearchComplete(query, result, index);
+              } else {
+                _saveInBackground(query, result, _currentSessionId);
+              }
             },
             (error) {
               if (!mounted || !_isFetching) return;
@@ -2450,5 +2471,31 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     });
     // LanguageService에 저장
     LanguageService.setTranslationLanguages(fromLang, toLang);
+  }
+
+  // 위젯이 사라진 뒤에도 완료된 검색 결과를 저장하기 위한 백그라운드 저장 헬퍼
+  Future<void> _saveInBackground(
+    String query,
+    String result,
+    dynamic sessionId,
+  ) async {
+    try {
+      final bgService = SearchHistoryService();
+      if (sessionId != null) {
+        await bgService.addSearchCardToExistingSession(
+          sessionId,
+          query,
+          result,
+          false,
+        );
+      } else {
+        await bgService.addSearchCard(query, result, false);
+      }
+      bgService.dispose();
+      // 리뷰 요청은 UI 컨텍스트가 없으므로 생략
+      print('백그라운드 저장 완료: $query');
+    } catch (e) {
+      print('백그라운드 저장 실패: $e');
+    }
   }
 }
