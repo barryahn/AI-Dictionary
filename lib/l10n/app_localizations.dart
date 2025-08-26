@@ -232,6 +232,7 @@ class AppLocalizations {
       'tutorial_translate_tone_picker_desc': '번역 분위기를 선택해서 상황에 맞게 번역하세요!',
       'tutorial_next': '다음',
       'tutorial_skip': '건너뛰기',
+      'tutorial_skip_all': '모두 건너뛰기',
       'tutorial_finish': '시작하기',
       'tutorial_dont_show_again': '다시 보지 않기',
       'tutorial_show_again': '다시 보기',
@@ -480,6 +481,7 @@ class AppLocalizations {
           'Choose a translation tone to suit the situation!',
       'tutorial_next': 'Next',
       'tutorial_skip': 'Skip',
+      'tutorial_skip_all': 'Skip All',
       'tutorial_finish': 'Get Started',
       'tutorial_dont_show_again': 'Don\'t show again',
       'tutorial_show_again': 'Show again',
@@ -711,6 +713,7 @@ class AppLocalizations {
       'tutorial_translate_tone_picker_desc': '选择合适的翻译语气以匹配场景！',
       'tutorial_next': '下一步',
       'tutorial_skip': '跳过',
+      'tutorial_skip_all': '全部跳过',
       'tutorial_finish': '开始使用',
       'tutorial_dont_show_again': '不再显示',
       'tutorial_show_again': '再次查看',
@@ -940,6 +943,7 @@ class AppLocalizations {
       'tutorial_translate_tone_picker_desc': '選擇合適的翻譯語氣以符合情境！',
       'tutorial_next': '下一步',
       'tutorial_skip': '跳過',
+      'tutorial_skip_all': '全部跳過',
       'tutorial_finish': '開始使用',
       'tutorial_dont_show_again': '不再顯示',
       'tutorial_show_again': '再次查看',
@@ -1197,6 +1201,7 @@ class AppLocalizations {
           'Choisissez un ton de traduction adapté à la situation !',
       'tutorial_next': 'Suivant',
       'tutorial_skip': 'Passer',
+      'tutorial_skip_all': 'Tout passer',
       'tutorial_finish': 'Commencer',
       'tutorial_dont_show_again': 'Ne plus afficher',
       'tutorial_show_again': 'Afficher à nouveau',
@@ -1453,6 +1458,7 @@ class AppLocalizations {
           '¡Elige un tono de traducción acorde a la situación!',
       'tutorial_next': 'Siguiente',
       'tutorial_skip': 'Omitir',
+      'tutorial_skip_all': 'Omitir todo',
       'tutorial_finish': 'Empezar',
       'tutorial_dont_show_again': 'No mostrar de nuevo',
       'tutorial_show_again': 'Ver de nuevo',
@@ -1607,6 +1613,7 @@ class AppLocalizations {
       get('tutorial_translate_tone_picker_desc');
   String get tutorial_next => get('tutorial_next');
   String get tutorial_skip => get('tutorial_skip');
+  String get tutorial_skip_all => get('tutorial_skip_all');
   String get tutorial_finish => get('tutorial_finish');
   String get tutorial_dont_show_again => get('tutorial_dont_show_again');
   String get tutorial_show_again => get('tutorial_show_again');

@@ -238,8 +238,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 BottomNavigationBarItem(
                   icon: Showcase(
                     key: _three,
-                    title: '기록 탭',
-                    description: '검색했던 단어들은 여기서 확인할 수 있어요.ㅤ',
+                    title: AppLocalizations.of(context).tutorial_history_title,
+                    description:
+                        AppLocalizations.of(context).tutorial_history_desc +
+                        'ㅤ',
                     titleTextAlign: TextAlign.center,
                     titleTextStyle: TextStyle(
                       color: colors.white,
@@ -262,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           horizontal: 10,
                           vertical: 2,
                         ),
-                        name: 'Skip All',
+                        name: AppLocalizations.of(context).tutorial_skip_all,
                         textStyle: TextStyle(
                           color: colors.white.withValues(alpha: 0.5),
                         ),
@@ -288,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           top: 2,
                           bottom: 2,
                         ),
-                        name: 'Next',
+                        name: AppLocalizations.of(context).tutorial_next,
                         textStyle: TextStyle(color: colors.white),
                         backgroundColor: Colors.transparent,
                         borderRadius: BorderRadius.circular(10),
@@ -306,8 +308,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 BottomNavigationBarItem(
                   icon: Showcase(
                     key: _four,
-                    title: '번역 탭',
-                    description: '긴 문장은 여기서 번역해보세요.ㅤ',
+                    title: AppLocalizations.of(
+                      context,
+                    ).tutorial_translate_title,
+                    description:
+                        AppLocalizations.of(context).tutorial_translate_desc +
+                        'ㅤ',
                     titleTextAlign: TextAlign.center,
                     titleTextStyle: TextStyle(
                       color: colors.white,
@@ -330,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           horizontal: 10,
                           vertical: 2,
                         ),
-                        name: 'Skip All',
+                        name: AppLocalizations.of(context).tutorial_skip_all,
                         textStyle: TextStyle(
                           color: colors.white.withValues(alpha: 0.5),
                         ),
@@ -356,7 +362,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           top: 2,
                           bottom: 2,
                         ),
-                        name: 'Next',
+                        name: AppLocalizations.of(context).tutorial_next,
                         textStyle: TextStyle(color: colors.white),
                         backgroundColor: Colors.transparent,
                         borderRadius: BorderRadius.circular(10),
@@ -533,7 +539,7 @@ class _HomeTabState extends State<_HomeTab> {
                 TooltipActionButton(
                   type: TooltipDefaultActionType.skip,
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                  name: 'Skip All',
+                  name: AppLocalizations.of(context).tutorial_skip_all,
                   textStyle: TextStyle(
                     color: colors.white.withValues(alpha: 0.5),
                   ),
@@ -559,7 +565,7 @@ class _HomeTabState extends State<_HomeTab> {
                     top: 2,
                     bottom: 2,
                   ),
-                  name: 'Next',
+                  name: AppLocalizations.of(context).tutorial_next,
                   textStyle: TextStyle(color: colors.white),
                   backgroundColor: Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
@@ -741,7 +747,7 @@ class _HomeTabState extends State<_HomeTab> {
                 TooltipActionButton(
                   type: TooltipDefaultActionType.skip,
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                  name: 'Skip All',
+                  name: AppLocalizations.of(context).tutorial_skip_all,
                   textStyle: TextStyle(
                     color: colors.white.withValues(alpha: 0.5),
                   ),
@@ -767,7 +773,7 @@ class _HomeTabState extends State<_HomeTab> {
                     top: 2,
                     bottom: 2,
                   ),
-                  name: 'Next',
+                  name: AppLocalizations.of(context).tutorial_next,
                   textStyle: TextStyle(color: colors.white),
                   backgroundColor: Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
