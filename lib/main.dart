@@ -21,6 +21,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'pro_upgrade_screen.dart';
 
 // ShowcaseView 키들
 GlobalKey _one = GlobalKey();
@@ -459,6 +460,36 @@ class _HomeTabState extends State<_HomeTab> {
         ),
         backgroundColor: colors.white,
         elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProUpgradeScreen(),
+                  ),
+                );
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: colors.primary,
+                foregroundColor: colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'PRO',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
