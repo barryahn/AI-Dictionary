@@ -9,6 +9,7 @@ abstract class AppTheme {
 class CustomColors {
   final Color primary;
   final Color secondary;
+  final Color complementary;
   final Color background;
   final Color text;
   final Color accent;
@@ -35,6 +36,7 @@ class CustomColors {
   const CustomColors({
     required this.primary,
     required this.secondary,
+    required this.complementary,
     required this.white,
     required this.extraLight,
     required this.background,
@@ -74,6 +76,7 @@ class CustomColors {
   Map<String, Color> get palette => {
     'primary': primary,
     'secondary': secondary,
+    'complementary': complementary,
     'extraLight': extraLight,
     'light': light,
     'dark': dark,

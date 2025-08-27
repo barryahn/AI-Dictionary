@@ -12,6 +12,8 @@ class DarkTheme extends AppTheme {
     // secondary: Color(0xFF7724cc), // 보조 보라색
     primary: Color(0xFF3EB489), // 메인 베이지
     secondary: Color(0xFFAAC133), // 메인 베이지
+    complementary: Color(0xFFC96389), // 보색
+
     white: Color(0xFF191919),
     extraLight: Color(0xFF1D1D1D), // 매우 어두운 회색
     light: Color(0xFF2A2A2A), // 어두운 회색

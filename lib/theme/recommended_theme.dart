@@ -11,6 +11,7 @@ class RecommendedTheme extends AppTheme {
     primary: Color(0xFF29b56a), // 메인 베이지
     // Secondary
     secondary: Color(0xFFAAC133), // 메인 베이지
+    complementary: Color(0xFFB52974), // 보색
 
     white: Colors.white,
     light: Color(0xFFf9e9db), // 밝은 베이지
