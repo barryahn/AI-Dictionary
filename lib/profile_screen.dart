@@ -252,8 +252,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               _buildMenuItem(
                 icon: Icons.workspace_premium,
-                title: 'Pro 업그레이드',
-                subtitle: 'Pro 혜택 및 결제',
+                title: loc.get('pro_upgrade'),
+                subtitle: loc.get('pro_upgrade_description'),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(

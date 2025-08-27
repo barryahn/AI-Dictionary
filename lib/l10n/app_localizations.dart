@@ -107,6 +107,9 @@ class AppLocalizations {
       'logout_success': '로그아웃되었습니다.',
       'system': '시스템',
       'information': '정보',
+      // Pro
+      'pro_upgrade': 'Pro 업그레이드',
+      'pro_upgrade_description': 'Pro 혜택 및 결제',
 
       // 게스트 사용자
       'guest_user': '게스트 사용자',
@@ -343,6 +346,9 @@ class AppLocalizations {
       'logout_success': 'Logged out successfully.',
       'system': 'System',
       'information': 'Information',
+      // Pro
+      'pro_upgrade': 'Upgrade to Pro',
+      'pro_upgrade_description': 'Pro benefits and billing',
 
       // Guest User
       'guest_user': 'Guest User',
@@ -590,6 +596,9 @@ class AppLocalizations {
       'logout_success': '已成功退出登录。',
       'system': '系统',
       'information': '信息',
+      // Pro
+      'pro_upgrade': '升级到 Pro',
+      'pro_upgrade_description': 'Pro 权益与付款',
 
       // 访客用户
       'guest_user': '访客用户',
@@ -820,6 +829,9 @@ class AppLocalizations {
       'logout_success': '已成功登出。',
       'system': '系統',
       'information': '資訊',
+      // Pro
+      'pro_upgrade': '升級至 Pro',
+      'pro_upgrade_description': 'Pro 權益與付款',
 
       // 訪客使用者
       'guest_user': '訪客使用者',
@@ -1055,6 +1067,9 @@ class AppLocalizations {
       'logout_success': 'Déconnexion réussie.',
       'system': 'Système',
       'information': 'Information',
+      // Pro
+      'pro_upgrade': 'Passer à Pro',
+      'pro_upgrade_description': 'Avantages Pro et facturation',
 
       // Utilisateur invité
       'guest_user': 'Utilisateur invité',
@@ -1316,6 +1331,9 @@ class AppLocalizations {
       'logout_success': 'Cierre de sesión exitoso.',
       'system': 'Sistema',
       'information': 'Información',
+      // Pro
+      'pro_upgrade': 'Actualizar a Pro',
+      'pro_upgrade_description': 'Beneficios y facturación de Pro',
 
       // Usuario invitado
       'guest_user': 'Usuario invitado',
