@@ -14,6 +14,7 @@ import 'terms_of_service_content.dart';
 // import 'package:showcaseview/showcaseview.dart';
 import 'main.dart';
 import 'services/tutorial_service.dart';
+import 'pro_upgrade_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -248,6 +249,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildThemeItems(loc, colors),
 
               _buildMenuHeader(title: loc.get('information'), colors: colors),
+
+              _buildMenuItem(
+                icon: Icons.workspace_premium,
+                title: 'Pro 업그레이드',
+                subtitle: 'Pro 혜택 및 결제',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProUpgradeScreen(),
+                  ),
+                ),
+                colors: colors,
+              ),
 
               _buildMenuItem(
                 icon: Icons.help,
