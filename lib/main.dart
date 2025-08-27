@@ -13,6 +13,7 @@ import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'services/auth_service.dart';
 import 'services/theme_service.dart';
+import 'services/pro_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'l10n/app_localizations.dart';
@@ -104,6 +105,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthService()),
         ChangeNotifierProvider.value(value: ThemeService.instance),
+        ChangeNotifierProvider(create: (_) => ProService()..initialize()),
       ],
       child: Consumer<ThemeService>(
         builder: (context, themeService, child) {
@@ -463,35 +465,45 @@ class _HomeTabState extends State<_HomeTab> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
-            child: TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProUpgradeScreen(),
+            child: Consumer<ProService>(
+              builder: (context, pro, _) {
+                final bool isPro = pro.isPro;
+                return TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProUpgradeScreen(),
+                      ),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: colors.white,
+                    foregroundColor: colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: colors.primary, width: 1.4),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    child: isPro
+                        ? Icon(Icons.star, size: 20, color: colors.primary)
+                        : Text(
+                            'PRO',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: colors.primary,
+                            ),
+                          ),
                   ),
                 );
               },
-              style: TextButton.styleFrom(
-                backgroundColor: colors.white,
-                foregroundColor: colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: colors.primary, width: 1.4),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                child: Text(
-                  'PRO',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: colors.primary,
-                  ),
-                ),
-              ),
             ),
           ),
         ],

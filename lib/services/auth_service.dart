@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'pro_service.dart';
 
 ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
@@ -94,9 +95,13 @@ class AuthService extends ChangeNotifier {
             'email': user.email,
             'name': user.displayName,
             'photoUrl': user.photoURL,
+            'isPro': false,
             'createdAt': FieldValue.serverTimestamp(),
           });
         }
+
+        // Pro 상태 동기화
+        await ProService().syncFromFirestore(user.uid);
 
         await _saveUserData();
         notifyListeners();
@@ -131,6 +136,9 @@ class AuthService extends ChangeNotifier {
         _userPhotoUrl = doc.data()?['photoUrl'] ?? user.photoURL;
         _accessToken = await user.getIdToken();
 
+        // Pro 상태 동기화
+        await ProService().syncFromFirestore(user.uid);
+
         await _saveUserData();
         notifyListeners();
         return true;
@@ -157,6 +165,7 @@ class AuthService extends ChangeNotifier {
         await _firestore.collection('users').doc(user.uid).set({
           'email': email,
           'name': name,
+          'isPro': false,
           'createdAt': FieldValue.serverTimestamp(),
         });
 
@@ -165,6 +174,9 @@ class AuthService extends ChangeNotifier {
         _userName = name;
         _userPhotoUrl = user.photoURL;
         _accessToken = await user.getIdToken();
+
+        // Pro 상태 초기화 동기화
+        await ProService().syncFromFirestore(user.uid);
 
         await _saveUserData();
         notifyListeners();
@@ -309,14 +321,12 @@ class AuthService extends ChangeNotifier {
               final GoogleSignInAccount googleSignInAccount =
                   await _googleSignIn.authenticate();
 
-              if (googleSignInAccount != null) {
-                final GoogleSignInAuthentication googleSignInAuthentication =
-                    await googleSignInAccount.authentication;
+              final GoogleSignInAuthentication googleSignInAuthentication =
+                  await googleSignInAccount.authentication;
 
-                credential = GoogleAuthProvider.credential(
-                  idToken: googleSignInAuthentication.idToken,
-                );
-              }
+              credential = GoogleAuthProvider.credential(
+                idToken: googleSignInAuthentication.idToken,
+              );
             } catch (e) {
               if (kDebugMode) {
                 print('구글 재인증 credential 생성 실패: $e');
