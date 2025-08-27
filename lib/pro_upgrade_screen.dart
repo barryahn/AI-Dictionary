@@ -23,7 +23,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
           'currency': PricingService.getCurrencySymbol(
             AppLocalizations.of(context).locale,
           ),
-          'price': NumberFormat('#,###').format(
+          'price': NumberFormat('#,###.##').format(
             PricingService.getMonthlyPriceNumber(
               AppLocalizations.of(context).locale,
             ),
@@ -33,7 +33,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
           'currency': PricingService.getCurrencySymbol(
             AppLocalizations.of(context).locale,
           ),
-          'price': NumberFormat('#,###').format(
+          'price': NumberFormat('#,###.##').format(
             PricingService.getYearlyPriceNumber(
               AppLocalizations.of(context).locale,
             ),
@@ -238,21 +238,19 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                   ),
                                 ),
                                 Text(
-                                  AppLocalizations.of(context)
-                                      .getWithParams('pro_monthly_price', {
-                                        'currency':
-                                            PricingService.getCurrencySymbol(
-                                              AppLocalizations.of(
-                                                context,
-                                              ).locale,
-                                            ),
-                                        'price': NumberFormat('#,###').format(
-                                          PricingService.getMonthlyPriceNumber(
-                                            AppLocalizations.of(context).locale,
-                                          ),
+                                  AppLocalizations.of(
+                                    context,
+                                  ).getWithParams('pro_monthly_price', {
+                                    'currency':
+                                        PricingService.getCurrencySymbol(
+                                          AppLocalizations.of(context).locale,
                                         ),
-                                      })
-                                      .replaceAll(' per month', ''),
+                                    'price': NumberFormat('#,###.##').format(
+                                      PricingService.getMonthlyPriceNumber(
+                                        AppLocalizations.of(context).locale,
+                                      ),
+                                    ),
+                                  }),
                                   style: TextStyle(
                                     color: colors.text.withValues(alpha: 0.8),
                                     fontSize: 12,
@@ -306,7 +304,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '${PricingService.getCurrencySymbol(AppLocalizations.of(context).locale)} ${NumberFormat('#,###').format(PricingService.getMonthlyPriceNumber(AppLocalizations.of(context).locale) * 12)}',
+                                          '${PricingService.getCurrencySymbol(AppLocalizations.of(context).locale)} ${NumberFormat('#,###.##').format(PricingService.getMonthlyPriceNumber(AppLocalizations.of(context).locale) * 12)}',
                                           style: TextStyle(
                                             color: colors.textLight,
                                             fontSize: 10,
@@ -316,24 +314,24 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          AppLocalizations.of(context)
-                                              .getWithParams('pro_yearly_price', {
-                                                'currency':
-                                                    PricingService.getCurrencySymbol(
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      ).locale,
-                                                    ),
-                                                'price': NumberFormat('#,###')
-                                                    .format(
-                                                      PricingService.getYearlyPriceNumber(
-                                                        AppLocalizations.of(
-                                                          context,
-                                                        ).locale,
-                                                      ),
-                                                    ),
-                                              })
-                                              .replaceAll(' per year', ''),
+                                          AppLocalizations.of(
+                                            context,
+                                          ).getWithParams('pro_yearly_price', {
+                                            'currency':
+                                                PricingService.getCurrencySymbol(
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  ).locale,
+                                                ),
+                                            'price': NumberFormat('#,###.##')
+                                                .format(
+                                                  PricingService.getYearlyPriceNumber(
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    ).locale,
+                                                  ),
+                                                ),
+                                          }),
                                           style: TextStyle(
                                             color: colors.text.withValues(
                                               alpha: 0.8,

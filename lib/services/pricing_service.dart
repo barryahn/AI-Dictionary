@@ -3,35 +3,35 @@ import 'package:flutter/material.dart';
 class PricingService {
   /// 국가/언어별 월 구독 가격 숫자(통화/단위 제외) 관리
   /// 기본값은 '3,000'. 필요 시 백엔드 연동/원격 구성으로 확장 가능
-  static int getMonthlyPriceNumber(Locale locale) {
+  static double getMonthlyPriceNumber(Locale locale) {
     final lang = locale.languageCode;
     final country = locale.countryCode ?? '';
 
     // 예시 매핑: 각 국가/언어별로 손쉽게 변경 가능
     // 현재는 모두 동일한 '3,000'을 반환. 필요 시 국가별로 다르게 조정
     if (lang == 'ko') return 3000;
-    if (lang == 'zh' && country == 'TW') return 3000;
-    if (lang == 'zh') return 3000;
-    if (lang == 'es') return 3000;
-    if (lang == 'fr') return 3000;
+    if (lang == 'zh' && country == 'TW') return 72;
+    if (lang == 'zh') return 15.4;
+    if (lang == 'es') return 1.85;
+    if (lang == 'fr') return 1.85;
     if (lang == 'en') return 3;
-    return 3000;
+    return 3;
   }
 
   /// 국가/언어별 연 구독 가격 숫자(통화/단위 제외) 관리
   /// 기본값은 '20,000'. 필요 시 국가별 가격 차등을 적용하세요
-  static int getYearlyPriceNumber(Locale locale) {
+  static double getYearlyPriceNumber(Locale locale) {
     final lang = locale.languageCode;
     final country = locale.countryCode ?? '';
 
     // 예시: 모두 동일한 가격. 필요 시 조건 분기하여 변경
     if (lang == 'ko') return 20000;
-    if (lang == 'zh' && country == 'TW') return 20000;
-    if (lang == 'zh') return 20000;
-    if (lang == 'es') return 20000;
-    if (lang == 'fr') return 20000;
+    if (lang == 'zh' && country == 'TW') return 40;
+    if (lang == 'zh') return 100;
+    if (lang == 'es') return 12.3;
+    if (lang == 'fr') return 12.3;
     if (lang == 'en') return 20;
-    return 20000;
+    return 20;
   }
 
   /// 국가/언어별 통화 기호 반환
@@ -39,6 +39,8 @@ class PricingService {
   static String getCurrencySymbol(Locale locale) {
     final lang = locale.languageCode;
     final country = (locale.countryCode ?? '').toUpperCase();
+
+    print('country: $country, lang: $lang');
 
     // 한국 원화
     if (country == 'KR' || lang == 'ko') return '₩';
