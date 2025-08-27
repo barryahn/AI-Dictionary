@@ -2,8 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/theme_service.dart';
 
-class ProUpgradeScreen extends StatelessWidget {
+enum BillingCycle { monthly, yearly }
+
+class ProUpgradeScreen extends StatefulWidget {
   const ProUpgradeScreen({super.key});
+
+  @override
+  State<ProUpgradeScreen> createState() => _ProUpgradeScreenState();
+}
+
+class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
+  BillingCycle _selectedCycle = BillingCycle.monthly;
+
+  String get _priceLabel =>
+      _selectedCycle == BillingCycle.monthly ? '월 ₩3,000' : '연 ₩20,000';
+
+  void _select(BillingCycle cycle) {
+    if (_selectedCycle != cycle) {
+      setState(() {
+        _selectedCycle = cycle;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +150,148 @@ class ProUpgradeScreen extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 100),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _select(BillingCycle.monthly),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _selectedCycle == BillingCycle.monthly
+                                ? colors.primary
+                                : colors.textLight.withValues(alpha: 0.2),
+                            width: 2,
+                          ),
+                        ),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Text(
+                                '월간',
+                                style: TextStyle(
+                                  color: colors.text,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                '월 ₩3,000',
+                                style: TextStyle(
+                                  color: colors.text.withValues(alpha: 0.8),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _select(BillingCycle.yearly),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _selectedCycle == BillingCycle.yearly
+                                ? colors.primary
+                                : colors.textLight.withValues(alpha: 0.2),
+                            width: 2,
+                          ),
+                        ),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Center(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    '연간',
+                                    style: TextStyle(
+                                      color: colors.text,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '연 ₩36,000',
+                                        style: TextStyle(
+                                          color: colors.textLight,
+                                          fontSize: 10,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '연 ₩20,000',
+                                        style: TextStyle(
+                                          color: colors.text.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              right: -14,
+                              top: -20,
+                              child: Transform.rotate(
+                                angle: 0.2,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colors.primary,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  child: Text(
+                                    '-44%',
+                                    style: TextStyle(
+                                      color: colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 80),
             ],
           ),
         ),
@@ -168,9 +329,12 @@ class ProUpgradeScreen extends StatelessWidget {
                     'PRO로 업그레이드',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
-                  const Text(
-                    '월 ₩3,000',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  Text(
+                    _priceLabel,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
