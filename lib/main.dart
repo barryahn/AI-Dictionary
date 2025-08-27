@@ -473,19 +473,24 @@ class _HomeTabState extends State<_HomeTab> {
                 );
               },
               style: TextButton.styleFrom(
-                backgroundColor: colors.primary,
+                backgroundColor: colors.white,
                 foregroundColor: colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
-              child: const Text(
-                'PRO',
-                style: TextStyle(fontWeight: FontWeight.w700),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: colors.primary, width: 1.4),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: Text(
+                  'PRO',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: colors.primary,
+                  ),
+                ),
               ),
             ),
           ),
