@@ -132,6 +132,8 @@ class AppLocalizations {
       'pro_yearly': '연간',
       'pro_upgrade_cta': 'Pro로 업그레이드',
       'pro_payment_coming_soon': '결제는 준비 중입니다.',
+      'pro_monthly_price': '월 {currency}{price}',
+      'pro_yearly_price': '연 {currency}{price}',
 
       // 게스트 사용자
       'guest_user': '게스트 사용자',
@@ -396,6 +398,8 @@ class AppLocalizations {
       'pro_yearly': 'Yearly',
       'pro_upgrade_cta': 'Upgrade to Pro',
       'pro_payment_coming_soon': 'Payment is coming soon.',
+      'pro_monthly_price': '{currency}{price} per month',
+      'pro_yearly_price': '{currency}{price} per year',
 
       // Guest User
       'guest_user': 'Guest User',
@@ -668,6 +672,8 @@ class AppLocalizations {
       'pro_yearly': '年度',
       'pro_upgrade_cta': '升级到 Pro',
       'pro_payment_coming_soon': '支付功能即将上线。',
+      'pro_monthly_price': '每月 {currency}{price}',
+      'pro_yearly_price': '每年 {currency}{price}',
 
       // 访客用户
       'guest_user': '访客用户',
@@ -923,6 +929,8 @@ class AppLocalizations {
       'pro_yearly': '年費',
       'pro_upgrade_cta': '升級至 Pro',
       'pro_payment_coming_soon': '付款功能即將推出。',
+      'pro_monthly_price': '每月 {currency}{price}',
+      'pro_yearly_price': '每年 {currency}{price}',
 
       // 訪客使用者
       'guest_user': '訪客使用者',
@@ -1183,6 +1191,8 @@ class AppLocalizations {
       'pro_yearly': 'Annuel',
       'pro_upgrade_cta': 'Passer à Pro',
       'pro_payment_coming_soon': 'Le paiement arrive bientôt.',
+      'pro_monthly_price': '{currency}{price} par mois',
+      'pro_yearly_price': '{currency}{price} par an',
 
       // Utilisateur invité
       'guest_user': 'Utilisateur invité',
@@ -1469,6 +1479,8 @@ class AppLocalizations {
       'pro_yearly': 'Anual',
       'pro_upgrade_cta': 'Actualizar a Pro',
       'pro_payment_coming_soon': 'El pago estará disponible pronto.',
+      'pro_monthly_price': '{currency}{price} al mes',
+      'pro_yearly_price': '{currency}{price} al año',
 
       // Usuario invitado
       'guest_user': 'Usuario invitado',

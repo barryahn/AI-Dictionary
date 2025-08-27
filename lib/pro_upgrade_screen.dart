@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'services/theme_service.dart';
 import 'l10n/app_localizations.dart';
 import 'services/pro_service.dart';
+import 'services/pricing_service.dart';
+import 'package:intl/intl.dart';
 
 enum BillingCycle { monthly, yearly }
 
@@ -16,8 +18,27 @@ class ProUpgradeScreen extends StatefulWidget {
 class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   BillingCycle _selectedCycle = BillingCycle.monthly;
 
-  String get _priceLabel =>
-      _selectedCycle == BillingCycle.monthly ? '월 ₩3,000' : '연 ₩20,000';
+  String get _priceLabel => _selectedCycle == BillingCycle.monthly
+      ? AppLocalizations.of(context).getWithParams('pro_monthly_price', {
+          'currency': PricingService.getCurrencySymbol(
+            AppLocalizations.of(context).locale,
+          ),
+          'price': NumberFormat('#,###').format(
+            PricingService.getMonthlyPriceNumber(
+              AppLocalizations.of(context).locale,
+            ),
+          ),
+        })
+      : AppLocalizations.of(context).getWithParams('pro_yearly_price', {
+          'currency': PricingService.getCurrencySymbol(
+            AppLocalizations.of(context).locale,
+          ),
+          'price': NumberFormat('#,###').format(
+            PricingService.getYearlyPriceNumber(
+              AppLocalizations.of(context).locale,
+            ),
+          ),
+        });
 
   void _select(BillingCycle cycle) {
     if (_selectedCycle != cycle) {
@@ -217,7 +238,21 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '월 ₩3,000',
+                                  AppLocalizations.of(context)
+                                      .getWithParams('pro_monthly_price', {
+                                        'currency':
+                                            PricingService.getCurrencySymbol(
+                                              AppLocalizations.of(
+                                                context,
+                                              ).locale,
+                                            ),
+                                        'price': NumberFormat('#,###').format(
+                                          PricingService.getMonthlyPriceNumber(
+                                            AppLocalizations.of(context).locale,
+                                          ),
+                                        ),
+                                      })
+                                      .replaceAll(' per month', ''),
                                   style: TextStyle(
                                     color: colors.text.withValues(alpha: 0.8),
                                     fontSize: 12,
@@ -230,7 +265,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: InkWell(
                         onTap: () => _select(BillingCycle.yearly),
@@ -271,7 +306,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '연 ₩36,000',
+                                          '${PricingService.getCurrencySymbol(AppLocalizations.of(context).locale)} ${NumberFormat('#,###').format(PricingService.getMonthlyPriceNumber(AppLocalizations.of(context).locale) * 12)}',
                                           style: TextStyle(
                                             color: colors.textLight,
                                             fontSize: 10,
@@ -281,7 +316,24 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          '연 ₩20,000',
+                                          AppLocalizations.of(context)
+                                              .getWithParams('pro_yearly_price', {
+                                                'currency':
+                                                    PricingService.getCurrencySymbol(
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      ).locale,
+                                                    ),
+                                                'price': NumberFormat('#,###')
+                                                    .format(
+                                                      PricingService.getYearlyPriceNumber(
+                                                        AppLocalizations.of(
+                                                          context,
+                                                        ).locale,
+                                                      ),
+                                                    ),
+                                              })
+                                              .replaceAll(' per year', ''),
                                           style: TextStyle(
                                             color: colors.text.withValues(
                                               alpha: 0.8,

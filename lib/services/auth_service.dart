@@ -41,6 +41,8 @@ class AuthService extends ChangeNotifier {
       _userPhotoUrl = currentUser.photoURL;
       _accessToken = await currentUser.getIdToken();
       await _saveUserData();
+      // Pro 상태 동기화 (앱 시작 시 로그인 유저가 있는 경우)
+      await ProService().syncFromFirestore(currentUser.uid);
     } else {
       await _loadUserData();
     }
@@ -100,7 +102,7 @@ class AuthService extends ChangeNotifier {
           });
         }
 
-        // Pro 상태 동기화
+        // Pro 상태 동기화 (로그인 시 최신값으로 세팅)
         await ProService().syncFromFirestore(user.uid);
 
         await _saveUserData();
@@ -136,7 +138,7 @@ class AuthService extends ChangeNotifier {
         _userPhotoUrl = doc.data()?['photoUrl'] ?? user.photoURL;
         _accessToken = await user.getIdToken();
 
-        // Pro 상태 동기화
+        // Pro 상태 동기화 (로그인 시 최신값으로 세팅)
         await ProService().syncFromFirestore(user.uid);
 
         await _saveUserData();
@@ -203,6 +205,8 @@ class AuthService extends ChangeNotifier {
       _accessToken = null;
 
       await _clearUserData();
+      // Pro 상태 초기화 (로그아웃 시 비로그인 상태이므로 false)
+      await ProService().setPro(false);
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
