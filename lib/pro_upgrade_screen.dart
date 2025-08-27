@@ -270,7 +270,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: colors.primary,
+                                    color: colors.complementary,
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                   child: Text(
