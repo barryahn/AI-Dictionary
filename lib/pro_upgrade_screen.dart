@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/theme_service.dart';
+import 'services/pro_service.dart';
 
 enum BillingCycle { monthly, yearly }
 
@@ -29,6 +30,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   Widget build(BuildContext context) {
     final themeService = context.watch<ThemeService>();
     final colors = themeService.colors;
+    final isPro = context.watch<ProService>().isPro;
 
     return Scaffold(
       appBar: AppBar(
@@ -45,19 +47,26 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 8),
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: const Text('🚀', style: TextStyle(fontSize: 56)),
-              ),
+              isPro
+                  ? Container(
+                      width: 200,
+                      height: 180,
+                      alignment: Alignment.center,
+                      child: const Text('🎉', style: TextStyle(fontSize: 100)),
+                    )
+                  : Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: colors.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text('🚀', style: TextStyle(fontSize: 56)),
+                    ),
               const SizedBox(height: 16),
               Text(
-                'Pro로 업그레이드하세요.',
+                isPro ? 'Pro를 구입해 주셔서 감사합니다.' : 'Pro로 업그레이드하세요.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: colors.text,
@@ -67,7 +76,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                '더 빠르고, 더 정확하고, 더 편리하게.',
+                isPro ? '오늘 하루도 행복하세요!' : '더 빠르고, 더 정확하고, 더 편리하게.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: colors.textLight,
@@ -150,45 +159,140 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => _select(BillingCycle.monthly),
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.background,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _selectedCycle == BillingCycle.monthly
-                                ? colors.primary
-                                : colors.textLight.withValues(alpha: 0.2),
-                            width: 2,
+              if (!isPro) const SizedBox(height: 24),
+              if (!isPro)
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => _select(BillingCycle.monthly),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colors.background,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _selectedCycle == BillingCycle.monthly
+                                  ? colors.primary
+                                  : colors.textLight.withValues(alpha: 0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                  '월간',
+                                  style: TextStyle(
+                                    color: colors.text,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  '월 ₩3,000',
+                                  style: TextStyle(
+                                    color: colors.text.withValues(alpha: 0.8),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        child: Center(
-                          child: Column(
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => _select(BillingCycle.yearly),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colors.background,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _selectedCycle == BillingCycle.yearly
+                                  ? colors.primary
+                                  : colors.textLight.withValues(alpha: 0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: Stack(
+                            clipBehavior: Clip.none,
                             children: [
-                              Text(
-                                '월간',
-                                style: TextStyle(
-                                  color: colors.text,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                              Center(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '연간',
+                                      style: TextStyle(
+                                        color: colors.text,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '연 ₩36,000',
+                                          style: TextStyle(
+                                            color: colors.textLight,
+                                            fontSize: 10,
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '연 ₩20,000',
+                                          style: TextStyle(
+                                            color: colors.text.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                '월 ₩3,000',
-                                style: TextStyle(
-                                  color: colors.text.withValues(alpha: 0.8),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
+                              Positioned(
+                                right: -14,
+                                top: -20,
+                                child: Transform.rotate(
+                                  angle: 0.2,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orangeAccent,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: Text(
+                                      '-44%',
+                                      style: TextStyle(
+                                        color: colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -196,152 +300,64 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => _select(BillingCycle.yearly),
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.background,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _selectedCycle == BillingCycle.yearly
-                                ? colors.primary
-                                : colors.textLight.withValues(alpha: 0.2),
-                            width: 2,
-                          ),
-                        ),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Center(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    '연간',
-                                    style: TextStyle(
-                                      color: colors.text,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '연 ₩36,000',
-                                        style: TextStyle(
-                                          color: colors.textLight,
-                                          fontSize: 10,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '연 ₩20,000',
-                                        style: TextStyle(
-                                          color: colors.text.withValues(
-                                            alpha: 0.8,
-                                          ),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Positioned(
-                              right: -14,
-                              top: -20,
-                              child: Transform.rotate(
-                                angle: 0.2,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.orangeAccent,
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: Text(
-                                    '-44%',
-                                    style: TextStyle(
-                                      color: colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               const SizedBox(height: 80),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 60,
-            child: ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '결제는 준비 중입니다.',
-                      style: TextStyle(color: colors.white),
+      bottomNavigationBar: isPro
+          ? null
+          : SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '결제는 준비 중입니다.',
+                            style: TextStyle(color: colors.white),
+                          ),
+                          backgroundColor: colors.primary,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    backgroundColor: colors.primary,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Pro로 업그레이드',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          _priceLabel,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colors.primary,
-                foregroundColor: colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Pro로 업그레이드',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    _priceLabel,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
