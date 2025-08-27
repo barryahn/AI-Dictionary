@@ -32,7 +32,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PRO'),
+        title: const Text('Pro'),
         backgroundColor: colors.background,
         iconTheme: IconThemeData(color: colors.text),
         elevation: 0,
@@ -57,7 +57,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'pro로 업그레이드하세요.',
+                'Pro로 업그레이드하세요.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: colors.text,
@@ -79,7 +79,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'PRO 혜택',
+                  'Pro 혜택',
                   style: TextStyle(
                     color: colors.text,
                     fontSize: 16,
@@ -270,7 +270,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: colors.complementary,
+                                    color: Colors.orangeAccent,
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                   child: Text(
@@ -326,7 +326,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'PRO로 업그레이드',
+                    'Pro로 업그레이드',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                   Text(
