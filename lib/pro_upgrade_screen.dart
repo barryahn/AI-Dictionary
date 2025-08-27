@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/theme_service.dart';
+import 'l10n/app_localizations.dart';
 import 'services/pro_service.dart';
 
 enum BillingCycle { monthly, yearly }
@@ -66,7 +67,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                     ),
               const SizedBox(height: 16),
               Text(
-                isPro ? 'Pro를 구입해 주셔서 감사합니다.' : 'Pro로 업그레이드하세요.',
+                isPro
+                    ? AppLocalizations.of(context).get('pro_thank_you')
+                    : AppLocalizations.of(context).get('pro_headline'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: colors.text,
@@ -76,7 +79,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                isPro ? '오늘 하루도 행복하세요!' : '더 빠르고, 더 정확하고, 더 편리하게.',
+                isPro
+                    ? AppLocalizations.of(context).get('pro_subtitle_thanks')
+                    : AppLocalizations.of(context).get('pro_subtitle'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: colors.textLight,
@@ -88,7 +93,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Pro 혜택',
+                  AppLocalizations.of(context).get('pro_benefits_title'),
                   style: TextStyle(
                     color: colors.text,
                     fontSize: 16,
@@ -99,16 +104,32 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
               const SizedBox(height: 12),
               Builder(
                 builder: (context) {
+                  final loc = AppLocalizations.of(context);
                   final List<Map<String, String>> benefits = [
-                    {'title': '무제한 검색', 'desc': '제한 없이 원하는 만큼 검색할 수 있어요.'},
                     {
-                      'title': '더 높은 AI 모델',
-                      'desc': '3배 이상 높은 정확도와 자연스러움을 느껴보세요.',
+                      'title': loc.get('pro_benefit_unlimited_title'),
+                      'desc': loc.get('pro_benefit_unlimited_desc'),
                     },
-                    {'title': '더 긴 텍스트 번역', 'desc': '500자 제한이 3,000자로 확장돼요.'},
-                    {'title': '고급 번역 품질', 'desc': '문맥과 뉘앙스를 더 잘 반영해요.'},
-                    {'title': '광고 제거', 'desc': '깨끗하고 집중되는 화면을 제공해요.'},
-                    {'title': '추가 기능', 'desc': '다가오는 업데이트 기능과 언어를 먼저 경험하세요.'},
+                    {
+                      'title': loc.get('pro_benefit_better_model_title'),
+                      'desc': loc.get('pro_benefit_better_model_desc'),
+                    },
+                    {
+                      'title': loc.get('pro_benefit_longer_text_title'),
+                      'desc': loc.get('pro_benefit_longer_text_desc'),
+                    },
+                    {
+                      'title': loc.get('pro_benefit_quality_title'),
+                      'desc': loc.get('pro_benefit_quality_desc'),
+                    },
+                    {
+                      'title': loc.get('pro_benefit_no_ads_title'),
+                      'desc': loc.get('pro_benefit_no_ads_desc'),
+                    },
+                    {
+                      'title': loc.get('pro_benefit_extras_title'),
+                      'desc': loc.get('pro_benefit_extras_desc'),
+                    },
                   ];
                   return Column(
                     children: benefits
@@ -186,7 +207,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                             child: Column(
                               children: [
                                 Text(
-                                  '월간',
+                                  AppLocalizations.of(
+                                    context,
+                                  ).get('pro_monthly'),
                                   style: TextStyle(
                                     color: colors.text,
                                     fontSize: 14,
@@ -234,7 +257,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      '연간',
+                                      AppLocalizations.of(
+                                        context,
+                                      ).get('pro_yearly'),
                                       style: TextStyle(
                                         color: colors.text,
                                         fontSize: 14,
@@ -338,9 +363,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Pro로 업그레이드',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context).get('pro_upgrade_cta'),
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
