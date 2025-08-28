@@ -5,7 +5,9 @@ import 'l10n/app_localizations.dart';
 import 'services/pro_service.dart';
 import 'services/pricing_service.dart';
 import 'package:intl/intl.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'services/purchase_service.dart';
+import 'services/auth_service.dart';
+import 'login_screen.dart';
 
 enum BillingCycle { monthly, yearly }
 
@@ -393,16 +395,61 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final auth = context.read<AuthService>();
+                      if (!auth.isLoggedIn) {
+                        // 로그인 화면으로 이동
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                        );
+                        return;
+                      }
+
+                      final plan = _selectedCycle == BillingCycle.monthly
+                          ? PurchasePlan.monthly
+                          : PurchasePlan.yearly;
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            '결제는 준비 중입니다.',
+                            AppLocalizations.of(
+                              context,
+                            ).get('purchase_starting'),
                             style: TextStyle(color: colors.white),
                           ),
                           backgroundColor: colors.primary,
                         ),
                       );
+
+                      final success = await PurchaseService().purchasePro(plan);
+                      if (!success && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(
+                                context,
+                              ).get('purchase_failed'),
+                              style: TextStyle(color: colors.white),
+                            ),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      } else if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(
+                                context,
+                              ).get('purchase_in_progress'),
+                              style: TextStyle(color: colors.white),
+                            ),
+                            backgroundColor: colors.primary,
+                          ),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colors.primary,

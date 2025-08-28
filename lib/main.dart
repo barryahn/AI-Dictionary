@@ -14,6 +14,7 @@ import 'services/openai_service.dart';
 import 'services/auth_service.dart';
 import 'services/theme_service.dart';
 import 'services/pro_service.dart';
+import 'services/purchase_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'l10n/app_localizations.dart';
@@ -51,6 +52,7 @@ void main() async {
     OpenAIService.initialize(),
     AuthService().initialize(),
     ThemeService.initialize(),
+    PurchaseService().initialize(),
   ]);
 
   // Google Mobile Ads 초기화
@@ -106,6 +108,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => AuthService()),
         ChangeNotifierProvider.value(value: ThemeService.instance),
         ChangeNotifierProvider(create: (_) => ProService()..initialize()),
+        ChangeNotifierProvider.value(value: PurchaseService()),
       ],
       child: Consumer<ThemeService>(
         builder: (context, themeService, child) {
