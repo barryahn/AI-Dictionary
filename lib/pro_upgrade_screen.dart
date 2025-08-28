@@ -5,6 +5,7 @@ import 'l10n/app_localizations.dart';
 import 'services/pro_service.dart';
 import 'services/pricing_service.dart';
 import 'package:intl/intl.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 
 enum BillingCycle { monthly, yearly }
 
