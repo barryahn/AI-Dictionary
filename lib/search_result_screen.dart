@@ -267,10 +267,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final supportedLanguages = LanguageService.getSupportedLanguagesCode();
     final List<String> languages = [];
 
-    /* for (final lang in possibleLanguages) {
+    for (final lang in possibleLanguages) {
       print('lang: ${lang.languageTag}');
       print('lang: ${lang.confidence}');
-    } */
+    }
 
     for (final language in possibleLanguages) {
       if (supportedLanguages.contains(language.languageTag)) {
@@ -347,6 +347,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       }
       // fromLanguage와 toLanguage가 다른 경우
       else {
+        // 도착 언어가 지원되는 언어인지 확인
         if (languages.first == LanguageService.getLanguageCode(_toLanguage) ||
             languages.contains(LanguageService.getLanguageCode(_toLanguage))) {
           OpenAIService.getL2WordDefinition(
@@ -392,6 +393,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               });
             },
           );
+          // 출발 언어가 지원되는 언어인지 확인
         } else if (languages.first ==
             LanguageService.getLanguageCode(_fromLanguage)) {
           OpenAIService.getL1WordDefinition(
@@ -438,6 +440,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
           );
         } else {
+          // 출발 언어가 지원되는 언어가 아닌 경우
           OpenAIService.getL2WordDefinition(
             query,
             _fromLanguage,
