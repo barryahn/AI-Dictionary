@@ -298,11 +298,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
       String result = '';
 
-      // 1. 출발 언어와 도착 언어가 같고, 입력한 단어도 같은 경우
       bool isSameLanguage = _fromLanguage == _toLanguage;
 
+      // 1. 출발 언어와 도착 언어가 같고, 입력한 단어도 같은 경우
       if (isSameLanguage &&
           languages.contains(LanguageService.getLanguageCode(_fromLanguage))) {
+        print('1번 케이스');
+
         OpenAIService.getL1EqualsToL2WordDefinition(
           query,
           _toLanguage,
@@ -351,7 +353,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       else {
         // 2. 입력한 단어가 출발 언어일 경우 (입력한 단어: 한국어 / 출발: 한국어 / 도착: 영어)
         // 입력한 단어 언어를 파악한 후 출발 언어가 입력한 단어 언어의 후보에 있다면, L1
-        if (languages.first == LanguageService.getLanguageCode(_fromLanguage)) {
+        if (languages.first == LanguageService.getLanguageCode(_fromLanguage) ||
+            (languages.first == "zh" && _fromLanguage == "대만 중국어")) {
+          print('2번 케이스');
+
           OpenAIService.getL1WordDefinition(
             query,
             _fromLanguage,
@@ -401,6 +406,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         else if (languages.contains(
           LanguageService.getLanguageCode(_toLanguage),
         )) {
+          print('3번 케이스');
+
           OpenAIService.getL2WordDefinition(
             query,
             _fromLanguage,
@@ -450,8 +457,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
           // 도착 언어가 대만 중국어이고 입력한 단어 언어가 중국어인 경우를 제외하고는 도착 언어를 입력한 단어 언어로 바꿈.
           print('4번 케이스');
-          print('_toLanguage: $_toLanguage');
-          print('languages.first: ${languages.first}');
 
           if (!(_toLanguage == "대만 중국어" && languages.first == "zh")) {
             _updateLanguages(
