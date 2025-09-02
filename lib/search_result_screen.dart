@@ -446,10 +446,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         } else {
           // 4. 입력한 단어가 둘 다 아닐 경우 (입력한 단어: 중국어 / 출발: 한국어 / 도착: 영어)
           // 도착 언어를 입력한 단어 언어로 바꿈.
-          _updateLanguages(
-            _fromLanguage,
-            LanguageService.getLanguageNameInKorean(languages.first),
-          );
+
+          // 도착 언어가 대만 중국어이고 입력한 단어 언어가 중국어인 경우를 제외하고는 도착 언어를 입력한 단어 언어로 바꿈.
+          print('4번 케이스');
+          print('_toLanguage: $_toLanguage');
+          print('languages.first: ${languages.first}');
+
+          if (!(_toLanguage == "대만 중국어" && languages.first == "zh")) {
+            _updateLanguages(
+              _fromLanguage,
+              LanguageService.getLanguageNameInKorean(languages.first),
+            );
+          }
 
           OpenAIService.getL2WordDefinition(
             query,
