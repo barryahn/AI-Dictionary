@@ -297,10 +297,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
       String result = '';
 
-      // fromLanguage와 toLanguage가 같은 경우
+      // 1. 출발 언어와 도착 언어가 같고, 입력한 단어도 같은 경우
       bool isSameLanguage = _fromLanguage == _toLanguage;
 
-      if (isSameLanguage) {
+      if (isSameLanguage &&
+          languages.contains(LanguageService.getLanguageCode(_fromLanguage))) {
         OpenAIService.getL1EqualsToL2WordDefinition(
           query,
           _toLanguage,
@@ -347,55 +348,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       }
       // fromLanguage와 toLanguage가 다른 경우
       else {
-        // 도착 언어가 지원되는 언어인지 확인
-        if (languages.first == LanguageService.getLanguageCode(_toLanguage) ||
-            languages.contains(LanguageService.getLanguageCode(_toLanguage))) {
-          OpenAIService.getL2WordDefinition(
-            query,
-            _fromLanguage,
-            _toLanguage,
-            (delta) {
-              if (!_isFetching) return;
-              result += delta;
-              if (!mounted) return;
-              setState(() {
-                // 실시간으로 결과 업데이트
-                if (index < _searchResults.length) {
-                  _searchResults[index] = _buildResultSection(
-                    query,
-                    result,
-                    index,
-                  );
-                }
-              });
-            },
-            () {
-              if (!_isFetching) return;
-              if (mounted) {
-                _handleSearchComplete(query, result, index);
-              } else {
-                _saveInBackground(query, result, _currentSessionId);
-              }
-            },
-            (error) {
-              if (!mounted || !_isFetching) return;
-              print('OpenAI API 오류: $error');
-              setState(() {
-                if (index < _isLoading.length) {
-                  _isLoading[index] = false;
-                }
-                if (index < _searchResults.length) {
-                  _searchResults[index] = _buildErrorSection(query, index);
-                }
-                if (index == _searchQueries.length - 1) {
-                  _isFetching = false;
-                }
-              });
-            },
-          );
-          // 출발 언어가 지원되는 언어인지 확인
-        } else if (languages.first ==
-            LanguageService.getLanguageCode(_fromLanguage)) {
+        // 2. 입력한 단어가 출발 언어일 경우 (입력한 단어: 한국어 / 출발: 한국어 / 도착: 영어)
+        // 입력한 단어 언어를 파악한 후 출발 언어가 입력한 단어 언어의 후보에 있다면, L1
+        if (languages.first == LanguageService.getLanguageCode(_fromLanguage)) {
           OpenAIService.getL1WordDefinition(
             query,
             _fromLanguage,
@@ -439,12 +394,67 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               });
             },
           );
-        } else {
-          // 출발 언어가 지원되는 언어가 아닌 경우
+        }
+        // 3. 입력한 단어가 도착 언어일 경우 (입력한 단어: 영어 / 출발: 한국어 / 도착: 영어)
+        // 입력한 단어 언어를 파악한 후 도착 언어가 입력한 단어 언어의 후보에 있다면, L2
+        else if (languages.contains(
+          LanguageService.getLanguageCode(_toLanguage),
+        )) {
           OpenAIService.getL2WordDefinition(
             query,
             _fromLanguage,
+            _toLanguage,
+            (delta) {
+              if (!_isFetching) return;
+              result += delta;
+              if (!mounted) return;
+              setState(() {
+                // 실시간으로 결과 업데이트
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildResultSection(
+                    query,
+                    result,
+                    index,
+                  );
+                }
+              });
+            },
+            () {
+              if (!_isFetching) return;
+              if (mounted) {
+                _handleSearchComplete(query, result, index);
+              } else {
+                _saveInBackground(query, result, _currentSessionId);
+              }
+            },
+            (error) {
+              if (!mounted || !_isFetching) return;
+              print('OpenAI API 오류: $error');
+              setState(() {
+                if (index < _isLoading.length) {
+                  _isLoading[index] = false;
+                }
+                if (index < _searchResults.length) {
+                  _searchResults[index] = _buildErrorSection(query, index);
+                }
+                if (index == _searchQueries.length - 1) {
+                  _isFetching = false;
+                }
+              });
+            },
+          );
+        } else {
+          // 4. 입력한 단어가 둘 다 아닐 경우 (입력한 단어: 중국어 / 출발: 한국어 / 도착: 영어)
+          // 도착 언어를 입력한 단어 언어로 바꿈.
+          _updateLanguages(
+            _fromLanguage,
             LanguageService.getLanguageNameInKorean(languages.first),
+          );
+
+          OpenAIService.getL2WordDefinition(
+            query,
+            _fromLanguage,
+            _toLanguage,
             (delta) {
               if (!_isFetching) return;
               result += delta;
