@@ -17,6 +17,7 @@ import 'package:showcaseview/showcaseview.dart';
 import 'services/tutorial_service.dart';
 import 'widgets/ad_card.dart';
 import 'services/review_service.dart';
+import 'package:lpinyin/lpinyin.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -2283,11 +2284,28 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: SelectableText(
-                              text,
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: colors.text,
+                            child: SelectableText.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: text,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: colors.text,
+                                    ),
+                                  ),
+                                  if (RegExp(r'[\u3400-\u9FFF]').hasMatch(text))
+                                    TextSpan(
+                                      text:
+                                          '\n${PinyinHelper.getPinyin(text, format: PinyinFormat.WITH_TONE_MARK)}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: colors.text.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                           ),
@@ -2341,12 +2359,28 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: SelectableText(
-                              text,
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: colors.text,
-                                fontWeight: FontWeight.w400,
+                            child: SelectableText.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: text,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: colors.text,
+                                    ),
+                                  ),
+                                  if (RegExp(r'[\u3400-\u9FFF]').hasMatch(text))
+                                    TextSpan(
+                                      text:
+                                          '\n${PinyinHelper.getPinyin(text, format: PinyinFormat.WITH_TONE_MARK)}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: colors.text.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                           ),
