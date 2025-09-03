@@ -12,6 +12,7 @@ import 'l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_langdetect/flutter_langdetect.dart' as langdetect;
 import 'services/tutorial_service.dart';
+import 'package:lpinyin/lpinyin.dart';
 
 final GlobalKey _langSelectorKey = GlobalKey();
 final GlobalKey _tonePickerKey = GlobalKey();
@@ -1386,17 +1387,45 @@ class TranslationScreenState extends State<TranslationScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: SingleChildScrollView(
-                child: SelectableText(
-                  _translatedText.isEmpty
-                      ? AppLocalizations.of(context).translation_result_hint
-                      : _translatedText,
-                  style: TextStyle(
-                    color: _translatedText.isEmpty
-                        ? colors.textLight
-                        : colors.text,
-                    fontSize: 15,
-                    height: 1.4,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableText(
+                      _translatedText.isEmpty
+                          ? AppLocalizations.of(context).translation_result_hint
+                          : _translatedText,
+                      style: TextStyle(
+                        color: _translatedText.isEmpty
+                            ? colors.textLight
+                            : colors.text,
+                        fontSize: 15,
+                        height: 1.4,
+                      ),
+                    ),
+                    if (RegExp(r'[\u3400-\u9FFF]').hasMatch(_translatedText) &&
+                        (selectedToLanguage == '중국어' ||
+                            selectedToLanguage == '대만 중국어')) ...[
+                      const SizedBox(height: 8),
+                      Divider(
+                        height: 16,
+                        color: colors.textLight.withValues(alpha: 0.4),
+                        indent: 10,
+                        endIndent: 10,
+                      ),
+                      const SizedBox(height: 8),
+                      SelectableText(
+                        PinyinHelper.getPinyin(
+                          _translatedText,
+                          format: PinyinFormat.WITH_TONE_MARK,
+                        ),
+                        style: TextStyle(
+                          color: colors.textLight,
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
