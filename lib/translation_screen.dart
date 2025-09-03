@@ -1662,49 +1662,102 @@ class _ResultFullScreenViewer extends StatelessWidget {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).translation_result),
       ),
-      body: Container(
-        color: colors.white,
-        width: double.infinity,
-        height: double.infinity,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SelectableText(
-                text.isEmpty
-                    ? AppLocalizations.of(context).translation_result_hint
-                    : text,
-                style: TextStyle(
-                  color: text.isEmpty ? colors.textLight : colors.text,
-                  height: 1.6,
-                  fontSize: 15,
+      body: Stack(
+        children: [
+          Container(
+            color: colors.white,
+            width: double.infinity,
+            height: double.infinity,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SelectableText(
+                    text.isEmpty
+                        ? AppLocalizations.of(context).translation_result_hint
+                        : text,
+                    style: TextStyle(
+                      color: text.isEmpty ? colors.textLight : colors.text,
+                      height: 1.6,
+                      fontSize: 15,
+                    ),
+                  ),
+                  if (showPinyin &&
+                      RegExp(r'[\u3400-\u9FFF]').hasMatch(text)) ...[
+                    const SizedBox(height: 12),
+                    Divider(
+                      height: 20,
+                      color: colors.textLight.withValues(alpha: 0.4),
+                      indent: 10,
+                      endIndent: 10,
+                    ),
+                    const SizedBox(height: 12),
+                    SelectableText(
+                      PinyinHelper.getPinyin(
+                        text,
+                        format: PinyinFormat.WITH_TONE_MARK,
+                      ),
+                      style: TextStyle(
+                        color: colors.textLight,
+                        height: 1.6,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 90),
+                ],
+              ),
+            ),
+          ),
+
+          // 하단바 영역: search_result_screen.dart의 초기 하단바 디자인을 참고
+          // 키보드가 올라오면 자동으로 키보드 위로 배치되도록 Stack + Positioned 사용
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              ignoring: false,
+              child: BottomAppBar(
+                color: colors.background,
+                height: 64,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Text(
+                        "${text.length}",
+                        style: TextStyle(color: colors.text, fontSize: 14),
+                      ),
+                    ),
+                    const Spacer(),
+                    // 복사 버튼: 원형 버튼 스타일, 누르면 텍스트가 전체 복사됩니다.
+                    ElevatedButton(
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: text));
+                        Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context).input_text_copied,
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(2),
+                        backgroundColor: colors.white,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: Icon(Icons.copy, color: colors.text, size: 24),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              if (showPinyin && RegExp(r'[\u3400-\u9FFF]').hasMatch(text)) ...[
-                const SizedBox(height: 12),
-                Divider(
-                  height: 20,
-                  color: colors.textLight.withValues(alpha: 0.4),
-                  indent: 10,
-                  endIndent: 10,
-                ),
-                const SizedBox(height: 12),
-                SelectableText(
-                  PinyinHelper.getPinyin(
-                    text,
-                    format: PinyinFormat.WITH_TONE_MARK,
-                  ),
-                  style: TextStyle(
-                    color: colors.textLight,
-                    height: 1.6,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
