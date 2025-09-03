@@ -1,4 +1,4 @@
-package com.example.ai_dictionary
+package com.baxbase.wordvibe
 
 import io.flutter.embedding.android.FlutterActivity
 
