@@ -1384,53 +1384,94 @@ class TranslationScreenState extends State<TranslationScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SelectableText(
-                      _translatedText.isEmpty
-                          ? AppLocalizations.of(context).translation_result_hint
-                          : _translatedText,
-                      style: TextStyle(
-                        color: _translatedText.isEmpty
-                            ? colors.textLight
-                            : colors.text,
-                        fontSize: 15,
-                        height: 1.4,
-                      ),
-                    ),
-                    if (RegExp(r'[\u3400-\u9FFF]').hasMatch(_translatedText) &&
-                        (selectedToLanguage == '중국어' ||
-                            selectedToLanguage == '대만 중국어')) ...[
-                      const SizedBox(height: 8),
-                      Divider(
-                        height: 16,
-                        color: colors.textLight.withValues(alpha: 0.4),
-                        indent: 10,
-                        endIndent: 10,
-                      ),
-                      const SizedBox(height: 8),
+            child: GestureDetector(
+              onTap: () {
+                if (_translatedText.isNotEmpty &&
+                    _translatedText !=
+                        AppLocalizations.of(context).translation_result_hint) {
+                  _openFullScreenResultViewer();
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       SelectableText(
-                        PinyinHelper.getPinyin(
-                          _translatedText,
-                          format: PinyinFormat.WITH_TONE_MARK,
-                        ),
+                        _translatedText.isEmpty
+                            ? AppLocalizations.of(
+                                context,
+                              ).translation_result_hint
+                            : _translatedText,
                         style: TextStyle(
-                          color: colors.textLight,
+                          color: _translatedText.isEmpty
+                              ? colors.textLight
+                              : colors.text,
                           fontSize: 15,
                           height: 1.4,
                         ),
+                        onTap: () {
+                          if (_translatedText.isNotEmpty &&
+                              _translatedText !=
+                                  AppLocalizations.of(
+                                    context,
+                                  ).translation_result_hint) {
+                            _openFullScreenResultViewer();
+                          }
+                        },
                       ),
+                      if (RegExp(
+                            r'[\u3400-\u9FFF]',
+                          ).hasMatch(_translatedText) &&
+                          (selectedToLanguage == '중국어' ||
+                              selectedToLanguage == '대만 중국어')) ...[
+                        const SizedBox(height: 8),
+                        Divider(
+                          height: 16,
+                          color: colors.textLight.withValues(alpha: 0.4),
+                          indent: 10,
+                          endIndent: 10,
+                        ),
+                        const SizedBox(height: 8),
+                        SelectableText(
+                          PinyinHelper.getPinyin(
+                            _translatedText,
+                            format: PinyinFormat.WITH_TONE_MARK,
+                          ),
+                          style: TextStyle(
+                            color: colors.textLight,
+                            fontSize: 15,
+                            height: 1.4,
+                          ),
+                          onTap: () {
+                            if (_translatedText.isNotEmpty) {
+                              _openFullScreenResultViewer();
+                            }
+                          },
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _openFullScreenResultViewer() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _ResultFullScreenViewer(
+          text: _translatedText,
+          showPinyin:
+              RegExp(r'[\u3400-\u9FFF]').hasMatch(_translatedText) &&
+              (selectedToLanguage == '중국어' || selectedToLanguage == '대만 중국어'),
+        ),
       ),
     );
   }
@@ -1514,12 +1555,13 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
               color: colors.white,
               child: SingleChildScrollView(
                 child: TextField(
-                  style: TextStyle(color: colors.text),
+                  style: TextStyle(color: colors.text, fontSize: 15),
                   controller: _controller,
                   autofocus: true,
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
                   maxLines: null,
+
                   // 무료 버전에서는 일정 길이 이상 입력 시 잘라냅니다.
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(
@@ -1600,6 +1642,68 @@ class _InputFullScreenEditorState extends State<_InputFullScreenEditor> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ResultFullScreenViewer extends StatelessWidget {
+  final String text;
+  final bool showPinyin;
+
+  const _ResultFullScreenViewer({required this.text, required this.showPinyin});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeService = context.watch<ThemeService>();
+    final colors = themeService.colors;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context).translation_result),
+      ),
+      body: Container(
+        color: colors.white,
+        width: double.infinity,
+        height: double.infinity,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SelectableText(
+                text.isEmpty
+                    ? AppLocalizations.of(context).translation_result_hint
+                    : text,
+                style: TextStyle(
+                  color: text.isEmpty ? colors.textLight : colors.text,
+                  height: 1.6,
+                  fontSize: 15,
+                ),
+              ),
+              if (showPinyin && RegExp(r'[\u3400-\u9FFF]').hasMatch(text)) ...[
+                const SizedBox(height: 12),
+                Divider(
+                  height: 20,
+                  color: colors.textLight.withValues(alpha: 0.4),
+                  indent: 10,
+                  endIndent: 10,
+                ),
+                const SizedBox(height: 12),
+                SelectableText(
+                  PinyinHelper.getPinyin(
+                    text,
+                    format: PinyinFormat.WITH_TONE_MARK,
+                  ),
+                  style: TextStyle(
+                    color: colors.textLight,
+                    height: 1.6,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
