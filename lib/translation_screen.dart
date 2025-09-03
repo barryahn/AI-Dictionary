@@ -442,7 +442,7 @@ class TranslationScreenState extends State<TranslationScreen> {
         TooltipActionButton(
           type: TooltipDefaultActionType.next,
           padding: EdgeInsets.only(top: 3, right: 8),
-          name: '1/4',
+          name: '1/2',
           textStyle: TextStyle(
             color: colors.white.withValues(alpha: 0.5),
             fontSize: 12,
@@ -754,7 +754,7 @@ class TranslationScreenState extends State<TranslationScreen> {
         TooltipActionButton(
           type: TooltipDefaultActionType.next,
           padding: EdgeInsets.only(top: 3, right: 8),
-          name: '2/4',
+          name: '2/2',
           textStyle: TextStyle(
             color: colors.white.withValues(alpha: 0.5),
             fontSize: 12,
