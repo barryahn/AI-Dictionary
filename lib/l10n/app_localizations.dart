@@ -12,6 +12,7 @@ class AppLocalizations {
 
   // 앱 이름 상수
   static const String appName = 'WordVibe';
+  static const String appVersion = '1.0.1';
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'ko': {
@@ -100,7 +101,7 @@ class AppLocalizations {
       'terms_of_service': '이용 약관',
       'terms_of_service_description': '서비스 이용에 관한 약관',
       'app_info': '앱 정보',
-      'app_version': '버전 1.0.0',
+      'app_version': '버전 $appVersion',
       'logout': '로그아웃',
       'logout_description': '계정에서 로그아웃',
       'logout_confirm': '정말 로그아웃하시겠습니까?',
@@ -363,7 +364,7 @@ class AppLocalizations {
       'terms_of_service': 'Terms of Service',
       'terms_of_service_description': 'Terms of service usage',
       'app_info': 'App Info',
-      'app_version': 'Version 1.0.0',
+      'app_version': 'Version $appVersion',
       'logout': 'Logout',
       'logout_description': 'Logout from account',
       'logout_confirm': 'Are you sure you want to logout?',
@@ -640,7 +641,7 @@ class AppLocalizations {
       'terms_of_service': '服务条款',
       'terms_of_service_description': '服务使用相关条款',
       'app_info': '应用信息',
-      'app_version': '版本 1.0.0',
+      'app_version': '版本 $appVersion',
       'logout': '退出登录',
       'logout_description': '从账户退出',
       'logout_confirm': '确定要退出登录吗？',
@@ -897,7 +898,7 @@ class AppLocalizations {
       'terms_of_service': '服務條款',
       'terms_of_service_description': '服務使用相關條款',
       'app_info': '應用資訊',
-      'app_version': '版本 1.0.0',
+      'app_version': '版本 $appVersion',
       'logout': '登出',
       'logout_description': '從帳戶登出',
       'logout_confirm': '確定要登出嗎？',
@@ -1159,7 +1160,7 @@ class AppLocalizations {
       'terms_of_service': 'Conditions d\'utilisation',
       'terms_of_service_description': 'Conditions d\'utilisation du service',
       'app_info': 'Informations sur l\'application',
-      'app_version': 'Version 1.0.0',
+      'app_version': 'Version $appVersion',
       'logout': 'Déconnexion',
       'logout_description': 'Se déconnecter du compte',
       'logout_confirm': 'Êtes-vous sûr de vouloir vous déconnecter ?',
@@ -1447,7 +1448,7 @@ class AppLocalizations {
       'terms_of_service': 'Términos de servicio',
       'terms_of_service_description': 'Términos de uso del servicio',
       'app_info': 'Información de la aplicación',
-      'app_version': 'Versión 1.0.0',
+      'app_version': 'Versión $appVersion',
       'logout': 'Cerrar sesión',
       'logout_description': 'Cerrar sesión de la cuenta',
       'logout_confirm': '¿Estás seguro de que quieres cerrar sesión?',
