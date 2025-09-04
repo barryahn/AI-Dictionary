@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:401470234441:android:0a8463f64897b73307c498",
+        "android_client_info": {
+          "package_name": "com.baxbase.wordvibe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401470234441-uv1f3ijnno5rthl8u42m9mcsqeoenm3j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCxZAnjXdMfd2sa3p8eTGeLVl5dHmNYVQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401470234441-uv1f3ijnno5rthl8u42m9mcsqeoenm3j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "401470234441-3hcm26nbrpeo1sr1k5bmoqloftl4i7f2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.aiDictionary"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:401470234441:android:e67ff0bb18d2ead407c498",
         "android_client_info": {
           "package_name": "com.example.ai_dictionary"
