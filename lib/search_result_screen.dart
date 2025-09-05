@@ -932,38 +932,60 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(right: 20),
                       child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 6,
-                            right: 8,
-                            top: 5,
-                            bottom: 5,
+                        child: Tooltip(
+                          margin: const EdgeInsets.only(top: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
                           ),
+                          message: 'Pro 모델 검색 남은 횟수\n내일 00:00에 다시 리셋됩니다',
+                          triggerMode: TooltipTriggerMode.tap,
+                          showDuration: const Duration(seconds: 2),
+                          waitDuration: const Duration(milliseconds: 100),
+                          preferBelow: false,
+                          verticalOffset: 12,
                           decoration: BoxDecoration(
-                            color: colors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: colors.primary.withValues(alpha: 0.3),
-                            ),
+                            color: colors.primary,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.diamond_outlined,
-                                color: colors.primary,
-                                size: 13,
+                          textStyle: TextStyle(
+                            color: colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              left: 6,
+                              right: 8,
+                              top: 6,
+                              bottom: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colors.primary.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: colors.primary.withValues(alpha: 0.3),
                               ),
-                              const SizedBox(width: 2),
-                              Text(
-                                '$remaining/5',
-                                style: TextStyle(
-                                  fontSize: 12,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.diamond_outlined,
                                   color: colors.primary,
-                                  fontWeight: FontWeight.w600,
+                                  size: 13,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 2),
+                                Text(
+                                  '$remaining/5',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
