@@ -9,6 +9,7 @@ class FirestoreSearchHistoryService {
   // 캐시 관련 변수들
   List<Map<String, dynamic>> _cachedSessions = [];
   bool _isCacheInitialized = false;
+  String? _initializedUserId;
   StreamSubscription<QuerySnapshot>? _sessionsListener;
   final Map<String, StreamSubscription<QuerySnapshot>> _cardsListeners = {};
 
@@ -17,14 +18,19 @@ class FirestoreSearchHistoryService {
 
   // 캐시 초기화 및 실시간 리스너 시작
   Future<void> initializeCache() async {
-    if (_isCacheInitialized) return;
-
     final userId = _currentUserId;
     if (userId == null) return;
+
+    // 이미 초기화되었지만 다른 사용자로 전환된 경우 리스너를 재설정
+    if (_isCacheInitialized && _initializedUserId == userId) {
+      return;
+    }
 
     try {
       // 기존 리스너들 정리
       _disposeAllListeners();
+      // 사용자 전환 시 캐시 비우기 (이전 사용자 데이터 노출 방지)
+      _cachedSessions.clear();
 
       // 세션 리스너 시작
       _sessionsListener = _firestore
@@ -36,6 +42,7 @@ class FirestoreSearchHistoryService {
           .listen(_onSessionsChanged);
 
       _isCacheInitialized = true;
+      _initializedUserId = userId;
       print('Firestore 캐시 초기화 완료');
     } catch (e) {
       print('Firestore 캐시 초기화 실패: $e');
@@ -174,6 +181,7 @@ class FirestoreSearchHistoryService {
     _disposeAllListeners();
     _cachedSessions.clear();
     _isCacheInitialized = false;
+    _initializedUserId = null;
   }
 
   // 캐시된 데이터 가져오기

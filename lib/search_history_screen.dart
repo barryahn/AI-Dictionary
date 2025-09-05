@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
 import 'services/theme_service.dart';
+import 'services/auth_service.dart';
 import 'models/unified_search_session.dart';
 import 'search_result_screen.dart';
 import 'theme/app_theme.dart';
@@ -76,11 +77,22 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   bool _isLoading = true;
   bool _isPauseHistoryEnabled = false; // 일시 중지 상태 확인용
   final ScrollController _scrollController = ScrollController();
+  AuthService? _authService;
+  VoidCallback? _authListener;
 
   @override
   void initState() {
     super.initState();
     refresh();
+    // 인증 상태 변경을 구독하여 로그인/로그아웃/계정 전환 시 즉시 새로고침
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _authService = context.read<AuthService>();
+      _authListener = () {
+        if (mounted) refresh();
+      };
+      _authService?.addListener(_authListener!);
+    });
   }
 
   Future<void> refresh() async {
@@ -185,6 +197,9 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
 
   @override
   void dispose() {
+    if (_authListener != null && _authService != null) {
+      _authService!.removeListener(_authListener!);
+    }
     _scrollController.dispose();
     super.dispose();
   }
