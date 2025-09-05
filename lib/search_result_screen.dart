@@ -262,7 +262,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     });
     // 포커스 이동
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) FocusScope.of(context).requestFocus(_focusNode);
+      if (!mounted) return;
+      FocusScope.of(context).requestFocus(_focusNode);
+      // 해당 카드로 자동 스크롤
+      _scrollController.scrollToIndex(
+        index,
+        duration: const Duration(milliseconds: 300),
+        preferPosition: AutoScrollPosition.begin,
+      );
     });
   }
 
