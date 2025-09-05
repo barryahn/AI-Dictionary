@@ -852,27 +852,35 @@ class _HomeTabState extends State<_HomeTab> {
                     ),
                   );
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: colors.background,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 4,
-                  ),
-                  child: IgnorePointer(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.search, color: colors.text),
-                        fillColor: colors.light,
-                        hintText: AppLocalizations.of(context).main_search_hint,
-                        hintStyle: TextStyle(
-                          color: colors.textLight,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                child: Hero(
+                  tag: 'searchBar',
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colors.background,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 4,
+                      ),
+                      child: IgnorePointer(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.search, color: colors.text),
+                            fillColor: colors.light,
+                            hintText: AppLocalizations.of(
+                              context,
+                            ).main_search_hint,
+                            hintStyle: TextStyle(
+                              color: colors.textLight,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            border: InputBorder.none,
+                          ),
                         ),
-                        border: InputBorder.none,
                       ),
                     ),
                   ),
