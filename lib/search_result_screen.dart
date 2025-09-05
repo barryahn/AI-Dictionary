@@ -56,6 +56,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   dynamic _currentSessionId; // 현재 세션 ID를 저장
   bool _showWarningIcon = false; // 경고 아이콘 표시 여부
 
+  // 기존 카드 편집 모드 상태
+  bool _isEditingExisting = false;
+  int? _editingIndex;
+  String? _editingOldQuery;
+  bool _isOverwritingExisting = false;
+
   // 언어 판별
   final languageIdentifier = LanguageIdentifier(confidenceThreshold: 0.005);
 
@@ -240,6 +246,63 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     _fetchSearchResult(query, _searchQueries.length - 1);
   }
 
+  // 기존 카드 편집 시작
+  void _beginEditExisting(int index) {
+    if (index < 0 || index >= _searchQueries.length) return;
+    // 로딩 중인 카드는 편집 불가
+    if (index < _isLoading.length && _isLoading[index]) return;
+    setState(() {
+      _isEditingExisting = true;
+      _editingIndex = index;
+      _editingOldQuery = _searchQueries[index];
+      _searchController.text = _searchQueries[index];
+      _showWarningIcon = false;
+    });
+    // 포커스 이동
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) FocusScope.of(context).requestFocus(_focusNode);
+    });
+  }
+
+  void _cancelEdit() {
+    setState(() {
+      _isEditingExisting = false;
+      _editingIndex = null;
+      _editingOldQuery = null;
+      _isOverwritingExisting = false;
+    });
+    _searchController.clear();
+    FocusScope.of(context).unfocus();
+  }
+
+  // 편집 제출 및 해당 카드 덮어쓰기 검색
+  void _submitEditAndRefetch() {
+    if (_editingIndex == null) return;
+    final newQuery = _searchController.text.trim();
+    if (newQuery.isEmpty || _showWarningIcon) return;
+
+    final idx = _editingIndex!;
+    setState(() {
+      _isOverwritingExisting = true;
+      _isFetching = true;
+      // UI 갱신: 해당 카드 로딩 표시 및 쿼리 업데이트
+      if (idx < _searchQueries.length) {
+        _searchQueries[idx] = newQuery;
+      }
+      if (idx < _isLoading.length) {
+        _isLoading[idx] = true;
+      }
+      if (idx < _searchResults.length) {
+        _searchResults[idx] = _buildLoadingSection(newQuery, idx);
+      }
+    });
+
+    _searchController.clear();
+    FocusScope.of(context).unfocus();
+
+    _fetchSearchResult(newQuery, idx);
+  }
+
   Future<void> _saveSearchCard(
     String query,
     String result,
@@ -258,6 +321,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         // 새로운 세션에 카드 추가
         await _searchHistoryService.addSearchCard(query, result, isLoading);
       }
+      // 세션 ID 동기화 및 히스토리 백그라운드 갱신
+      _currentSessionId = _searchHistoryService.currentSessionId;
+      Future.microtask(() async {
+        try {
+          await _searchHistoryService.getRecentSearchSessions(limit: 10);
+        } catch (_) {}
+      });
     } catch (e) {
       print('검색 카드 저장 실패: $e');
     }
@@ -687,6 +757,58 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ),
         ),
       );
+    } else if (_isEditingExisting) {
+      // 편집 모드 하단 바: 선택한 카드의 검색어 수정 입력
+      bottomBar = SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: colors.white,
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: colors.primary, width: 1.5),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    focusNode: _focusNode,
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context).additional_search,
+                      hintStyle: TextStyle(
+                        color: colors.text,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                      border: InputBorder.none,
+                      icon: Icon(Icons.edit, color: colors.text),
+                    ),
+                    onSubmitted: (_) => _submitEditAndRefetch(),
+                  ),
+                ),
+                if (_showWarningIcon) ...[
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: colors.error,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                IconButton(
+                  icon: Icon(Icons.close, color: colors.text),
+                  onPressed: _cancelEdit,
+                ),
+                IconButton(
+                  icon: Icon(Icons.send, color: colors.text),
+                  onPressed: _submitEditAndRefetch,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
     } else {
       // 검색 완료 후의 "추가 검색하기" 창
       print('검색 완료 후 하단 바 표시');
@@ -1112,6 +1234,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     style: TextStyle(fontSize: 26, color: colors.text),
                     decoration: const InputDecoration(border: InputBorder.none),
                     readOnly: true,
+                    onTap: () {},
                   ),
                 ),
               ],
@@ -1162,6 +1285,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   style: TextStyle(fontSize: 26, color: colors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
+                  onTap: () => _beginEditExisting(index),
                 ),
               ),
             ],
@@ -1207,6 +1331,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   style: TextStyle(fontSize: 26, color: colors.text),
                   decoration: const InputDecoration(border: InputBorder.none),
                   readOnly: true,
+                  onTap: () => _beginEditExisting(index),
                 ),
               ),
             ],
@@ -1396,6 +1521,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         border: InputBorder.none,
                       ),
                       readOnly: true,
+                      onTap: () => _beginEditExisting(index),
                     ),
                   ),
                 ],
@@ -1517,6 +1643,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         border: InputBorder.none,
                       ),
                       readOnly: true,
+                      onTap: () => _beginEditExisting(index),
                     ),
                   ),
                 ],
@@ -1639,6 +1766,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         border: InputBorder.none,
                       ),
                       readOnly: true,
+                      onTap: () => _beginEditExisting(index),
                     ),
                   ),
                 ],
@@ -1826,6 +1954,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         border: InputBorder.none,
                       ),
                       readOnly: true,
+                      onTap: () => _beginEditExisting(index),
                     ),
                   ),
                 ],
@@ -2608,10 +2737,49 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       return;
     }
 
-    // 검색 결과가 있는 경우 저장
-    print('검색 카드 저장 시작');
-    await _saveSearchCard(query, result, false);
-    print('검색 카드 저장 완료');
+    // 저장 로직: 덮어쓰기 vs 새 카드 추가
+    if (_isOverwritingExisting && _editingIndex == index) {
+      try {
+        final sessionId =
+            _currentSessionId ?? _searchHistoryService.currentSessionId;
+        if (sessionId != null && _editingOldQuery != null) {
+          print('기존 카드 업데이트 시작 (세션: $sessionId)');
+          await _searchHistoryService.updateSearchCardByOldQuery(
+            sessionId,
+            _editingOldQuery!,
+            query,
+            result,
+          );
+          print('기존 카드 업데이트 완료');
+          // 히스토리 백그라운드 갱신
+          Future.microtask(() async {
+            try {
+              await _searchHistoryService.getRecentSearchSessions(limit: 10);
+            } catch (_) {}
+          });
+        } else {
+          // 세션 ID를 모르면 새 카드로 저장 (폴백)
+          print('세션 ID 없음 - 폴백으로 새 카드 저장');
+          await _saveSearchCard(query, result, false);
+        }
+      } catch (e) {
+        print('카드 업데이트 중 오류: $e');
+      } finally {
+        setState(() {
+          _isOverwritingExisting = false;
+          _isEditingExisting = false;
+          _editingIndex = null;
+          _editingOldQuery = null;
+          // 이 편집 검색이 끝났으므로 fetching 해제
+          _isFetching = false;
+        });
+      }
+    } else {
+      // 검색 결과가 있는 경우 새 카드로 저장
+      print('검색 카드 저장 시작');
+      await _saveSearchCard(query, result, false);
+      print('검색 카드 저장 완료');
+    }
 
     print('AI 응답 처리 완료: $query');
 

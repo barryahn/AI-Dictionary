@@ -191,6 +191,82 @@ class SearchHistoryService {
     }
   }
 
+  // 기존 카드 한 장을 (같은 세션 내에서) 과거 쿼리 기준으로 찾아
+  // 쿼리와 결과를 동시에 업데이트
+  Future<void> updateSearchCardByOldQuery(
+    dynamic sessionId,
+    String oldQuery,
+    String newQuery,
+    String newResult,
+  ) async {
+    // 검색 기록이 일시 중지된 경우 저장하지 않음
+    if (await isPauseHistoryEnabled()) {
+      print('검색 기록이 일시 중지되어 기존 카드 업데이트를 수행하지 않습니다.');
+      return;
+    }
+
+    if (_authService.isLoggedIn) {
+      // Firestore 에서 과거 쿼리 기반으로 찾아 업데이트
+      await _firestoreService.updateSearchCardByOldQuery(
+        sessionId.toString(),
+        oldQuery,
+        newQuery,
+        newResult,
+      );
+    } else {
+      // 로컬 DB에서 세션 카드 목록을 조회하여 마지막 매칭 카드를 업데이트
+      final cards = await _databaseHelper.getCardsBySessionId(sessionId as int);
+      final targetCard = cards.where((c) => c.query == oldQuery).lastOrNull;
+      if (targetCard == null) return;
+
+      final updated = SearchCard(
+        id: targetCard.id,
+        query: newQuery,
+        result: newResult,
+        isLoading: false,
+        createdAt: targetCard.createdAt, // 기존 생성 시간 유지
+      );
+      await _databaseHelper.updateSearchCardById(targetCard.id!, updated);
+    }
+  }
+
+  // 카드 ID 기반 업데이트 (가능하면 ID로 업데이트하는 것이 가장 안전)
+  Future<void> updateSearchCardById(
+    dynamic sessionId,
+    dynamic cardId,
+    String newQuery,
+    String newResult,
+  ) async {
+    // 검색 기록이 일시 중지된 경우 저장하지 않음
+    if (await isPauseHistoryEnabled()) {
+      print('검색 기록이 일시 중지되어 카드 ID 기반 업데이트를 수행하지 않습니다.');
+      return;
+    }
+
+    if (_authService.isLoggedIn) {
+      await _firestoreService.updateSearchCardById(
+        sessionId.toString(),
+        cardId.toString(),
+        newQuery,
+        newResult,
+      );
+    } else {
+      if (cardId == null) return;
+      final cards = await _databaseHelper.getCardsBySessionId(sessionId as int);
+      final targetCard = cards.where((c) => c.id == cardId as int).lastOrNull;
+      if (targetCard == null) return;
+
+      final updated = SearchCard(
+        id: targetCard.id,
+        query: newQuery,
+        result: newResult,
+        isLoading: false,
+        createdAt: targetCard.createdAt,
+      );
+      await _databaseHelper.updateSearchCardById(targetCard.id!, updated);
+    }
+  }
+
   // 현재 세션 완료
   void completeCurrentSession() {
     _currentSessionId = null;

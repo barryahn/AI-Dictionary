@@ -90,6 +90,7 @@ class FirestoreSearchHistoryService {
         .collection('search_sessions')
         .doc(sessionId)
         .collection('search_cards')
+        .orderBy('createdAt')
         .snapshots()
         .listen((snapshot) => _onCardsChanged(sessionId, snapshot));
   }
@@ -138,6 +139,7 @@ class FirestoreSearchHistoryService {
           .collection('search_sessions')
           .doc(sessionId)
           .collection('search_cards')
+          .orderBy('createdAt')
           .get();
 
       final cards = cardsSnapshot.docs.map((cardDoc) {
@@ -146,15 +148,13 @@ class FirestoreSearchHistoryService {
         return cardData;
       }).toList();
 
-      // createdAt 순서대로 정렬 (오름차순)
+      // Firestore에서 정렬했지만, 안전하게 한 번 더 정렬 보정
       cards.sort((a, b) {
         final aCreatedAt = a['createdAt'] as Timestamp?;
         final bCreatedAt = b['createdAt'] as Timestamp?;
-
         if (aCreatedAt == null && bCreatedAt == null) return 0;
         if (aCreatedAt == null) return -1;
         if (bCreatedAt == null) return 1;
-
         return aCreatedAt.compareTo(bCreatedAt);
       });
 
@@ -276,6 +276,72 @@ class FirestoreSearchHistoryService {
     }
   }
 
+  // 카드 ID로 검색 카드 업데이트 (쿼리 및 결과 동시 수정)
+  Future<void> updateSearchCardById(
+    String sessionId,
+    String cardId,
+    String newQuery,
+    String newResult,
+  ) async {
+    final userId = _currentUserId;
+    if (userId == null) return;
+
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .doc(sessionId)
+          .collection('search_cards')
+          .doc(cardId)
+          .update({'query': newQuery, 'result': newResult, 'isLoading': false});
+    } catch (e) {
+      print('Firestore 카드 ID 기반 업데이트 실패: $e');
+    }
+  }
+
+  // 과거 쿼리로 마지막 카드를 찾아 쿼리/결과 동시 수정
+  Future<void> updateSearchCardByOldQuery(
+    String sessionId,
+    String oldQuery,
+    String newQuery,
+    String newResult,
+  ) async {
+    final userId = _currentUserId;
+    if (userId == null) return;
+
+    try {
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .doc(sessionId)
+          .collection('search_cards')
+          .where('query', isEqualTo: oldQuery)
+          .orderBy('createdAt', descending: true)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final docId = querySnapshot.docs.first.id;
+        await _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('search_sessions')
+            .doc(sessionId)
+            .collection('search_cards')
+            .doc(docId)
+            .update({
+              'query': newQuery,
+              'result': newResult,
+              'isLoading': false,
+            });
+      }
+    } catch (e) {
+      print('Firestore 과거 쿼리 기반 카드 업데이트 실패: $e');
+    }
+  }
+
   // 모든 검색 세션 가져오기 (캐시 우선)
   Future<List<Map<String, dynamic>>> getAllSearchSessions() async {
     // 캐시가 초기화되지 않았다면 초기화
@@ -309,6 +375,7 @@ class FirestoreSearchHistoryService {
         // 각 세션의 카드들 가져오기
         final cardsSnapshot = await doc.reference
             .collection('search_cards')
+            .orderBy('createdAt')
             .get();
         final cards = cardsSnapshot.docs.map((cardDoc) {
           final cardData = cardDoc.data();
@@ -348,6 +415,7 @@ class FirestoreSearchHistoryService {
       // 카드들 가져오기
       final cardsSnapshot = await doc.reference
           .collection('search_cards')
+          .orderBy('createdAt')
           .get();
       final cards = cardsSnapshot.docs.map((cardDoc) {
         final cardData = cardDoc.data();
@@ -439,6 +507,7 @@ class FirestoreSearchHistoryService {
         // 각 세션의 카드들 가져오기
         final cardsSnapshot = await doc.reference
             .collection('search_cards')
+            .orderBy('createdAt')
             .get();
         final cards = cardsSnapshot.docs.map((cardDoc) {
           final cardData = cardDoc.data();
