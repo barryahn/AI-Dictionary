@@ -55,6 +55,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _isFetching = false; // 현재 API 호출이 진행 중인지 여부
   dynamic _currentSessionId; // 현재 세션 ID를 저장
   bool _showWarningIcon = false; // 경고 아이콘 표시 여부
+  // 각 검색 카드별로 프로 모델 사용 여부 기록 (완료 시 차감용)
+  final List<bool> _usingProModelFlags = [];
 
   // 기존 카드 편집 모드 상태
   bool _isEditingExisting = false;
@@ -368,19 +370,20 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         return;
       }
 
-      // 모델 선택: PRO는 항상 고급 모델, 무료는 하루 5회까지 고급 모델 사용
+      // 모델 선택: PRO 또는 남은 고급 쿼터가 있으면 프로 모델 사용(차감은 완료 시)
       final proService = context.read<ProService>();
       final quotaService = context.read<QuotaService>();
-      bool usingProModel = true;
-      if (!proService.isPro) {
-        if (quotaService.hasHighTierRemaining) {
-          final ok = await quotaService.tryConsumeHighTierOnce();
-          usingProModel = ok;
-        } else {
-          usingProModel = false;
-        }
+      bool usingProModel =
+          proService.isPro || quotaService.hasHighTierRemaining;
+      print('프로 모델 사용(예정): ' + usingProModel.toString());
+
+      // 인덱스별 사용 모델 기록
+      if (_usingProModelFlags.length <= index) {
+        _usingProModelFlags.addAll(
+          List<bool>.filled(index - _usingProModelFlags.length + 1, false),
+        );
       }
-      print('프로 모델 사용: ' + usingProModel.toString());
+      _usingProModelFlags[index] = usingProModel;
 
       String result = '';
 
@@ -2735,6 +2738,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     // 검색 결과가 없는 경우 저장하지 않음
     if (result.trim() == "No result") {
       return;
+    }
+
+    // 무료 버전: 완료 시점에 고급 쿼터 차감
+    try {
+      final proService = context.read<ProService>();
+      final quotaService = context.read<QuotaService>();
+      final usedProModel = index < _usingProModelFlags.length
+          ? _usingProModelFlags[index]
+          : false;
+      if (!proService.isPro && usedProModel) {
+        // 실제로 결과가 생성되어 완료된 경우에만 차감
+        await quotaService.tryConsumeHighTierOnce();
+      }
+    } catch (e) {
+      // 차감 실패는 앱 흐름에 영향 주지 않음
+      print('쿼터 차감 실패(무시): $e');
     }
 
     // 저장 로직: 편집 모드(덮어쓰기) vs 비편집 모드(새 카드 추가)
