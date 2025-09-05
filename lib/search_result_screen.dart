@@ -2737,11 +2737,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       return;
     }
 
-    // 저장 로직: 덮어쓰기 vs 새 카드 추가
+    // 저장 로직: 편집 모드(덮어쓰기) vs 비편집 모드(새 카드 추가)
     if (_isOverwritingExisting && _editingIndex == index) {
       try {
+        // 편집 모드에서는 반드시 업데이트만 수행하고, 새 세션/새 카드 생성 금지
         final sessionId =
-            _currentSessionId ?? _searchHistoryService.currentSessionId;
+            _currentSessionId ??
+            (widget.searchSession != null ? widget.searchSession!.id : null) ??
+            _searchHistoryService.currentSessionId;
         if (sessionId != null && _editingOldQuery != null) {
           print('기존 카드 업데이트 시작 (세션: $sessionId)');
           await _searchHistoryService.updateSearchCardByOldQuery(
@@ -2758,9 +2761,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             } catch (_) {}
           });
         } else {
-          // 세션 ID를 모르면 새 카드로 저장 (폴백)
-          print('세션 ID 없음 - 폴백으로 새 카드 저장');
-          await _saveSearchCard(query, result, false);
+          // 세션 식별 실패 시: 새 카드/새 세션 생성하지 않고 로그만 남김
+          print('경고: 편집 모드에서 세션 식별 실패 - DB 업데이트 생략');
         }
       } catch (e) {
         print('카드 업데이트 중 오류: $e');
