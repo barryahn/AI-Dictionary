@@ -11,6 +11,8 @@ class OpenAIService {
   static bool _isInitialized = false;
   static Stream<OpenAIStreamChatCompletionModel>? _chatStream;
   static StreamSubscription<OpenAIStreamChatCompletionModel>? _subscription;
+  static final String _proModel = "gpt-4.1-mini";
+  static final String _freeModel = "gpt-4.1-nano";
 
   static void dispose() {
     _subscription?.cancel();
@@ -29,7 +31,7 @@ class OpenAIService {
   }
 
   /*===============================================
-  L1 단어 정의 생성
+  L1과 L2가 같을 때 단어 정의 생성
   ===============================================*/
 
   static void getL1EqualsToL2WordDefinition(
@@ -37,8 +39,9 @@ class OpenAIService {
     String l1,
     ChatDeltaCallback onDelta,
     ChatCompleteCallback onComplete,
-    ChatErrorCallback onError,
-  ) async {
+    ChatErrorCallback onError, {
+    bool usingProModel = false,
+  }) async {
     try {
       await initialize();
 
@@ -99,7 +102,7 @@ class OpenAIService {
 
       // the actual request.
       final stream = OpenAI.instance.chat.createStream(
-        model: "gpt-4.1-mini",
+        model: usingProModel ? _proModel : _freeModel,
         messages: requestMessages,
         temperature: 0.1,
         maxTokens: 700,
@@ -128,8 +131,9 @@ class OpenAIService {
     String l2,
     ChatDeltaCallback onDelta,
     ChatCompleteCallback onComplete,
-    ChatErrorCallback onError,
-  ) async {
+    ChatErrorCallback onError, {
+    bool usingProModel = false,
+  }) async {
     try {
       await initialize();
 
@@ -194,7 +198,7 @@ class OpenAIService {
 
       // the actual request.
       final stream = OpenAI.instance.chat.createStream(
-        model: "gpt-4.1-mini",
+        model: usingProModel ? _proModel : _freeModel,
         messages: requestMessages,
         temperature: 0.1,
         maxTokens: 700,
@@ -223,8 +227,9 @@ class OpenAIService {
     String l2,
     ChatDeltaCallback onDelta,
     ChatCompleteCallback onComplete,
-    ChatErrorCallback onError,
-  ) async {
+    ChatErrorCallback onError, {
+    bool usingProModel = false,
+  }) async {
     try {
       await initialize();
 
@@ -287,7 +292,7 @@ class OpenAIService {
 
       // the actual request.
       final stream = OpenAI.instance.chat.createStream(
-        model: "gpt-4.1-mini",
+        model: usingProModel ? _proModel : _freeModel,
         messages: requestMessages,
         temperature: 0.1,
         maxTokens: 700,
@@ -345,7 +350,7 @@ $toneInstruction
 
       OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat
           .create(
-            model: "gpt-4.1-mini",
+            model: _proModel,
             messages: requestMessages,
             temperature: 0.2,
             maxTokens: 1000,

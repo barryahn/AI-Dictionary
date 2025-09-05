@@ -14,6 +14,7 @@ import 'services/openai_service.dart';
 import 'services/auth_service.dart';
 import 'services/theme_service.dart';
 import 'services/pro_service.dart';
+import 'services/quota_service.dart';
 import 'services/purchase_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -108,6 +109,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => AuthService()),
         ChangeNotifierProvider.value(value: ThemeService.instance),
         ChangeNotifierProvider(create: (_) => ProService()..initialize()),
+        ChangeNotifierProvider(create: (_) => QuotaService()..initialize()),
         ChangeNotifierProvider.value(value: PurchaseService()),
       ],
       child: Consumer<ThemeService>(

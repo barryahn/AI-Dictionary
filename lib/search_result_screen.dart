@@ -18,6 +18,8 @@ import 'services/tutorial_service.dart';
 import 'widgets/ad_card.dart';
 import 'services/review_service.dart';
 import 'package:lpinyin/lpinyin.dart';
+import 'services/pro_service.dart';
+import 'services/quota_service.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -296,6 +298,20 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         return;
       }
 
+      // 모델 선택: PRO는 항상 고급 모델, 무료는 하루 5회까지 고급 모델 사용
+      final proService = context.read<ProService>();
+      final quotaService = context.read<QuotaService>();
+      bool usingProModel = true;
+      if (!proService.isPro) {
+        if (quotaService.hasHighTierRemaining) {
+          final ok = await quotaService.tryConsumeHighTierOnce();
+          usingProModel = ok;
+        } else {
+          usingProModel = false;
+        }
+      }
+      print('프로 모델 사용: ' + usingProModel.toString());
+
       String result = '';
 
       bool isSameLanguage = _fromLanguage == _toLanguage;
@@ -347,6 +363,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               }
             });
           },
+          usingProModel: usingProModel,
         );
       }
       // fromLanguage와 toLanguage가 다른 경우
@@ -399,6 +416,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 }
               });
             },
+            usingProModel: usingProModel,
           );
         }
         // 3. 입력한 단어가 도착 언어일 경우 (입력한 단어: 영어 / 출발: 한국어 / 도착: 영어)
@@ -450,6 +468,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 }
               });
             },
+            usingProModel: usingProModel,
           );
         } else {
           // 4. 입력한 단어가 둘 다 아닐 경우 (입력한 단어: 중국어 / 출발: 한국어 / 도착: 영어)
@@ -507,6 +526,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 }
               });
             },
+            usingProModel: usingProModel,
           );
         }
       }
@@ -763,6 +783,53 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   FocusScope.of(context).unfocus(),
                 },
               ),
+              actions: [
+                Consumer2<ProService, QuotaService>(
+                  builder: (context, pro, quota, _) {
+                    if (pro.isPro) return const SizedBox.shrink();
+                    final remaining = quota.remainingToday;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            left: 6,
+                            right: 8,
+                            top: 5,
+                            bottom: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: colors.primary.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.diamond_outlined,
+                                color: colors.primary,
+                                size: 13,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                '$remaining/5',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
               title: Showcase(
                 key: _toLangKey,
                 description:
