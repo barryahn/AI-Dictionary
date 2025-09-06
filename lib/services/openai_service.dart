@@ -96,12 +96,11 @@ class OpenAIService {
         role: ChatCompletionMessageRole.user,
       );
 
-      final String modelStr = usingProModel ? _proModel : _freeModel;
-
       // 이전 진행 중인 스트림이 있다면 즉시 취소하여 지연을 방지
       _subscription?.cancel();
 
       final stream = usingProModel
+          // 프로 모델에서는 serviceTier을 설정해서 속도를 높임
           ? client.createChatCompletionStream(
               request: CreateChatCompletionRequest(
                 model: ChatCompletionModel.modelId(_proModel),
@@ -196,12 +195,11 @@ class OpenAIService {
         role: ChatCompletionMessageRole.user,
       );
 
-      final String modelStr = usingProModel ? _proModel : _freeModel;
-
       // 이전 진행 중인 스트림이 있다면 즉시 취소하여 지연을 방지
       _subscription?.cancel();
 
       final stream = usingProModel
+          // 프로 모델에서는 serviceTier을 설정해서 속도를 높임
           ? client.createChatCompletionStream(
               request: CreateChatCompletionRequest(
                 model: ChatCompletionModel.modelId(_proModel),
@@ -294,12 +292,11 @@ class OpenAIService {
         role: ChatCompletionMessageRole.user,
       );
 
-      final String modelStr = usingProModel ? _proModel : _freeModel;
-
       // 이전 진행 중인 스트림이 있다면 즉시 취소하여 지연을 방지
       _subscription?.cancel();
 
       final stream = usingProModel
+          // 프로 모델에서는 serviceTier을 설정해서 속도를 높임
           ? client.createChatCompletionStream(
               request: CreateChatCompletionRequest(
                 model: ChatCompletionModel.modelId(_proModel),
