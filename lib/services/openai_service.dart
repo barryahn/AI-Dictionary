@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dart_openai/dart_openai.dart';
+import 'package:openai_dart/openai_dart.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 typedef ChatDeltaCallback = void Function(String delta);
@@ -9,10 +9,13 @@ typedef ChatErrorCallback = void Function(Object error);
 
 class OpenAIService {
   static bool _isInitialized = false;
-  static Stream<OpenAIStreamChatCompletionModel>? _chatStream;
-  static StreamSubscription<OpenAIStreamChatCompletionModel>? _subscription;
-  static final String _proModel = "gpt-4.1-mini";
-  static final String _freeModel = "gpt-4.1-nano";
+  static StreamSubscription? _subscription;
+  static final String _proModel = "gpt-5-mini";
+  static final String _freeModel = "gpt-4.1-mini";
+  static String get proModel => _proModel;
+  static String get freeModel => _freeModel;
+
+  static OpenAIClient client = OpenAIClient();
 
   static void dispose() {
     _subscription?.cancel();
@@ -26,8 +29,9 @@ class OpenAIService {
       throw Exception('OPENAI_API_KEY가 설정되지 않았습니다.');
     }
 
-    OpenAI.apiKey = apiKey;
     _isInitialized = true;
+
+    client = OpenAIClient(apiKey: apiKey);
   }
 
   /*===============================================
@@ -80,37 +84,33 @@ class OpenAIService {
       print(prompt);
       print('======================');
 
-      final systemMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            '\'$word\'가 $l1로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
-          ),
-        ],
-        role: OpenAIChatMessageRole.system,
+      final developerMessage = ChatCompletionDeveloperMessageContent.text(
+        '\'$word\'가 $l1로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
       );
-
-      // the user message that will be sent to the request.
-      final userMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt),
-        ],
-        role: OpenAIChatMessageRole.user,
-      );
-
-      // all messages to be sent.
-      final requestMessages = [systemMessage, userMessage];
+      final userMessage = ChatCompletionUserMessageContent.string(prompt);
 
       // the actual request.
-      final stream = OpenAI.instance.chat.createStream(
-        model: usingProModel ? _proModel : _freeModel,
-        messages: requestMessages,
-        temperature: 0.1,
-        maxTokens: 700,
+      final String modelStr = usingProModel ? _proModel : _freeModel;
+
+      final stream = client.createChatCompletionStream(
+        request: CreateChatCompletionRequest(
+          model: ChatCompletionModel.modelId(modelStr),
+          messages: [
+            ChatCompletionMessage.developer(
+              content: developerMessage,
+              role: ChatCompletionMessageRole.developer,
+            ),
+            ChatCompletionMessage.user(
+              content: userMessage,
+              role: ChatCompletionMessageRole.user,
+            ),
+          ],
+        ),
       );
 
       _subscription = stream.listen(
         (event) {
-          final deltaText = event.choices.first.delta.content![0]?.text ?? '';
+          final deltaText = event.choices!.first.delta?.content ?? '';
           if (deltaText != '') onDelta(deltaText.toString());
         },
         onDone: onComplete,
@@ -176,37 +176,33 @@ class OpenAIService {
       print(prompt);
       print('======================');
 
-      final systemMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            '\'$word\'가 $l2로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
-          ),
-        ],
-        role: OpenAIChatMessageRole.system,
+      final developerMessage = ChatCompletionDeveloperMessageContent.text(
+        '\'$word\'가 $l2로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
       );
-
-      // the user message that will be sent to the request.
-      final userMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt),
-        ],
-        role: OpenAIChatMessageRole.user,
-      );
-
-      // all messages to be sent.
-      final requestMessages = [systemMessage, userMessage];
+      final userMessage = ChatCompletionUserMessageContent.string(prompt);
 
       // the actual request.
-      final stream = OpenAI.instance.chat.createStream(
-        model: usingProModel ? _proModel : _freeModel,
-        messages: requestMessages,
-        temperature: 0.1,
-        maxTokens: 700,
+      final String modelStr = usingProModel ? _proModel : _freeModel;
+
+      final stream = client.createChatCompletionStream(
+        request: CreateChatCompletionRequest(
+          model: ChatCompletionModel.modelId(modelStr),
+          messages: [
+            ChatCompletionMessage.developer(
+              content: developerMessage,
+              role: ChatCompletionMessageRole.developer,
+            ),
+            ChatCompletionMessage.user(
+              content: userMessage,
+              role: ChatCompletionMessageRole.user,
+            ),
+          ],
+        ),
       );
 
       _subscription = stream.listen(
         (event) {
-          final deltaText = event.choices.first.delta.content![0]?.text ?? '';
+          final deltaText = event.choices!.first.delta?.content ?? '';
           if (deltaText != '') onDelta(deltaText.toString());
         },
         onDone: onComplete,
@@ -270,37 +266,33 @@ class OpenAIService {
       print(prompt);
       print('======================');
 
-      final systemMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            '\'$word\'가 무슨 뜻인지 궁금해요. $l1로 친절하게 설명해주세요.',
-          ),
-        ],
-        role: OpenAIChatMessageRole.system,
+      final developerMessage = ChatCompletionDeveloperMessageContent.text(
+        '\'$word\'가 무슨 뜻인지 궁금해요. $l1로 친절하게 설명해주세요.',
       );
-
-      // the user message that will be sent to the request.
-      final userMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt),
-        ],
-        role: OpenAIChatMessageRole.user,
-      );
-
-      // all messages to be sent.
-      final requestMessages = [systemMessage, userMessage];
+      final userMessage = ChatCompletionUserMessageContent.string(prompt);
 
       // the actual request.
-      final stream = OpenAI.instance.chat.createStream(
-        model: usingProModel ? _proModel : _freeModel,
-        messages: requestMessages,
-        temperature: 0.1,
-        maxTokens: 700,
+      final String modelStr = usingProModel ? _proModel : _freeModel;
+
+      final stream = client.createChatCompletionStream(
+        request: CreateChatCompletionRequest(
+          model: ChatCompletionModel.modelId(modelStr),
+          messages: [
+            ChatCompletionMessage.developer(
+              content: developerMessage,
+              role: ChatCompletionMessageRole.developer,
+            ),
+            ChatCompletionMessage.user(
+              content: userMessage,
+              role: ChatCompletionMessageRole.user,
+            ),
+          ],
+        ),
       );
 
       _subscription = stream.listen(
         (event) {
-          final deltaText = event.choices.first.delta.content![0]?.text ?? '';
+          final deltaText = event.choices!.first.delta?.content ?? '';
           if (deltaText != '') onDelta(deltaText.toString());
         },
         onDone: onComplete,
@@ -330,34 +322,32 @@ $toneInstruction
 번역 결과만 출력하고 다른 설명은 포함하지 마세요.
 ''';
 
-      final systemMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            "You are a professional translator. Translate the given text accurately according to the specified tone and style. Respond only with the translated text without any additional comments or explanations.",
-          ),
-        ],
-        role: OpenAIChatMessageRole.system,
+      final developerMessage = ChatCompletionDeveloperMessageContent.text(
+        "You are a professional translator. Translate the given text accurately according to the specified tone and style. Respond only with the translated text without any additional comments or explanations.",
+      );
+      final userMessage = ChatCompletionUserMessageContent.string(prompt);
+
+      // the actual request.
+      final String modelStr = true ? _proModel : _freeModel;
+
+      final res = await client.createChatCompletion(
+        request: CreateChatCompletionRequest(
+          model: ChatCompletionModel.modelId(modelStr),
+          messages: [
+            ChatCompletionMessage.developer(
+              content: developerMessage,
+              role: ChatCompletionMessageRole.developer,
+            ),
+            ChatCompletionMessage.user(
+              content: userMessage,
+              role: ChatCompletionMessageRole.user,
+            ),
+          ],
+        ),
       );
 
-      final userMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(prompt),
-        ],
-        role: OpenAIChatMessageRole.user,
-      );
-
-      final requestMessages = [systemMessage, userMessage];
-
-      OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat
-          .create(
-            model: _proModel,
-            messages: requestMessages,
-            temperature: 0.2,
-            maxTokens: 1000,
-          );
-
-      return chatCompletion.choices.first.message.haveContent
-          ? chatCompletion.choices.first.message.content![0].text.toString()
+      return res.choices.first.message.content != null
+          ? res.choices.first.message.content.toString()
           : '번역을 생성할 수 없습니다.';
     } catch (e) {
       print('OpenAI API 호출 오류: $e');

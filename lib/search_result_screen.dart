@@ -386,6 +386,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       bool usingProModel =
           proService.isPro || quotaService.hasHighTierRemaining;
       print('프로 모델 사용(예정): ' + usingProModel.toString());
+      print(
+        '사용 모델명: ${usingProModel ? OpenAIService.proModel : OpenAIService.freeModel}',
+      );
 
       // 인덱스별 사용 모델 기록
       if (_usingProModelFlags.length <= index) {
