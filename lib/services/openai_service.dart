@@ -10,12 +10,12 @@ typedef ChatErrorCallback = void Function(Object error);
 class OpenAIService {
   static bool _isInitialized = false;
   static StreamSubscription? _subscription;
-  static final String _proModel = "gpt-5-mini";
-  static final String _freeModel = "gpt-4.1-mini";
+  static final String _proModel = "gpt-4.1-mini";
+  static final String _freeModel = "gpt-4o-mini-search-preview";
   static String get proModel => _proModel;
   static String get freeModel => _freeModel;
 
-  static OpenAIClient client = OpenAIClient();
+  static late OpenAIClient client;
 
   static void dispose() {
     _subscription?.cancel();
@@ -47,8 +47,6 @@ class OpenAIService {
     bool usingProModel = false,
   }) async {
     try {
-      await initialize();
-
       // 언어 설정 확인을 위한 로그
       print('=== OpenAI 서비스 언어 설정 ===');
       print('검색 단어: $word');
@@ -84,29 +82,39 @@ class OpenAIService {
       print(prompt);
       print('======================');
 
-      final developerMessage = ChatCompletionDeveloperMessageContent.text(
-        '\'$word\'가 $l1로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
+      // developer message
+      final developerMessage = ChatCompletionMessage.developer(
+        content: ChatCompletionDeveloperMessageContent.text(
+          '\'$word\'가 $l1로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
+        ),
+        role: ChatCompletionMessageRole.developer,
       );
-      final userMessage = ChatCompletionUserMessageContent.string(prompt);
 
-      // the actual request.
+      // user message
+      final userMessage = ChatCompletionMessage.user(
+        content: ChatCompletionUserMessageContent.string(prompt),
+        role: ChatCompletionMessageRole.user,
+      );
+
       final String modelStr = usingProModel ? _proModel : _freeModel;
 
-      final stream = client.createChatCompletionStream(
-        request: CreateChatCompletionRequest(
-          model: ChatCompletionModel.modelId(modelStr),
-          messages: [
-            ChatCompletionMessage.developer(
-              content: developerMessage,
-              role: ChatCompletionMessageRole.developer,
-            ),
-            ChatCompletionMessage.user(
-              content: userMessage,
-              role: ChatCompletionMessageRole.user,
-            ),
-          ],
-        ),
-      );
+      // 이전 진행 중인 스트림이 있다면 즉시 취소하여 지연을 방지
+      _subscription?.cancel();
+
+      final stream = usingProModel
+          ? client.createChatCompletionStream(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_proModel),
+                messages: [developerMessage, userMessage],
+                serviceTier: CreateChatCompletionRequestServiceTier.auto,
+              ),
+            )
+          : client.createChatCompletionStream(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_freeModel),
+                messages: [developerMessage, userMessage],
+              ),
+            );
 
       _subscription = stream.listen(
         (event) {
@@ -135,8 +143,6 @@ class OpenAIService {
     bool usingProModel = false,
   }) async {
     try {
-      await initialize();
-
       // 언어 설정 확인을 위한 로그
       print('=== OpenAI 서비스 언어 설정 ===');
       print('검색 단어: $word');
@@ -176,29 +182,39 @@ class OpenAIService {
       print(prompt);
       print('======================');
 
-      final developerMessage = ChatCompletionDeveloperMessageContent.text(
-        '\'$word\'가 $l2로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
+      // developer message
+      final developerMessage = ChatCompletionMessage.developer(
+        content: ChatCompletionDeveloperMessageContent.text(
+          '\'$word\'가 $l2로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
+        ),
+        role: ChatCompletionMessageRole.developer,
       );
-      final userMessage = ChatCompletionUserMessageContent.string(prompt);
 
-      // the actual request.
+      // user message
+      final userMessage = ChatCompletionMessage.user(
+        content: ChatCompletionUserMessageContent.string(prompt),
+        role: ChatCompletionMessageRole.user,
+      );
+
       final String modelStr = usingProModel ? _proModel : _freeModel;
 
-      final stream = client.createChatCompletionStream(
-        request: CreateChatCompletionRequest(
-          model: ChatCompletionModel.modelId(modelStr),
-          messages: [
-            ChatCompletionMessage.developer(
-              content: developerMessage,
-              role: ChatCompletionMessageRole.developer,
-            ),
-            ChatCompletionMessage.user(
-              content: userMessage,
-              role: ChatCompletionMessageRole.user,
-            ),
-          ],
-        ),
-      );
+      // 이전 진행 중인 스트림이 있다면 즉시 취소하여 지연을 방지
+      _subscription?.cancel();
+
+      final stream = usingProModel
+          ? client.createChatCompletionStream(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_proModel),
+                messages: [developerMessage, userMessage],
+                serviceTier: CreateChatCompletionRequestServiceTier.auto,
+              ),
+            )
+          : client.createChatCompletionStream(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_freeModel),
+                messages: [developerMessage, userMessage],
+              ),
+            );
 
       _subscription = stream.listen(
         (event) {
@@ -227,8 +243,6 @@ class OpenAIService {
     bool usingProModel = false,
   }) async {
     try {
-      await initialize();
-
       // 언어 설정 확인을 위한 로그
       print('=== OpenAI 서비스 언어 설정 ===');
       print('검색 단어: $word');
@@ -266,29 +280,39 @@ class OpenAIService {
       print(prompt);
       print('======================');
 
-      final developerMessage = ChatCompletionDeveloperMessageContent.text(
-        '\'$word\'가 무슨 뜻인지 궁금해요. $l1로 친절하게 설명해주세요.',
+      // developer message
+      final developerMessage = ChatCompletionMessage.developer(
+        content: ChatCompletionDeveloperMessageContent.text(
+          '\'$word\'가 무슨 뜻인지 궁금해요. $l1로 친절하게 설명해주세요.',
+        ),
+        role: ChatCompletionMessageRole.developer,
       );
-      final userMessage = ChatCompletionUserMessageContent.string(prompt);
 
-      // the actual request.
+      // user message
+      final userMessage = ChatCompletionMessage.user(
+        content: ChatCompletionUserMessageContent.string(prompt),
+        role: ChatCompletionMessageRole.user,
+      );
+
       final String modelStr = usingProModel ? _proModel : _freeModel;
 
-      final stream = client.createChatCompletionStream(
-        request: CreateChatCompletionRequest(
-          model: ChatCompletionModel.modelId(modelStr),
-          messages: [
-            ChatCompletionMessage.developer(
-              content: developerMessage,
-              role: ChatCompletionMessageRole.developer,
-            ),
-            ChatCompletionMessage.user(
-              content: userMessage,
-              role: ChatCompletionMessageRole.user,
-            ),
-          ],
-        ),
-      );
+      // 이전 진행 중인 스트림이 있다면 즉시 취소하여 지연을 방지
+      _subscription?.cancel();
+
+      final stream = usingProModel
+          ? client.createChatCompletionStream(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_proModel),
+                messages: [developerMessage, userMessage],
+                serviceTier: CreateChatCompletionRequestServiceTier.auto,
+              ),
+            )
+          : client.createChatCompletionStream(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_freeModel),
+                messages: [developerMessage, userMessage],
+              ),
+            );
 
       _subscription = stream.listen(
         (event) {
@@ -310,8 +334,6 @@ class OpenAIService {
     String toneInstruction,
   ) async {
     try {
-      await initialize();
-
       final prompt =
           '''
 다음 텍스트를 $fromLanguage에서 $toLanguage로 번역해주세요.
@@ -328,7 +350,7 @@ $toneInstruction
       final userMessage = ChatCompletionUserMessageContent.string(prompt);
 
       // the actual request.
-      final String modelStr = true ? _proModel : _freeModel;
+      final String modelStr = _proModel;
 
       final res = await client.createChatCompletion(
         request: CreateChatCompletionRequest(
