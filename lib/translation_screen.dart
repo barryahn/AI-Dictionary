@@ -7,6 +7,7 @@ import 'package:showcaseview/showcaseview.dart';
 import 'services/language_service.dart';
 import 'services/openai_service.dart';
 import 'services/theme_service.dart';
+import 'services/pro_service.dart';
 import 'theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -321,11 +322,15 @@ class TranslationScreenState extends State<TranslationScreen> {
           break;
       }
 
+      // PRO 사용자는 프로 모델 사용
+      final bool usingProModel = context.read<ProService>().isPro;
+
       final translatedText = await OpenAIService.translateText(
         _inputController.text.trim(),
         selectedFromLanguage,
         selectedToLanguage,
         toneInstruction,
+        usingProModel,
       );
 
       setState(() {

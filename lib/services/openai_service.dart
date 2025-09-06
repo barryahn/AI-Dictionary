@@ -329,6 +329,7 @@ class OpenAIService {
     String fromLanguage,
     String toLanguage,
     String toneInstruction,
+    bool usingProModel,
   ) async {
     try {
       final prompt =
@@ -341,29 +342,32 @@ $toneInstruction
 번역 결과만 출력하고 다른 설명은 포함하지 마세요.
 ''';
 
-      final developerMessage = ChatCompletionDeveloperMessageContent.text(
-        "You are a professional translator. Translate the given text accurately according to the specified tone and style. Respond only with the translated text without any additional comments or explanations.",
+      final developerMessage = ChatCompletionMessage.developer(
+        content: ChatCompletionDeveloperMessageContent.text(
+          "You are a professional translator. Translate the given text accurately according to the specified tone and style. Respond only with the translated text without any additional comments or explanations.",
+        ),
+        role: ChatCompletionMessageRole.developer,
       );
-      final userMessage = ChatCompletionUserMessageContent.string(prompt);
+      final userMessage = ChatCompletionMessage.user(
+        content: ChatCompletionUserMessageContent.string(prompt),
+        role: ChatCompletionMessageRole.user,
+      );
 
       // the actual request.
-      final String modelStr = _proModel;
-
-      final res = await client.createChatCompletion(
-        request: CreateChatCompletionRequest(
-          model: ChatCompletionModel.modelId(modelStr),
-          messages: [
-            ChatCompletionMessage.developer(
-              content: developerMessage,
-              role: ChatCompletionMessageRole.developer,
-            ),
-            ChatCompletionMessage.user(
-              content: userMessage,
-              role: ChatCompletionMessageRole.user,
-            ),
-          ],
-        ),
-      );
+      final res = usingProModel
+          ? await client.createChatCompletion(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_proModel),
+                messages: [developerMessage, userMessage],
+                serviceTier: CreateChatCompletionRequestServiceTier.auto,
+              ),
+            )
+          : await client.createChatCompletion(
+              request: CreateChatCompletionRequest(
+                model: ChatCompletionModel.modelId(_freeModel),
+                messages: [developerMessage, userMessage],
+              ),
+            );
 
       return res.choices.first.message.content != null
           ? res.choices.first.message.content.toString()
