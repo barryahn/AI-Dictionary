@@ -189,6 +189,49 @@ class DatabaseHelper {
     return sessions;
   }
 
+  // 페이징: 최근 검색 세션 페이지 단위로 가져오기
+  Future<List<SearchSession>> getSearchSessionsPage({
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    final db = await database;
+
+    // created_at 내림차순, startAfter가 있으면 그보다 과거(<)만
+    final String orderBy = 'created_at DESC';
+    List<Map<String, dynamic>> sessionMaps;
+    if (startAfter != null) {
+      sessionMaps = await db.query(
+        'search_sessions',
+        where: 'created_at < ?',
+        whereArgs: [startAfter.toIso8601String()],
+        orderBy: orderBy,
+        limit: limit,
+      );
+    } else {
+      sessionMaps = await db.query(
+        'search_sessions',
+        orderBy: orderBy,
+        limit: limit,
+      );
+    }
+
+    List<SearchSession> sessions = [];
+    for (var sessionMap in sessionMaps) {
+      final session = SearchSession.fromMap(sessionMap);
+      final cards = await getCardsBySessionId(session.id!);
+      sessions.add(
+        SearchSession(
+          id: session.id,
+          sessionName: session.sessionName,
+          createdAt: session.createdAt,
+          cards: cards,
+        ),
+      );
+    }
+
+    return sessions;
+  }
+
   // 특정 세션 가져오기
   Future<SearchSession?> getSearchSessionById(int sessionId) async {
     final db = await database;

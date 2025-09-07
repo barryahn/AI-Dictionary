@@ -292,6 +292,32 @@ class SearchHistoryService {
     }
   }
 
+  // 페이징: 최근 검색 세션 페이지 단위로 가져오기
+  Future<List<UnifiedSearchSession>> getSearchSessionsPage({
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    if (_authService.isLoggedIn) {
+      final firestoreSessions = await _firestoreService.getSearchSessionsPage(
+        limit: limit,
+        startAfter: startAfter,
+      );
+      return firestoreSessions
+          .map((data) => UnifiedSearchSession.fromFirestoreData(data))
+          .toList();
+    } else {
+      final localSessions = await _databaseHelper.getSearchSessionsPage(
+        limit: limit,
+        startAfter: startAfter,
+      );
+      return localSessions
+          .map(
+            (session) => UnifiedSearchSession.fromLocalSearchSession(session),
+          )
+          .toList();
+    }
+  }
+
   // 특정 검색 세션 가져오기
   Future<UnifiedSearchSession?> getSearchSessionById(dynamic sessionId) async {
     if (_authService.isLoggedIn) {

@@ -359,7 +359,6 @@ $toneInstruction
               request: CreateChatCompletionRequest(
                 model: ChatCompletionModel.modelId(_proModel),
                 messages: [developerMessage, userMessage],
-                serviceTier: CreateChatCompletionRequestServiceTier.auto,
               ),
             )
           : await client.createChatCompletion(

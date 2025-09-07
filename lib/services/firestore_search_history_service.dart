@@ -369,7 +369,8 @@ class FirestoreSearchHistoryService {
 
       List<Map<String, dynamic>> sessions = [];
       for (var doc in querySnapshot.docs) {
-        final sessionData = doc.data();
+        final Map<String, dynamic> sessionData =
+            doc.data() as Map<String, dynamic>;
         sessionData['id'] = doc.id;
 
         // 각 세션의 카드들 가져오기
@@ -378,7 +379,8 @@ class FirestoreSearchHistoryService {
             .orderBy('createdAt')
             .get();
         final cards = cardsSnapshot.docs.map((cardDoc) {
-          final cardData = cardDoc.data();
+          final Map<String, dynamic> cardData =
+              cardDoc.data() as Map<String, dynamic>;
           cardData['id'] = cardDoc.id;
           return cardData;
         }).toList();
@@ -390,6 +392,57 @@ class FirestoreSearchHistoryService {
       return sessions;
     } catch (e) {
       print('Firestore 세션 가져오기 실패: $e');
+      return [];
+    }
+  }
+
+  // 페이징: 최근 검색 세션 페이지 단위로 가져오기
+  Future<List<Map<String, dynamic>>> getSearchSessionsPage({
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    final userId = _currentUserId;
+    if (userId == null) return [];
+
+    try {
+      Query query = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .orderBy('createdAt', descending: true)
+          .limit(limit);
+
+      if (startAfter != null) {
+        query = query.startAfter([Timestamp.fromDate(startAfter)]);
+      }
+
+      final querySnapshot = await query.get();
+
+      List<Map<String, dynamic>> sessions = [];
+      for (var doc in querySnapshot.docs) {
+        final Map<String, dynamic> sessionData =
+            doc.data() as Map<String, dynamic>;
+        sessionData['id'] = doc.id;
+
+        // 각 세션의 카드들 가져오기 (정렬 보장)
+        final cardsSnapshot = await doc.reference
+            .collection('search_cards')
+            .orderBy('createdAt')
+            .get();
+        final cards = cardsSnapshot.docs.map((cardDoc) {
+          final Map<String, dynamic> cardData =
+              cardDoc.data() as Map<String, dynamic>;
+          cardData['id'] = cardDoc.id;
+          return cardData;
+        }).toList();
+
+        sessionData['cards'] = cards;
+        sessions.add(sessionData);
+      }
+
+      return sessions;
+    } catch (e) {
+      print('Firestore 페이징 세션 가져오기 실패: $e');
       return [];
     }
   }

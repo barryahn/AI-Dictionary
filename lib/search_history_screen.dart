@@ -75,6 +75,9 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   final SearchHistoryService _searchHistoryService = SearchHistoryService();
   List<UnifiedSearchSession> _searchSessions = [];
   bool _isLoading = true;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  final int _pageSize = 10;
   bool _isPauseHistoryEnabled = false; // 일시 중지 상태 확인용
   final ScrollController _scrollController = ScrollController();
   AuthService? _authService;
@@ -84,6 +87,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   void initState() {
     super.initState();
     refresh();
+    _scrollController.addListener(_onScroll);
     // 인증 상태 변경을 구독하여 로그인/로그아웃/계정 전환 시 즉시 새로고침
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -98,38 +102,80 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
   Future<void> refresh() async {
     if (!mounted) return;
 
-    // 현재 스크롤 위치 저장
-    final currentScrollOffset = _scrollController.hasClients
-        ? _scrollController.offset
-        : 0.0;
-
     setState(() {
       // 키보드 숨기기
       FocusScope.of(context).unfocus();
       _isLoading = true;
+      _isLoadingMore = false;
+      _hasMore = true;
+      _searchSessions = [];
     });
 
     try {
       // 검색 기록 일시 중지 상태 확인
       final isPaused = await SearchHistoryService.isPauseHistoryEnabled();
-      final sessions = await _searchHistoryService.getAllSearchSessions();
+      final sessions = await _searchHistoryService.getSearchSessionsPage(
+        limit: _pageSize,
+      );
       if (!mounted) return;
       setState(() {
         _searchSessions = sessions;
         _isPauseHistoryEnabled = isPaused;
         _isLoading = false;
-      });
-
-      // 데이터 로드 완료 후 이전 스크롤 위치로 복원
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients && currentScrollOffset > 0) {
-          _scrollController.jumpTo(currentScrollOffset);
-        }
+        _hasMore = sessions.length >= _pageSize;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context).delete_failed}: $e'),
+        ),
+      );
+    }
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients ||
+        _isLoading ||
+        _isLoadingMore ||
+        !_hasMore) {
+      return;
+    }
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _loadMore() async {
+    if (!mounted || _isLoadingMore || !_hasMore) return;
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    try {
+      final DateTime? startAfter = _searchSessions.isNotEmpty
+          ? _searchSessions.last.createdAt
+          : null;
+
+      final more = await _searchHistoryService.getSearchSessionsPage(
+        limit: _pageSize,
+        startAfter: startAfter,
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _searchSessions.addAll(more);
+        _hasMore = more.length >= _pageSize;
+        _isLoadingMore = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingMore = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -200,6 +246,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
     if (_authListener != null && _authService != null) {
       _authService!.removeListener(_authListener!);
     }
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -290,8 +337,12 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                     child: ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.all(16),
-                      itemCount: _searchSessions.length,
+                      itemCount:
+                          _searchSessions.length + (_isLoadingMore ? 3 : 0),
                       itemBuilder: (context, index) {
+                        if (index >= _searchSessions.length) {
+                          return _buildSkeletonItem(colors);
+                        }
                         final session = _searchSessions[index];
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -402,6 +453,57 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                   ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonItem(CustomColors colors) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      color: colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 16,
+              width: 180,
+              decoration: BoxDecoration(
+                color: colors.textLight.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 12,
+              width: 120,
+              decoration: BoxDecoration(
+                color: colors.textLight.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              height: 14,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: colors.textLight.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              height: 14,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: colors.textLight.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
