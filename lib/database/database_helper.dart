@@ -270,6 +270,28 @@ class DatabaseHelper {
     await db.delete('search_sessions');
   }
 
+  // 세션을 최대 maxCount개만 유지하고, 초과분(오래된 것) 삭제
+  Future<void> trimSessionsToMax(int maxCount) async {
+    final db = await database;
+    // 최신순으로 모두 조회 후 초과분 id 수집
+    final List<Map<String, dynamic>> sessionMaps = await db.query(
+      'search_sessions',
+      orderBy: 'created_at DESC',
+    );
+
+    if (sessionMaps.length <= maxCount) return;
+
+    final excess = sessionMaps.skip(maxCount).toList();
+    final batch = db.batch();
+    for (final m in excess) {
+      final id = m['id'] as int?;
+      if (id != null) {
+        batch.delete('search_sessions', where: 'id = ?', whereArgs: [id]);
+      }
+    }
+    await batch.commit(noResult: true);
+  }
+
   // 최근 검색 세션 가져오기 (최대 10개)
   Future<List<SearchSession>> getRecentSearchSessions({int limit = 10}) async {
     final allSessions = await getAllSearchSessions();

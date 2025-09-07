@@ -2,6 +2,7 @@ import '../database/database_helper.dart';
 import 'auth_service.dart';
 import 'firestore_search_history_service.dart';
 import '../models/unified_search_session.dart';
+import 'pro_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchHistoryService {
@@ -9,6 +10,7 @@ class SearchHistoryService {
   final FirestoreSearchHistoryService _firestoreService =
       FirestoreSearchHistoryService();
   final AuthService _authService = AuthService();
+  final ProService _proService = ProService();
 
   int? _currentSessionId;
   String? _currentFirestoreSessionId;
@@ -71,12 +73,16 @@ class SearchHistoryService {
         sessionName,
       );
       _currentSessionId = null;
+      // 플랜별 세션 개수 제한 적용
+      await _enforceCapLimitIfNeeded();
     } else {
       // 게스트인 경우 로컬에 저장
       _currentSessionId = await _databaseHelper.createSearchSession(
         sessionName,
       );
       _currentFirestoreSessionId = null;
+      // 플랜별 세션 개수 제한 적용
+      await _enforceCapLimitIfNeeded();
     }
   }
 
@@ -118,6 +124,24 @@ class SearchHistoryService {
 
       await _databaseHelper.addSearchCard(_currentSessionId!, card);
     }
+  }
+
+  // 플랜별 세션 개수 제한 적용 (무료 20개, Pro 200개)
+  Future<void> _enforceCapLimitIfNeeded() async {
+    int maxSessions = 200;
+    try {
+      if (!_proService.isPro) {
+        maxSessions = 20;
+      }
+    } catch (_) {}
+
+    try {
+      if (_authService.isLoggedIn) {
+        await _firestoreService.trimSessionsToMax(maxSessions);
+      } else {
+        await _databaseHelper.trimSessionsToMax(maxSessions);
+      }
+    } catch (_) {}
   }
 
   // 기존 세션에 검색 카드 추가

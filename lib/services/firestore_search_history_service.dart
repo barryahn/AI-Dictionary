@@ -523,6 +523,34 @@ class FirestoreSearchHistoryService {
     }
   }
 
+  // 최신 createdAt 기준으로 세션을 최대 maxCount개만 유지
+  Future<void> trimSessionsToMax(int maxCount) async {
+    final userId = _currentUserId;
+    if (userId == null) return;
+
+    try {
+      // 최신순으로 모두 조회
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      final docs = querySnapshot.docs;
+      if (docs.length <= maxCount) return;
+
+      final excess = docs.skip(maxCount).toList();
+      final batch = _firestore.batch();
+      for (final d in excess) {
+        batch.delete(d.reference);
+      }
+      await batch.commit();
+    } catch (e) {
+      print('Firestore 세션 트리밍 실패: $e');
+    }
+  }
+
   // 최근 검색 세션 가져오기
   Future<List<Map<String, dynamic>>> getRecentSearchSessions({
     int limit = 10,
