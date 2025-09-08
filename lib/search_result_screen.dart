@@ -347,7 +347,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         await _searchHistoryService.addSearchCard(query, result, isLoading);
       }
       // 세션 ID 동기화 및 히스토리 백그라운드 갱신
-      _currentSessionId = _searchHistoryService.currentSessionId;
+      // 주의: 기존 세션에 추가하는 경우 서비스의 currentSessionId가 null일 수 있으므로
+      // 새 세션이 시작된 경우(서비스가 보유한 세션 ID가 존재할 때)만 갱신합니다.
+      final serviceSessionId = _searchHistoryService.currentSessionId;
+      if (serviceSessionId != null) {
+        _currentSessionId = serviceSessionId;
+      }
       // 저장 완료된 카드 수 갱신
       _savedCardCount = _isLoading.where((e) => e == false).length;
       Future.microtask(() async {
