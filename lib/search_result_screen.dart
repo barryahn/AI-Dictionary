@@ -20,6 +20,7 @@ import 'services/review_service.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'services/pro_service.dart';
 import 'services/quota_service.dart';
+import 'pro_upgrade_screen.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -58,6 +59,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   // 각 검색 카드별로 프로 모델 사용 여부 기록 (완료 시 차감용)
   final List<bool> _usingProModelFlags = [];
   int _savedCardCount = 0; // 저장 완료된 카드 수 (무료 한도 체크)
+  // 무료 한도 도달 시 업그레이드 오버레이 표시 제어
+  bool _isUpgradeOverlayDismissed = false;
 
   // 기존 카드 편집 모드 상태
   bool _isEditingExisting = false;
@@ -854,22 +857,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Text(
-                      'Pro 버전을 구독해서\n더 많은 단어를 이어서 검색해보세요.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: colors.primary,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         );
@@ -1336,43 +1323,127 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 _isSearching
                     ? _buildResultView(colors)
                     : _buildInitialView(colors),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: IgnorePointer(
-                    ignoring: false,
-                    child: isFreeLimitReached
-                        ? Container(
-                            padding: const EdgeInsets.only(top: 20),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.center,
-                                colors: [
-                                  colors.white.withValues(alpha: 0.0),
-                                  colors.primary.withValues(alpha: 0.2),
-                                ],
-                              ),
-                            ),
-                            child: bottomBar,
-                          )
-                        : Container(
-                            padding: const EdgeInsets.only(top: 20),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  colors.white.withValues(alpha: 0.0),
-                                  colors.background,
-                                ],
-                              ),
-                            ),
-                            child: bottomBar,
+
+                if (isFreeLimitReached && !_isUpgradeOverlayDismissed)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: IgnorePointer(
+                      ignoring: false,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment(0.0, -0.5),
+                            colors: [
+                              colors.white.withValues(alpha: 0.0),
+                              colors.background.withValues(alpha: 0.95),
+                            ],
                           ),
+                        ),
+                        child: SafeArea(
+                          top: false,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  child: Text(
+                                    'Pro 버전을 구독해서\n더 많은 검색을 이어가 보세요.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontFamily: 'MaruBuri',
+                                      fontSize: 20,
+                                      color: colors.text,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colors.primary,
+                                    foregroundColor: colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 100,
+                                      vertical: 8,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProUpgradeScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    ).get('pro_upgrade'),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isUpgradeOverlayDismissed = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    color: colors.white.withValues(alpha: 0.0),
+                                    padding: const EdgeInsets.only(
+                                      left: 100,
+                                      right: 100,
+                                      bottom: 10,
+                                    ),
+                                    child: Text(
+                                      '닫기',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: colors.textLight,
+                                        decoration: TextDecoration.underline,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: IgnorePointer(
+                      ignoring: false,
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              colors.white.withValues(alpha: 0.0),
+                              colors.background,
+                            ],
+                          ),
+                        ),
+                        child: bottomBar,
+                      ),
+                    ),
                   ),
-                ),
               ],
             ),
             // bottomNavigationBar: Padding(
