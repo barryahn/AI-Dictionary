@@ -57,6 +57,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _showWarningIcon = false; // 경고 아이콘 표시 여부
   // 각 검색 카드별로 프로 모델 사용 여부 기록 (완료 시 차감용)
   final List<bool> _usingProModelFlags = [];
+  int _savedCardCount = 0; // 저장 완료된 카드 수 (무료 한도 체크)
 
   // 기존 카드 편집 모드 상태
   bool _isEditingExisting = false;
@@ -125,6 +126,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       _isSessionStarted = true;
       _isFetching = false;
       _currentSessionId = session.id; // 현재 세션 ID 저장
+      _savedCardCount = session.cards.where((c) => !c.isLoading).length;
 
       final initialIndex = _searchQueries.length;
       for (var i = 0; i < session.cards.length; i++) {
@@ -222,6 +224,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   void _addSearchResult(String query) {
+    // 무료 플랜: 세션당 10개 제한이면 차단
+    try {
+      final pro = context.read<ProService>();
+      if (!pro.isPro && _savedCardCount >= 10) {
+        return;
+      }
+    } catch (_) {}
+
     print('새 검색 추가: $query');
     setState(() {
       final index = _searchQueries.length;
@@ -335,6 +345,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       }
       // 세션 ID 동기화 및 히스토리 백그라운드 갱신
       _currentSessionId = _searchHistoryService.currentSessionId;
+      // 저장 완료된 카드 수 갱신
+      _savedCardCount = _isLoading.where((e) => e == false).length;
       Future.microtask(() async {
         try {
           await _searchHistoryService.getRecentSearchSessions(limit: 10);
@@ -730,6 +742,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final themeService = context.watch<ThemeService>();
     final colors = themeService.colors;
 
+    final pro = context.watch<ProService>();
+    final isFreeLimitReached = !pro.isPro && _savedCardCount >= 10;
+
     // 하단 바를 동적으로 변경
     Widget bottomBar;
     if (!_isSearching) {
@@ -832,36 +847,85 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         ),
       );
     } else {
-      // 검색 완료 후의 "추가 검색하기" 창
-      print('검색 완료 후 하단 바 표시');
-      bottomBar = SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Container(
-            decoration: BoxDecoration(
-              color: colors.white,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: colors.primary, width: 1.5),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    focusNode: _focusNode,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context).additional_search,
-                      hintStyle: TextStyle(
-                        color: colors.text,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
+      // 무료 버전: 세션당 10개 도달 시 추가 검색창 숨김
+      if (isFreeLimitReached) {
+        bottomBar = SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      'Pro 버전을 구독해서\n더 많은 단어를 이어서 검색해보세요.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: colors.primary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
                       ),
-                      border: InputBorder.none,
-                      icon: Icon(Icons.search, color: colors.text),
                     ),
-                    onSubmitted: (value) {
-                      final newQuery = value.trim();
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      } else {
+        // 검색 완료 후의 "추가 검색하기" 창
+        print('검색 완료 후 하단 바 표시');
+        bottomBar = SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Container(
+              decoration: BoxDecoration(
+                color: colors.white,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: colors.primary, width: 1.5),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      focusNode: _focusNode,
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(
+                          context,
+                        ).additional_search,
+                        hintStyle: TextStyle(
+                          color: colors.text,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                        border: InputBorder.none,
+                        icon: Icon(Icons.search, color: colors.text),
+                      ),
+                      onSubmitted: (value) {
+                        final newQuery = value.trim();
+                        if (newQuery.isNotEmpty && !_showWarningIcon) {
+                          _addSearchResult(newQuery);
+                          _searchController.clear();
+                          FocusScope.of(context).unfocus();
+                        }
+                      },
+                    ),
+                  ),
+                  if (_showWarningIcon) ...[
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: colors.error,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  IconButton(
+                    icon: Icon(Icons.send, color: colors.text),
+                    onPressed: () {
+                      final newQuery = _searchController.text.trim();
                       if (newQuery.isNotEmpty && !_showWarningIcon) {
                         _addSearchResult(newQuery);
                         _searchController.clear();
@@ -869,31 +933,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       }
                     },
                   ),
-                ),
-                if (_showWarningIcon) ...[
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: colors.error,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
                 ],
-                IconButton(
-                  icon: Icon(Icons.send, color: colors.text),
-                  onPressed: () {
-                    final newQuery = _searchController.text.trim();
-                    if (newQuery.isNotEmpty && !_showWarningIcon) {
-                      _addSearchResult(newQuery);
-                      _searchController.clear();
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      );
+        );
+      }
     }
 
     return ShowCaseWidget(
@@ -1297,20 +1342,35 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   bottom: 0,
                   child: IgnorePointer(
                     ignoring: false,
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            colors.white.withValues(alpha: 0.0),
-                            colors.background,
-                          ],
-                        ),
-                      ),
-                      child: bottomBar,
-                    ),
+                    child: isFreeLimitReached
+                        ? Container(
+                            padding: const EdgeInsets.only(top: 20),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.center,
+                                colors: [
+                                  colors.white.withValues(alpha: 0.0),
+                                  colors.primary.withValues(alpha: 0.2),
+                                ],
+                              ),
+                            ),
+                            child: bottomBar,
+                          )
+                        : Container(
+                            padding: const EdgeInsets.only(top: 20),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  colors.white.withValues(alpha: 0.0),
+                                  colors.background,
+                                ],
+                              ),
+                            ),
+                            child: bottomBar,
+                          ),
                   ),
                 ),
               ],
@@ -2819,6 +2879,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         _isLoading[index] = false;
         print('로딩 상태 해제: 인덱스 $index');
       }
+      // 저장된 카드 수 갱신 (무료 한도 체크)
+      _savedCardCount = _isLoading.where((e) => e == false).length;
 
       // "No result" 응답 처리
       if (result.trim() == "No result") {
