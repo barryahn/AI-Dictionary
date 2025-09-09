@@ -44,12 +44,14 @@ class SearchSession {
   final int? id;
   final String sessionName;
   final DateTime createdAt;
+  final DateTime updatedAt;
   final List<SearchCard> cards;
 
   SearchSession({
     this.id,
     required this.sessionName,
     required this.createdAt,
+    required this.updatedAt,
     required this.cards,
   });
 
@@ -58,6 +60,7 @@ class SearchSession {
       'id': id,
       'session_name': sessionName,
       'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
@@ -66,6 +69,7 @@ class SearchSession {
       id: map['id'],
       sessionName: map['session_name'],
       createdAt: DateTime.parse(map['created_at']),
+      updatedAt: DateTime.parse(map['updated_at'] ?? map['created_at']),
       cards: [], // 카드는 별도로 로드
     );
   }
@@ -86,7 +90,12 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'search_history.db');
-    return await openDatabase(path, version: 1, onCreate: _onCreate);
+    return await openDatabase(
+      path,
+      version: 2,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -95,7 +104,8 @@ class DatabaseHelper {
       CREATE TABLE search_sessions(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         session_name TEXT NOT NULL,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
       )
     ''');
 
@@ -117,6 +127,22 @@ class DatabaseHelper {
     await db.execute(
       'CREATE INDEX idx_session_created_at ON search_sessions(created_at)',
     );
+    await db.execute(
+      'CREATE INDEX idx_session_updated_at ON search_sessions(updated_at)',
+    );
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // updated_at 컬럼 추가 및 초기값 채우기
+      await db.execute(
+        'ALTER TABLE search_sessions ADD COLUMN updated_at TEXT',
+      );
+      await db.execute('UPDATE search_sessions SET updated_at = created_at');
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_session_updated_at ON search_sessions(updated_at)',
+      );
+    }
   }
 
   // 새로운 검색 세션 생성
@@ -125,6 +151,7 @@ class DatabaseHelper {
     final session = SearchSession(
       sessionName: sessionName,
       createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
       cards: [],
     );
     return await db.insert('search_sessions', session.toMap());
@@ -136,7 +163,15 @@ class DatabaseHelper {
     // 항상 새로운 카드로 추가
     final cardMap = card.toMap();
     cardMap['session_id'] = sessionId;
-    return await db.insert('search_cards', cardMap);
+    final result = await db.insert('search_cards', cardMap);
+    // 카드 추가 시 세션의 updated_at 갱신
+    await db.update(
+      'search_sessions',
+      {'updated_at': DateTime.now().toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [sessionId],
+    );
+    return result;
   }
 
   // 기존 검색 카드 업데이트 (id 기준)
@@ -145,12 +180,36 @@ class DatabaseHelper {
     final updatedMap = Map<String, dynamic>.from(card.toMap());
     // id는 변경하지 않음
     updatedMap.remove('id');
-    return await db.update(
+    final updated = await db.update(
       'search_cards',
       updatedMap,
       where: 'id = ?',
       whereArgs: [id],
     );
+    // 카드 갱신 시 부모 세션의 updated_at 갱신
+    final maps = await db.query(
+      'search_cards',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      final sessionIdMaps = await db.query(
+        'search_cards',
+        columns: ['session_id'],
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      if (sessionIdMaps.isNotEmpty) {
+        final sessionId = sessionIdMaps.first['session_id'] as int;
+        await db.update(
+          'search_sessions',
+          {'updated_at': DateTime.now().toIso8601String()},
+          where: 'id = ?',
+          whereArgs: [sessionId],
+        );
+      }
+    }
+    return updated;
   }
 
   // 세션의 모든 카드 가져오기
@@ -170,7 +229,7 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> sessionMaps = await db.query(
       'search_sessions',
-      orderBy: 'created_at DESC',
+      orderBy: 'updated_at DESC',
     );
 
     List<SearchSession> sessions = [];
@@ -182,6 +241,7 @@ class DatabaseHelper {
           id: session.id,
           sessionName: session.sessionName,
           createdAt: session.createdAt,
+          updatedAt: session.updatedAt,
           cards: cards,
         ),
       );
@@ -196,13 +256,13 @@ class DatabaseHelper {
   }) async {
     final db = await database;
 
-    // created_at 내림차순, startAfter가 있으면 그보다 과거(<)만
-    final String orderBy = 'created_at DESC';
+    // updated_at 내림차순, startAfter가 있으면 그보다 과거(<)만
+    final String orderBy = 'updated_at DESC';
     List<Map<String, dynamic>> sessionMaps;
     if (startAfter != null) {
       sessionMaps = await db.query(
         'search_sessions',
-        where: 'created_at < ?',
+        where: 'updated_at < ?',
         whereArgs: [startAfter.toIso8601String()],
         orderBy: orderBy,
         limit: limit,
@@ -224,6 +284,7 @@ class DatabaseHelper {
           id: session.id,
           sessionName: session.sessionName,
           createdAt: session.createdAt,
+          updatedAt: session.updatedAt,
           cards: cards,
         ),
       );
@@ -249,6 +310,7 @@ class DatabaseHelper {
       id: session.id,
       sessionName: session.sessionName,
       createdAt: session.createdAt,
+      updatedAt: session.updatedAt,
       cards: cards,
     );
   }
@@ -276,7 +338,7 @@ class DatabaseHelper {
     // 최신순으로 모두 조회 후 초과분 id 수집
     final List<Map<String, dynamic>> sessionMaps = await db.query(
       'search_sessions',
-      orderBy: 'created_at DESC',
+      orderBy: 'updated_at DESC',
     );
 
     if (sessionMaps.length <= maxCount) return;

@@ -5,6 +5,7 @@ class UnifiedSearchSession {
   final dynamic id; // int (로컬) 또는 String (Firestore)
   final String sessionName;
   final DateTime createdAt;
+  final DateTime updatedAt;
   final List<UnifiedSearchCard> cards;
   final bool isFromFirestore;
 
@@ -12,6 +13,7 @@ class UnifiedSearchSession {
     required this.id,
     required this.sessionName,
     required this.createdAt,
+    required this.updatedAt,
     required this.cards,
     required this.isFromFirestore,
   });
@@ -22,6 +24,7 @@ class UnifiedSearchSession {
       id: session.id,
       sessionName: session.sessionName,
       createdAt: session.createdAt,
+      updatedAt: session.updatedAt,
       cards: session.cards
           .map((card) => UnifiedSearchCard.fromLocalSearchCard(card))
           .toList(),
@@ -39,6 +42,10 @@ class UnifiedSearchSession {
       id: data['id'],
       sessionName: data['sessionName'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt:
+          (data['updatedAt'] as Timestamp?)?.toDate() ??
+          (data['createdAt'] as Timestamp?)?.toDate() ??
+          DateTime.now(),
       cards: cards,
       isFromFirestore: true,
     );

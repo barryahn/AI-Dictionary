@@ -158,7 +158,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
 
     try {
       final DateTime? startAfter = _searchSessions.isNotEmpty
-          ? _searchSessions.last.createdAt
+          ? _searchSessions.last.updatedAt
           : null;
 
       final more = await _searchHistoryService.getSearchSessionsPage(
@@ -386,7 +386,7 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
                               children: [
                                 const SizedBox(height: 4),
                                 Text(
-                                  _formatDateTime(session.createdAt),
+                                  _formatDateTime(session.updatedAt),
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: colors.textLight,

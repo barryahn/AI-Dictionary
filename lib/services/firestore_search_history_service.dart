@@ -37,7 +37,7 @@ class FirestoreSearchHistoryService {
           .collection('users')
           .doc(userId)
           .collection('search_sessions')
-          .orderBy('createdAt', descending: true)
+          .orderBy('updatedAt', descending: true)
           .snapshots()
           .listen(_onSessionsChanged);
 
@@ -202,6 +202,7 @@ class FirestoreSearchHistoryService {
           .add({
             'sessionName': sessionName,
             'createdAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
           });
       return docRef.id;
     } catch (e) {
@@ -233,6 +234,14 @@ class FirestoreSearchHistoryService {
             'isLoading': isLoading,
             'createdAt': FieldValue.serverTimestamp(),
           });
+
+      // 카드 추가 시 세션의 updatedAt 갱신
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .doc(sessionId)
+          .update({'updatedAt': FieldValue.serverTimestamp()});
     } catch (e) {
       print('Firestore 카드 추가 실패: $e');
     }
@@ -270,6 +279,14 @@ class FirestoreSearchHistoryService {
             .collection('search_cards')
             .doc(docId)
             .update({'result': result, 'isLoading': false});
+
+        // 카드 갱신 시 세션의 updatedAt 갱신
+        await _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('search_sessions')
+            .doc(sessionId)
+            .update({'updatedAt': FieldValue.serverTimestamp()});
       }
     } catch (e) {
       print('Firestore 카드 업데이트 실패: $e');
@@ -295,6 +312,13 @@ class FirestoreSearchHistoryService {
           .collection('search_cards')
           .doc(cardId)
           .update({'query': newQuery, 'result': newResult, 'isLoading': false});
+
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('search_sessions')
+          .doc(sessionId)
+          .update({'updatedAt': FieldValue.serverTimestamp()});
     } catch (e) {
       print('Firestore 카드 ID 기반 업데이트 실패: $e');
     }
@@ -336,6 +360,13 @@ class FirestoreSearchHistoryService {
               'result': newResult,
               'isLoading': false,
             });
+
+        await _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('search_sessions')
+            .doc(sessionId)
+            .update({'updatedAt': FieldValue.serverTimestamp()});
       }
     } catch (e) {
       print('Firestore 과거 쿼리 기반 카드 업데이트 실패: $e');
@@ -364,13 +395,13 @@ class FirestoreSearchHistoryService {
           .collection('users')
           .doc(userId)
           .collection('search_sessions')
-          .orderBy('createdAt', descending: true)
+          .orderBy('updatedAt', descending: true)
           .get();
 
       List<Map<String, dynamic>> sessions = [];
       for (var doc in querySnapshot.docs) {
-        final Map<String, dynamic> sessionData =
-            doc.data() as Map<String, dynamic>;
+        final Map<String, dynamic> sessionData = (doc.data() as Map)
+            .cast<String, dynamic>();
         sessionData['id'] = doc.id;
 
         // 각 세션의 카드들 가져오기
@@ -379,8 +410,8 @@ class FirestoreSearchHistoryService {
             .orderBy('createdAt')
             .get();
         final cards = cardsSnapshot.docs.map((cardDoc) {
-          final Map<String, dynamic> cardData =
-              cardDoc.data() as Map<String, dynamic>;
+          final Map<String, dynamic> cardData = (cardDoc.data() as Map)
+              .cast<String, dynamic>();
           cardData['id'] = cardDoc.id;
           return cardData;
         }).toList();
@@ -409,7 +440,7 @@ class FirestoreSearchHistoryService {
           .collection('users')
           .doc(userId)
           .collection('search_sessions')
-          .orderBy('createdAt', descending: true)
+          .orderBy('updatedAt', descending: true)
           .limit(limit);
 
       if (startAfter != null) {
@@ -421,7 +452,9 @@ class FirestoreSearchHistoryService {
       List<Map<String, dynamic>> sessions = [];
       for (var doc in querySnapshot.docs) {
         final Map<String, dynamic> sessionData =
-            doc.data() as Map<String, dynamic>;
+            (doc.data() as Map<dynamic, dynamic>).map(
+              (key, value) => MapEntry(key as String, value),
+            );
         sessionData['id'] = doc.id;
 
         // 각 세션의 카드들 가져오기 (정렬 보장)
@@ -431,7 +464,9 @@ class FirestoreSearchHistoryService {
             .get();
         final cards = cardsSnapshot.docs.map((cardDoc) {
           final Map<String, dynamic> cardData =
-              cardDoc.data() as Map<String, dynamic>;
+              (cardDoc.data() as Map<dynamic, dynamic>).map(
+                (key, value) => MapEntry(key as String, value),
+              );
           cardData['id'] = cardDoc.id;
           return cardData;
         }).toList();
@@ -534,7 +569,7 @@ class FirestoreSearchHistoryService {
           .collection('users')
           .doc(userId)
           .collection('search_sessions')
-          .orderBy('createdAt', descending: true)
+          .orderBy('updatedAt', descending: true)
           .get();
 
       final docs = querySnapshot.docs;
@@ -576,7 +611,7 @@ class FirestoreSearchHistoryService {
           .collection('users')
           .doc(userId)
           .collection('search_sessions')
-          .orderBy('createdAt', descending: true)
+          .orderBy('updatedAt', descending: true)
           .limit(limit)
           .get();
 
