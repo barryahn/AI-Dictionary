@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'services/search_history_service.dart';
 import 'services/theme_service.dart';
 import 'services/auth_service.dart';
+import 'services/pro_service.dart';
 import 'models/unified_search_session.dart';
 import 'search_result_screen.dart';
 import 'theme/app_theme.dart';
@@ -267,10 +268,47 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
           style: TextStyle(color: colors.text, fontWeight: FontWeight.bold),
         ),
         actions: [
+          Consumer<ProService>(
+            builder: (context, pro, _) {
+              if (pro.isPro) {
+                return const SizedBox.shrink();
+              }
+              return Tooltip(
+                margin: const EdgeInsets.only(top: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                message: '무료 버전에서는 최대 20개 리스트만 저장됩니다.',
+                triggerMode: TooltipTriggerMode.tap,
+                showDuration: const Duration(seconds: 2),
+                waitDuration: const Duration(milliseconds: 100),
+                preferBelow: false,
+                verticalOffset: 12,
+                decoration: BoxDecoration(
+                  color: colors.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                textStyle: TextStyle(
+                  color: colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  child: Icon(
+                    Icons.info_outline,
+                    color: colors.primary,
+                    size: 22,
+                  ),
+                ),
+              );
+            },
+          ),
           if (_searchSessions.isNotEmpty)
-            IconButton(
-              icon: Icon(Icons.delete_sweep, color: colors.warning),
-              onPressed: () => _clearAllHistory(colors),
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              child: IconButton(
+                icon: Icon(Icons.delete_sweep, color: colors.warning),
+                onPressed: () => _clearAllHistory(colors),
+              ),
             ),
         ],
       ),
