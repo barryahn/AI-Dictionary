@@ -276,7 +276,9 @@ class SearchHistoryScreenState extends State<SearchHistoryScreen> {
               return Tooltip(
                 margin: const EdgeInsets.only(top: 2),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                message: '무료 버전에서는 최대 20개 리스트만 저장됩니다.',
+                message: AppLocalizations.of(
+                  context,
+                ).free_version_history_limit_tooltip,
                 triggerMode: TooltipTriggerMode.tap,
                 showDuration: const Duration(seconds: 2),
                 waitDuration: const Duration(milliseconds: 100),

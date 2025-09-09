@@ -66,6 +66,7 @@ class AppLocalizations {
       'clear_all_confirm': '모든 검색 기록을 삭제하시겠습니까?\n이 작업은 취소할 수 없습니다.',
       'cancel': '취소',
       'delete': '삭제',
+      'close': '닫기',
       'all_history_deleted': '모든 검색 기록이 삭제되었습니다',
 
       // 프로필
@@ -135,6 +136,8 @@ class AppLocalizations {
       'pro_payment_coming_soon': '결제는 준비 중입니다.',
       'pro_monthly_price': '월 {currency}{price}',
       'pro_yearly_price': '연 {currency}{price}',
+      'pro_model_quota_tooltip': 'Pro 모델 검색 남은 횟수\n내일 00:00에 다시 리셋됩니다',
+      'pro_upgrade_overlay_message': 'Pro 버전을 구독해서\n더 많은 검색을 이어가 보세요.',
 
       // 게스트 사용자
       'guest_user': '게스트 사용자',
@@ -214,6 +217,7 @@ class AppLocalizations {
       // 검색 기록 관련
       'and_others': '외',
       'items': '개',
+      'free_version_history_limit_tooltip': '무료 버전에서는 최대 20개 리스트만 저장됩니다.',
 
       // 번역 관련
       'translation': '번역',
@@ -327,6 +331,7 @@ class AppLocalizations {
           'Delete all search history?\nThis action cannot be undone.',
       'cancel': 'Cancel',
       'delete': 'Delete',
+      'close': 'Close',
       'all_history_deleted': 'All search history deleted',
 
       // Profile
@@ -401,6 +406,10 @@ class AppLocalizations {
       'pro_payment_coming_soon': 'Payment is coming soon.',
       'pro_monthly_price': '{currency}{price} per month',
       'pro_yearly_price': '{currency}{price} per year',
+      'pro_model_quota_tooltip':
+          'Remaining Pro-model searches today\nReset at 00:00 tomorrow',
+      'pro_upgrade_overlay_message':
+          'Subscribe to Pro to continue more searches.',
 
       // Guest User
       'guest_user': 'Guest User',
@@ -483,6 +492,8 @@ class AppLocalizations {
       // Search History Related
       'and_others': 'and',
       'items': ' more',
+      'free_version_history_limit_tooltip':
+          'Free version saves up to 20 lists.',
 
       // Translation Related
       'translation': 'Translation',
@@ -607,6 +618,7 @@ class AppLocalizations {
       'clear_all_confirm': '删除所有搜索历史？\n此操作无法撤销。',
       'cancel': '取消',
       'delete': '删除',
+      'close': '关闭',
       'all_history_deleted': '所有搜索历史已删除',
 
       // 个人资料
@@ -675,6 +687,8 @@ class AppLocalizations {
       'pro_payment_coming_soon': '支付功能即将上线。',
       'pro_monthly_price': '每月 {currency}{price}',
       'pro_yearly_price': '每年 {currency}{price}',
+      'pro_model_quota_tooltip': '今日剩余 Pro 模型搜索次数\n将于明日 00:00 重置',
+      'pro_upgrade_overlay_message': '订阅 Pro，继续进行更多搜索。',
 
       // 访客用户
       'guest_user': '访客用户',
@@ -753,6 +767,7 @@ class AppLocalizations {
       // 搜索历史相关
       'and_others': '和另外',
       'items': '个',
+      'free_version_history_limit_tooltip': '免费版最多可保存 20 个列表。',
 
       // 翻译相关
       'translation': '翻译',
@@ -864,6 +879,7 @@ class AppLocalizations {
       'clear_all_confirm': '刪除所有搜尋歷史？\n此操作無法撤銷。',
       'cancel': '取消',
       'delete': '刪除',
+      'close': '關閉',
       'all_history_deleted': '所有搜尋歷史已刪除',
 
       // 個人資料
@@ -932,6 +948,8 @@ class AppLocalizations {
       'pro_payment_coming_soon': '付款功能即將推出。',
       'pro_monthly_price': '每月 {currency}{price}',
       'pro_yearly_price': '每年 {currency}{price}',
+      'pro_model_quota_tooltip': '今日剩餘 Pro 模型搜尋次數\n將於明日 00:00 重設',
+      'pro_upgrade_overlay_message': '訂閱 Pro，繼續進行更多搜尋。',
 
       // 訪客使用者
       'guest_user': '訪客使用者',
@@ -1010,6 +1028,7 @@ class AppLocalizations {
       // 搜尋歷史相關
       'and_others': '和另外',
       'items': '個',
+      'free_version_history_limit_tooltip': '免費版最多可儲存 20 個列表。',
 
       // 翻譯相關
       'translation': '翻譯',
@@ -1122,6 +1141,7 @@ class AppLocalizations {
           'Supprimer tout l\'historique de recherche ?\nCette action ne peut pas être annulée.',
       'cancel': 'Annuler',
       'delete': 'Supprimer',
+      'close': 'Fermer',
       'all_history_deleted': 'Tout l\'historique de recherche supprimé',
 
       // Profil
@@ -1194,6 +1214,10 @@ class AppLocalizations {
       'pro_payment_coming_soon': 'Le paiement arrive bientôt.',
       'pro_monthly_price': '{currency}{price} par mois',
       'pro_yearly_price': '{currency}{price} par an',
+      'pro_model_quota_tooltip':
+          'Recherches avec le modèle Pro restantes aujourd’hui\nRéinitialisation demain à 00:00',
+      'pro_upgrade_overlay_message':
+          'Abonnez‑vous à Pro pour continuer davantage de recherches.',
 
       // Utilisateur invité
       'guest_user': 'Utilisateur invité',
@@ -1283,6 +1307,8 @@ class AppLocalizations {
       // Historique de recherche
       'and_others': 'et',
       'items': ' autres',
+      'free_version_history_limit_tooltip':
+          'La version gratuite enregistre jusqu’à 20 listes.',
 
       // Traduction
       'translation': 'Traduction',
@@ -1410,6 +1436,7 @@ class AppLocalizations {
           '¿Eliminar todo el historial de búsqueda?\nEsta acción no se puede deshacer.',
       'cancel': 'Cancelar',
       'delete': 'Eliminar',
+      'close': 'Cerrar',
       'all_history_deleted': 'Todo el historial de búsqueda eliminado',
 
       // Perfil
@@ -1482,6 +1509,10 @@ class AppLocalizations {
       'pro_payment_coming_soon': 'El pago estará disponible pronto.',
       'pro_monthly_price': '{currency}{price} al mes',
       'pro_yearly_price': '{currency}{price} al año',
+      'pro_model_quota_tooltip':
+          'Búsquedas con modelo Pro restantes hoy\nSe restablecen mañana a las 00:00',
+      'pro_upgrade_overlay_message':
+          'Suscríbete a Pro para continuar con más búsquedas.',
 
       // Usuario invitado
       'guest_user': 'Usuario invitado',
@@ -1568,6 +1599,8 @@ class AppLocalizations {
       // Historial de búsqueda
       'and_others': 'y',
       'items': ' más',
+      'free_version_history_limit_tooltip':
+          'La versión gratuita guarda hasta 20 listas.',
 
       // Traducción
       'translation': 'Traducción',
@@ -1715,6 +1748,7 @@ class AppLocalizations {
   String get clear_all_confirm => get('clear_all_confirm');
   String get cancel => get('cancel');
   String get delete => get('delete');
+  String get close => get('close');
   String get all_history_deleted => get('all_history_deleted');
 
   // 시간 관련
@@ -1726,6 +1760,12 @@ class AppLocalizations {
   // 검색 기록 관련
   String get and_others => get('and_others');
   String get items => get('items');
+
+  // 추가 키 (툴팁/오버레이)
+  String get free_version_history_limit_tooltip =>
+      get('free_version_history_limit_tooltip');
+  String get pro_model_quota_tooltip => get('pro_model_quota_tooltip');
+  String get pro_upgrade_overlay_message => get('pro_upgrade_overlay_message');
 
   // 번역 관련
   String get translation => get('translation');

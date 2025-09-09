@@ -978,7 +978,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                             horizontal: 8,
                             vertical: 6,
                           ),
-                          message: 'Pro 모델 검색 남은 횟수\n내일 00:00에 다시 리셋됩니다',
+                          message: AppLocalizations.of(
+                            context,
+                          ).pro_model_quota_tooltip,
                           triggerMode: TooltipTriggerMode.tap,
                           showDuration: const Duration(seconds: 2),
                           waitDuration: const Duration(milliseconds: 100),
@@ -1356,7 +1358,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               children: [
                                 Container(
                                   child: Text(
-                                    'Pro 버전을 구독해서\n더 많은 검색을 이어가 보세요.',
+                                    AppLocalizations.of(
+                                      context,
+                                    ).pro_upgrade_overlay_message,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontFamily: 'MaruBuri',
@@ -1409,7 +1413,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                       bottom: 10,
                                     ),
                                     child: Text(
-                                      '닫기',
+                                      AppLocalizations.of(context).close,
                                       style: TextStyle(
                                         fontSize: 13,
                                         color: colors.textLight,
