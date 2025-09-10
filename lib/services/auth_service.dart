@@ -38,7 +38,21 @@ class AuthService extends ChangeNotifier {
       _isLoggedIn = true;
       _userEmail = currentUser.email;
       _userName = currentUser.displayName;
-      _userPhotoUrl = currentUser.photoURL;
+      // Firestore에 저장된 photoUrl을 우선 사용, 없으면 Firebase Auth photoURL 사용
+      try {
+        final doc = await _firestore
+            .collection('users')
+            .doc(currentUser.uid)
+            .get();
+        _userPhotoUrl =
+            (doc.data()?['photoUrl'] as String?) ?? currentUser.photoURL;
+        _userName = (doc.data()?['name'] as String?) ?? _userName;
+      } catch (e) {
+        if (kDebugMode) {
+          print('Firestore 사용자 정보 로드 실패: $e');
+        }
+        _userPhotoUrl = currentUser.photoURL;
+      }
       _accessToken = await currentUser.getIdToken();
       await _saveUserData();
       // Pro 상태 동기화 (앱 시작 시 로그인 유저가 있는 경우)
@@ -84,7 +98,6 @@ class AuthService extends ChangeNotifier {
         _isLoggedIn = true;
         _userEmail = user.email;
         _userName = user.displayName;
-        _userPhotoUrl = user.photoURL;
         _accessToken = await user.getIdToken();
 
         // Firestore에 user email이 없을 때만 데이터 저장
@@ -100,6 +113,22 @@ class AuthService extends ChangeNotifier {
             'isPro': false,
             'createdAt': FieldValue.serverTimestamp(),
           });
+        }
+
+        // Firestore에 저장된 photoUrl을 우선 사용, 없으면 Firebase Auth photoURL 사용
+        try {
+          final freshDoc = await _firestore
+              .collection('users')
+              .doc(user.uid)
+              .get();
+          _userPhotoUrl =
+              (freshDoc.data()?['photoUrl'] as String?) ?? user.photoURL;
+          _userName = (freshDoc.data()?['name'] as String?) ?? _userName;
+        } catch (e) {
+          if (kDebugMode) {
+            print('Firestore 사용자 사진 로드 실패: $e');
+          }
+          _userPhotoUrl = user.photoURL;
         }
 
         // Pro 상태 동기화 (로그인 시 최신값으로 세팅)
