@@ -265,6 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       vertical: 10,
                     ),
                     tooltipBackgroundColor: colors.primary,
+                    disableMovingAnimation: true,
                     tooltipActions: [
                       TooltipActionButton(
                         type: TooltipDefaultActionType.skip,
@@ -337,6 +338,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     descriptionPadding: EdgeInsets.only(top: 4),
                     descriptionTextAlign: TextAlign.center,
                     tooltipBackgroundColor: colors.primary,
+                    disableMovingAnimation: true,
                     tooltipActions: [
                       TooltipActionButton(
                         type: TooltipDefaultActionType.skip,
@@ -541,6 +543,7 @@ class _HomeTabState extends State<_HomeTab> {
             // 도착 언어 선택 드롭다운
             Showcase.withWidget(
               key: _two,
+              disableMovingAnimation: true,
               width: MediaQuery.of(context).size.width - 32,
               height: 100,
               container: Container(
@@ -790,6 +793,7 @@ class _HomeTabState extends State<_HomeTab> {
               descriptionPadding: EdgeInsets.only(top: 4),
               descriptionTextAlign: TextAlign.center,
               tooltipBackgroundColor: colors.primary,
+              disableMovingAnimation: true,
               targetPadding: EdgeInsets.only(
                 top: 150,
                 left: 20,
