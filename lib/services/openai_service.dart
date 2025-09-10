@@ -354,19 +354,12 @@ $toneInstruction
       );
 
       // the actual request.
-      final res = usingProModel
-          ? await client.createChatCompletion(
-              request: CreateChatCompletionRequest(
-                model: ChatCompletionModel.modelId(_proModel),
-                messages: [developerMessage, userMessage],
-              ),
-            )
-          : await client.createChatCompletion(
-              request: CreateChatCompletionRequest(
-                model: ChatCompletionModel.modelId(_freeModel),
-                messages: [developerMessage, userMessage],
-              ),
-            );
+      final res = await client.createChatCompletion(
+        request: CreateChatCompletionRequest(
+          model: ChatCompletionModel.modelId(_proModel),
+          messages: [developerMessage, userMessage],
+        ),
+      );
 
       return res.choices.first.message.content != null
           ? res.choices.first.message.content.toString()
