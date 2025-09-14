@@ -729,11 +729,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildResultView(CustomColors colors) {
+    final isPro = context.watch<ProService>().isPro;
     final List<Widget> children = [];
     for (int i = 0; i < _searchResults.length; i++) {
       children.add(_searchResults[i]);
       // 결과 카드 2개마다 광고 카드 삽입
-      if ((i + 1) % 2 == 0) {
+      if (!isPro && (i + 1) % 2 == 0) {
         children.add(const AdCard());
       }
     }
