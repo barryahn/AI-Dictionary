@@ -56,16 +56,16 @@ class OpenAIService {
 
       final prompt =
           '''
-단어 '$word'에 대해서 자세히 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해주세요.
-단, 모든 설명은 $l1로 해주세요.
+단어 '$word'에 대해서 자세히 알고 싶어. 아래 예시와 같은 NDJSON 형식으로 출력해줘.
+단, 모든 설명은 $l1로 해줘.
 
 [출력 형식 규칙]
-1. NDJSON은 반드시 아래의 형식으로 출력한다.
-2. "단어"에 '$word'를 넣는다. 단, '$word'에 오타가 있으면 오타를 수정해서 "단어"에 표기한다.
-3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
-5. "대화_예시"는 총 2세트.
-6. "비슷한_표현"은 총 최대 4개.
-7. "비슷한_표현"에서 중국어가 있을 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기한다.
+1. NDJSON은 반드시 아래의 형식으로 출력해.
+2. "단어"에 '$word'를 넣어. 단, '$word'에 오타가 있으면 오타를 수정해서 "단어"에 표기해.
+3. 만약 적절한 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력해. 다른 문자열은 출력하지 마.
+5. "대화_예시"는 아래 예시처럼 두 개 출력해.
+6. "비슷한_표현"은 총 최대 네 개 출력해.
+7. "비슷한_표현"에서 중국어가 있을 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기해.
 
 {"단어": "$word"}
 {"단어_뜻": "이 표현을 언제 쓰는지, 어떤 느낌이 있는지 다른 단어들과 비교해서 자세하게 $l1로 설명"}
@@ -85,7 +85,7 @@ class OpenAIService {
       // developer message
       final developerMessage = ChatCompletionMessage.developer(
         content: ChatCompletionDeveloperMessageContent.text(
-          '\'$word\'가 $l1로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
+          '\'$word\'가 $l1로 뭔지 궁금해. $l1로 친절하게 설명해줘.',
         ),
         role: ChatCompletionMessageRole.developer,
       );
@@ -151,19 +151,19 @@ class OpenAIService {
 
       final prompt =
           '''
-단어 '$word'를 $l2로 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해주세요.
-단, 모든 설명은 $l1로 해주세요.
+단어 '$word'를 $l2로 알고 싶어. 아래 예시와 같은 NDJSON 형식으로 출력해줘.
+단, 모든 설명은 $l1로 해줘.
 
 [출력 형식 규칙]
-1. NDJSON은 반드시 아래의 형식으로 출력한다.
-2. "단어"에 '$word'를 넣는다. 단, '$word'에 오타가 있으면 오타를 수정해서 "단어"에 표기한다.
-3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
-4. "품사", "뉘앙스" 항목은 반드시 $l1로 작성한다. "번역단어"는 반드시 $l2로 작성한다.
-5. "대화_예시"는 총 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
-6. "비슷한_표현"은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성한다.
-7. "번역단어"와 "비슷한_표현"에서 중국어가 있을 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기한다.
+1. NDJSON은 반드시 아래의 형식으로 출력해.
+2. "단어"에 '$word'를 넣어. 단, '$word'에 오타가 있으면 오타를 수정해서 "단어"에 표기해.
+3. 만약 적절한 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력해. 다른 문자열은 출력하지 마.
+4. "품사", "뉘앙스" 항목은 반드시 $l1로 작성해. "번역단어"는 반드시 $l2로 작성해.
+5. "대화_예시"는 아래 예시처럼 두 개 출력해.
+6. "비슷한_표현"은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성해.
+7. "번역단어"와 "비슷한_표현"에서 중국어가 있을 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기해.
 
-아래는 영어 단어 'change'를 검색하고 중국어로 설명한 예시입니다. 형식만 참고해서 출력해주세요.
+아래는 영어 단어 'change'를 검색하고 중국어로 설명한 예시야. 형식만 참고해서 출력해줘.
 
 {"단어": "change"}
 {"단어_뜻": {"품사": "($l1로 작성)", "번역": {"번역단어": "($l2로 작성)", "뉘앙스": "($word의 뉘앙스와 사용하는 상황을 $l1로 친절하게 설명)"}}}
@@ -184,7 +184,7 @@ class OpenAIService {
       // developer message
       final developerMessage = ChatCompletionMessage.developer(
         content: ChatCompletionDeveloperMessageContent.text(
-          '\'$word\'가 $l2로 뭔지 궁금해요. $l1로 친절하게 설명해주세요.',
+          '\'$word\'가 $l2로 뭔지 궁금해. $l1로 친절하게 설명해줘.',
         ),
         role: ChatCompletionMessageRole.developer,
       );
@@ -250,17 +250,17 @@ class OpenAIService {
 
       final prompt =
           '''
-단어 '$word'의 $l1 뜻을 알고 싶어요. 아래 예시와 같은 NDJSON 형식으로 출력해주세요.
-단, 모든 설명은 $l1로 해주세요.
+단어 '$word'의 $l1 뜻을 알고 싶어. 아래 예시와 같은 NDJSON 형식으로 출력해줘.
+단, 모든 설명은 $l1로 해줘.
 
 [출력 형식 규칙]
-1. NDJSON은 반드시 아래의 형식으로 출력한다.
-2. 검색 단어에 오타가 있으면 오타를 수정해서 "단어"에 표기한다.
-3. 만약 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력할 것. 다른 문자열은 출력하지 않는다.
-4. "품사", "뉘앙스", "번역단어" 항목은 반드시 $l1로 작성한다.
-5. "대화_예시"는 총 2세트. 하나의 세트는 $l2 대화와 번역된 $l1 대화로 구성. 순서는 $l2 대화부터.
-6. "비슷한_표현"은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성한다.
-7. "번역단어"와 "비슷한_표현"에서 중국어가 있을 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기한다.
+1. NDJSON은 반드시 아래의 형식으로 출력해.
+2. 검색 단어에 오타가 있으면 오타를 수정해서 "단어"에 표기해.
+3. 만약 적절한 검색 결과가 없다면 아래 규칙을 모두 무시하고 "No result"라는 문자열만 출력해. 다른 문자열은 출력하지 마.
+4. "품사", "뉘앙스", "번역단어" 항목은 반드시 $l1로 작성해.
+5. "대화_예시"는 아래 예시처럼 두 개 출력해.
+6. "비슷한_표현"은 총 최대 4개. $l2 단어를 작성하고 그 뜻은 $l1로 작성해.
+7. "번역단어"와 "비슷한_표현"에서 중국어가 있을 경우 改变 (gǎibiàn)처럼 한어병음을 함께 표기해.
 
 {"단어": "$word"}
 {"단어_뜻": {"품사": "($l1로 작성)", "번역": {"번역단어": "($l1로 작성)", "뉘앙스": "(이 경우 '$word'를 언제 쓰는지 $l1로 친절하게 설명)"}}}
@@ -281,7 +281,7 @@ class OpenAIService {
       // developer message
       final developerMessage = ChatCompletionMessage.developer(
         content: ChatCompletionDeveloperMessageContent.text(
-          '\'$word\'가 무슨 뜻인지 궁금해요. $l1로 친절하게 설명해주세요.',
+          '\'$word\'가 무슨 뜻인지 궁금해. $l1로 친절하게 설명해줘.',
         ),
         role: ChatCompletionMessageRole.developer,
       );
@@ -334,17 +334,17 @@ class OpenAIService {
     try {
       final prompt =
           '''
-다음 텍스트를 $fromLanguage에서 $toLanguage로 번역해주세요.
+다음 텍스트를 $fromLanguage에서 $toLanguage로 번역해줘.
 $toneInstruction
 
 번역할 텍스트: "$text"
 
-번역 결과만 출력하고 다른 설명은 포함하지 마세요.
+번역 결과만 출력하고 다른 설명은 포함하지 마.
 ''';
 
       final developerMessage = ChatCompletionMessage.developer(
         content: ChatCompletionDeveloperMessageContent.text(
-          "You are a professional translator. Translate the given text accurately according to the specified tone and style. Respond only with the translated text without any additional comments or explanations.",
+          "너는 전문적인 번역가야. 주어진 텍스트를 정확하게 번역해줘. 추가적인 설명이나 설명은 포함하지 마.",
         ),
         role: ChatCompletionMessageRole.developer,
       );
