@@ -2510,15 +2510,33 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: SelectableText(
-                    word,
-                    style: TextStyle(
-                      fontSize: 18,
-                      height: 1.4,
-                      fontWeight: FontWeight.w500,
-                      color: colors.text,
+                SelectableText(
+                  word,
+                  style: TextStyle(
+                    fontSize: 18,
+                    height: 1.4,
+                    fontWeight: FontWeight.w500,
+                    color: colors.text,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  height: 20,
+                  width: 20,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.volume_up_outlined,
+                      color: colors.text.withValues(alpha: 0.5),
                     ),
+                    onPressed: () {
+                      // TODO: implement TTS playback for `word`
+                      try {
+                        // 현재는 버튼만 추가 (동작은 추후 구현)
+                        print('재생 버튼 클릭: ' + word);
+                      } catch (_) {}
+                    },
+                    iconSize: 18,
+                    padding: EdgeInsets.zero,
                   ),
                 ),
               ],
@@ -2688,13 +2706,37 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '${AppLocalizations.of(context).conversation} ${index + 1}',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: colors.textLight,
-            ),
+          Row(
+            children: [
+              Text(
+                '${AppLocalizations.of(context).conversation} ${index + 1}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: colors.textLight,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Container(
+                alignment: Alignment.center,
+                height: 20,
+                width: 20,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.volume_up_outlined,
+                    color: colors.text.withValues(alpha: 0.5),
+                  ),
+                  onPressed: () {
+                    // TODO: implement TTS playback for `word`
+                    try {
+                      // 현재는 버튼만 추가 (동작은 추후 구현)
+                    } catch (_) {}
+                  },
+                  padding: EdgeInsets.zero,
+                  iconSize: 18,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Container(
@@ -2923,13 +2965,41 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SelectableText(
-            word,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: colors.text,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: SelectableText(
+                  word,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: colors.text,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Container(
+                height: 18,
+                width: 18,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.volume_up_outlined,
+                    color: colors.text.withValues(alpha: 0.5),
+                  ),
+                  onPressed: () {
+                    // TODO: implement TTS playback for `word`
+                    try {
+                      // 현재는 버튼만 추가 (동작은 추후 구현)
+                      print('비슷한 표현 재생 버튼 클릭: ' + word);
+                    } catch (_) {}
+                  },
+                  iconSize: 16,
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+            ],
           ),
 
           if (meaning.isNotEmpty) ...[
