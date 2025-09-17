@@ -59,6 +59,8 @@ class UnifiedSearchCard {
   final bool isLoading;
   final DateTime createdAt;
   final bool isFromFirestore;
+  final String fromLanguage;
+  final String toLanguage;
 
   UnifiedSearchCard({
     required this.id,
@@ -67,6 +69,8 @@ class UnifiedSearchCard {
     required this.isLoading,
     required this.createdAt,
     required this.isFromFirestore,
+    required this.fromLanguage,
+    required this.toLanguage,
   });
 
   // 로컬 SearchCard에서 변환
@@ -78,6 +82,8 @@ class UnifiedSearchCard {
       isLoading: card.isLoading,
       createdAt: card.createdAt,
       isFromFirestore: false,
+      fromLanguage: card.fromLanguage,
+      toLanguage: card.toLanguage,
     );
   }
 
@@ -90,6 +96,8 @@ class UnifiedSearchCard {
       isLoading: data['isLoading'] ?? false,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isFromFirestore: true,
+      fromLanguage: (data['fromLanguage'] ?? '').toString(),
+      toLanguage: (data['toLanguage'] ?? '').toString(),
     );
   }
 }

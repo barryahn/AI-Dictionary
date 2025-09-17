@@ -9,6 +9,8 @@ class SearchCard {
   final String result;
   final bool isLoading;
   final DateTime createdAt;
+  final String fromLanguage;
+  final String toLanguage;
 
   SearchCard({
     this.id,
@@ -16,6 +18,8 @@ class SearchCard {
     required this.result,
     required this.isLoading,
     required this.createdAt,
+    required this.fromLanguage,
+    required this.toLanguage,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +29,8 @@ class SearchCard {
       'result': result,
       'is_loading': isLoading ? 1 : 0,
       'created_at': createdAt.toIso8601String(),
+      'from_language': fromLanguage,
+      'to_language': toLanguage,
     };
   }
 
@@ -35,6 +41,8 @@ class SearchCard {
       result: map['result'],
       isLoading: map['is_loading'] == 1,
       createdAt: DateTime.parse(map['created_at']),
+      fromLanguage: (map['from_language'] ?? '').toString(),
+      toLanguage: (map['to_language'] ?? '').toString(),
     );
   }
 }
@@ -92,7 +100,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'search_history.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -118,6 +126,8 @@ class DatabaseHelper {
         result TEXT NOT NULL,
         is_loading INTEGER NOT NULL,
         created_at TEXT NOT NULL,
+        from_language TEXT NOT NULL,
+        to_language TEXT NOT NULL,
         FOREIGN KEY (session_id) REFERENCES search_sessions (id) ON DELETE CASCADE
       )
     ''');
@@ -141,6 +151,20 @@ class DatabaseHelper {
       await db.execute('UPDATE search_sessions SET updated_at = created_at');
       await db.execute(
         'CREATE INDEX IF NOT EXISTS idx_session_updated_at ON search_sessions(updated_at)',
+      );
+    }
+    if (oldVersion < 3) {
+      // 검색 카드에 언어 컬럼 추가
+      await db.execute(
+        'ALTER TABLE search_cards ADD COLUMN from_language TEXT',
+      );
+      await db.execute('ALTER TABLE search_cards ADD COLUMN to_language TEXT');
+      // NULL 값에 기본값 채우기
+      await db.execute(
+        "UPDATE search_cards SET from_language = COALESCE(from_language, '')",
+      );
+      await db.execute(
+        "UPDATE search_cards SET to_language = COALESCE(to_language, '')",
       );
     }
   }

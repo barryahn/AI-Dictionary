@@ -90,8 +90,10 @@ class SearchHistoryService {
   Future<void> addSearchCard(
     String query,
     String result,
-    bool isLoading,
-  ) async {
+    bool isLoading, {
+    required String fromLanguage,
+    required String toLanguage,
+  }) async {
     // 검색 기록이 일시 중지된 경우 저장하지 않음
     if (await isPauseHistoryEnabled()) {
       print('검색 기록이 일시 중지되어 카드를 저장하지 않습니다.');
@@ -108,6 +110,8 @@ class SearchHistoryService {
         query,
         result,
         isLoading,
+        fromLanguage,
+        toLanguage,
       );
     } else {
       // 게스트인 경우 로컬에 저장
@@ -120,6 +124,8 @@ class SearchHistoryService {
         result: result,
         isLoading: isLoading,
         createdAt: DateTime.now(),
+        fromLanguage: fromLanguage,
+        toLanguage: toLanguage,
       );
 
       await _databaseHelper.addSearchCard(_currentSessionId!, card);
@@ -149,8 +155,10 @@ class SearchHistoryService {
     dynamic sessionId,
     String query,
     String result,
-    bool isLoading,
-  ) async {
+    bool isLoading, {
+    required String fromLanguage,
+    required String toLanguage,
+  }) async {
     // 검색 기록이 일시 중지된 경우 저장하지 않음
     if (await isPauseHistoryEnabled()) {
       print('검색 기록이 일시 중지되어 기존 세션에 카드를 저장하지 않습니다.');
@@ -164,6 +172,8 @@ class SearchHistoryService {
         query,
         result,
         isLoading,
+        fromLanguage,
+        toLanguage,
       );
     } else {
       // 게스트인 경우 로컬에 저장
@@ -172,6 +182,8 @@ class SearchHistoryService {
         result: result,
         isLoading: isLoading,
         createdAt: DateTime.now(),
+        fromLanguage: fromLanguage,
+        toLanguage: toLanguage,
       );
 
       await _databaseHelper.addSearchCard(sessionId as int, card);
@@ -179,7 +191,12 @@ class SearchHistoryService {
   }
 
   // 검색 카드 업데이트 (로딩 상태에서 결과 상태로)
-  Future<void> updateSearchCard(String query, String result) async {
+  Future<void> updateSearchCard(
+    String query,
+    String result, {
+    String? fromLanguage,
+    String? toLanguage,
+  }) async {
     if (_authService.isLoggedIn) {
       // 로그인된 경우 Firestore에 저장
       if (_currentFirestoreSessionId != null) {
@@ -187,6 +204,8 @@ class SearchHistoryService {
           _currentFirestoreSessionId!,
           query,
           result,
+          fromLanguage: fromLanguage,
+          toLanguage: toLanguage,
         );
       }
     } else {
@@ -206,6 +225,8 @@ class SearchHistoryService {
             result: result,
             isLoading: false,
             createdAt: targetCard.createdAt,
+            fromLanguage: fromLanguage ?? targetCard.fromLanguage,
+            toLanguage: toLanguage ?? targetCard.toLanguage,
           );
 
           // 기존 카드 삭제 후 새 카드 추가
@@ -221,8 +242,10 @@ class SearchHistoryService {
     dynamic sessionId,
     String oldQuery,
     String newQuery,
-    String newResult,
-  ) async {
+    String newResult, {
+    String? fromLanguage,
+    String? toLanguage,
+  }) async {
     // 검색 기록이 일시 중지된 경우 저장하지 않음
     if (await isPauseHistoryEnabled()) {
       print('검색 기록이 일시 중지되어 기존 카드 업데이트를 수행하지 않습니다.');
@@ -236,6 +259,8 @@ class SearchHistoryService {
         oldQuery,
         newQuery,
         newResult,
+        fromLanguage: fromLanguage,
+        toLanguage: toLanguage,
       );
     } else {
       // 로컬 DB에서 세션 카드 목록을 조회하여 마지막 매칭 카드를 업데이트
@@ -249,6 +274,8 @@ class SearchHistoryService {
         result: newResult,
         isLoading: false,
         createdAt: targetCard.createdAt, // 기존 생성 시간 유지
+        fromLanguage: fromLanguage ?? targetCard.fromLanguage,
+        toLanguage: toLanguage ?? targetCard.toLanguage,
       );
       await _databaseHelper.updateSearchCardById(targetCard.id!, updated);
     }
@@ -259,8 +286,10 @@ class SearchHistoryService {
     dynamic sessionId,
     dynamic cardId,
     String newQuery,
-    String newResult,
-  ) async {
+    String newResult, {
+    String? fromLanguage,
+    String? toLanguage,
+  }) async {
     // 검색 기록이 일시 중지된 경우 저장하지 않음
     if (await isPauseHistoryEnabled()) {
       print('검색 기록이 일시 중지되어 카드 ID 기반 업데이트를 수행하지 않습니다.');
@@ -273,6 +302,8 @@ class SearchHistoryService {
         cardId.toString(),
         newQuery,
         newResult,
+        fromLanguage: fromLanguage,
+        toLanguage: toLanguage,
       );
     } else {
       if (cardId == null) return;
@@ -286,6 +317,8 @@ class SearchHistoryService {
         result: newResult,
         isLoading: false,
         createdAt: targetCard.createdAt,
+        fromLanguage: fromLanguage ?? targetCard.fromLanguage,
+        toLanguage: toLanguage ?? targetCard.toLanguage,
       );
       await _databaseHelper.updateSearchCardById(targetCard.id!, updated);
     }

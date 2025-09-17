@@ -217,6 +217,8 @@ class FirestoreSearchHistoryService {
     String query,
     String result,
     bool isLoading,
+    String fromLanguage,
+    String toLanguage,
   ) async {
     final userId = _currentUserId;
     if (userId == null) return;
@@ -233,6 +235,8 @@ class FirestoreSearchHistoryService {
             'result': result,
             'isLoading': isLoading,
             'createdAt': FieldValue.serverTimestamp(),
+            'fromLanguage': fromLanguage,
+            'toLanguage': toLanguage,
           });
 
       // 카드 추가 시 세션의 updatedAt 갱신
@@ -251,8 +255,10 @@ class FirestoreSearchHistoryService {
   Future<void> updateSearchCard(
     String sessionId,
     String query,
-    String result,
-  ) async {
+    String result, {
+    String? fromLanguage,
+    String? toLanguage,
+  }) async {
     final userId = _currentUserId;
     if (userId == null) return;
 
@@ -271,6 +277,10 @@ class FirestoreSearchHistoryService {
 
       if (querySnapshot.docs.isNotEmpty) {
         final docId = querySnapshot.docs.first.id;
+        final updateData = {'result': result, 'isLoading': false};
+        if (fromLanguage != null) updateData['fromLanguage'] = fromLanguage;
+        if (toLanguage != null) updateData['toLanguage'] = toLanguage;
+
         await _firestore
             .collection('users')
             .doc(userId)
@@ -278,7 +288,7 @@ class FirestoreSearchHistoryService {
             .doc(sessionId)
             .collection('search_cards')
             .doc(docId)
-            .update({'result': result, 'isLoading': false});
+            .update(updateData);
 
         // 카드 갱신 시 세션의 updatedAt 갱신
         await _firestore
@@ -298,12 +308,22 @@ class FirestoreSearchHistoryService {
     String sessionId,
     String cardId,
     String newQuery,
-    String newResult,
-  ) async {
+    String newResult, {
+    String? fromLanguage,
+    String? toLanguage,
+  }) async {
     final userId = _currentUserId;
     if (userId == null) return;
 
     try {
+      final updateData = {
+        'query': newQuery,
+        'result': newResult,
+        'isLoading': false,
+      };
+      if (fromLanguage != null) updateData['fromLanguage'] = fromLanguage;
+      if (toLanguage != null) updateData['toLanguage'] = toLanguage;
+
       await _firestore
           .collection('users')
           .doc(userId)
@@ -311,7 +331,7 @@ class FirestoreSearchHistoryService {
           .doc(sessionId)
           .collection('search_cards')
           .doc(cardId)
-          .update({'query': newQuery, 'result': newResult, 'isLoading': false});
+          .update(updateData);
 
       await _firestore
           .collection('users')
@@ -329,8 +349,10 @@ class FirestoreSearchHistoryService {
     String sessionId,
     String oldQuery,
     String newQuery,
-    String newResult,
-  ) async {
+    String newResult, {
+    String? fromLanguage,
+    String? toLanguage,
+  }) async {
     final userId = _currentUserId;
     if (userId == null) return;
 
@@ -348,6 +370,14 @@ class FirestoreSearchHistoryService {
 
       if (querySnapshot.docs.isNotEmpty) {
         final docId = querySnapshot.docs.first.id;
+        final updateData = {
+          'query': newQuery,
+          'result': newResult,
+          'isLoading': false,
+        };
+        if (fromLanguage != null) updateData['fromLanguage'] = fromLanguage;
+        if (toLanguage != null) updateData['toLanguage'] = toLanguage;
+
         await _firestore
             .collection('users')
             .doc(userId)
@@ -355,11 +385,7 @@ class FirestoreSearchHistoryService {
             .doc(sessionId)
             .collection('search_cards')
             .doc(docId)
-            .update({
-              'query': newQuery,
-              'result': newResult,
-              'isLoading': false,
-            });
+            .update(updateData);
 
         await _firestore
             .collection('users')

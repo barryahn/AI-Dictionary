@@ -341,10 +341,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           query,
           result,
           isLoading,
+          fromLanguage: _fromLanguage,
+          toLanguage: _toLanguage,
         );
       } else {
         // 새로운 세션에 카드 추가
-        await _searchHistoryService.addSearchCard(query, result, isLoading);
+        await _searchHistoryService.addSearchCard(
+          query,
+          result,
+          isLoading,
+          fromLanguage: _fromLanguage,
+          toLanguage: _toLanguage,
+        );
       }
       // 세션 ID 동기화 및 히스토리 백그라운드 갱신
       // 주의: 기존 세션에 추가하는 경우 서비스의 currentSessionId가 null일 수 있으므로
@@ -3099,6 +3107,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             _editingOldQuery!,
             query,
             result,
+            fromLanguage: _fromLanguage,
+            toLanguage: _toLanguage,
           );
           print('기존 카드 업데이트 완료');
           // 히스토리 백그라운드 갱신
@@ -3166,9 +3176,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           query,
           result,
           false,
+          fromLanguage: _fromLanguage,
+          toLanguage: _toLanguage,
         );
       } else {
-        await bgService.addSearchCard(query, result, false);
+        await bgService.addSearchCard(
+          query,
+          result,
+          false,
+          fromLanguage: _fromLanguage,
+          toLanguage: _toLanguage,
+        );
       }
       bgService.dispose();
       // 리뷰 요청은 UI 컨텍스트가 없으므로 생략
