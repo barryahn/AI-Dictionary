@@ -1836,6 +1836,20 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     color: colors.text,
                   ),
                 ),
+                if (RegExp(
+                  r'[\u3400-\u9FFF]',
+                ).hasMatch(parsedData['단어'].toString())) ...[
+                  SelectableText(
+                    PinyinHelper.getPinyin(
+                      parsedData['단어'].toString(),
+                      format: PinyinFormat.WITH_TONE_MARK,
+                    ),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: colors.text.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 4),
               ],
 
@@ -2548,12 +2562,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 18,
                   height: 18,
-                  margin: const EdgeInsets.only(right: 8),
+                  margin: const EdgeInsets.only(right: 8, top: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: colors.primary.withValues(alpha: 0.15),
@@ -2568,19 +2582,37 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     ),
                   ),
                 ),
-                SelectableText(
-                  word,
-                  style: TextStyle(
-                    fontSize: 18,
-                    height: 1.4,
-                    fontWeight: FontWeight.w500,
-                    color: colors.text,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableText(
+                      word,
+                      style: TextStyle(
+                        fontSize: 18,
+                        height: 1.4,
+                        fontWeight: FontWeight.w500,
+                        color: colors.text,
+                      ),
+                    ),
+                    if (RegExp(r'[\u3400-\u9FFF]').hasMatch(word)) ...[
+                      SelectableText(
+                        PinyinHelper.getPinyin(
+                          word,
+                          format: PinyinFormat.WITH_TONE_MARK,
+                        ),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.text.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 if (_cardFromLanguages[cardIndex] !=
                     _cardToLanguages[cardIndex]) ...[
                   const SizedBox(width: 4),
                   Container(
+                    margin: const EdgeInsets.only(top: 4),
                     height: 20,
                     width: 20,
                     child: IconButton(
@@ -3135,6 +3167,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ],
             ],
           ),
+
+          if (RegExp(r'[\u3400-\u9FFF]').hasMatch(word)) ...[
+            SelectableText(
+              PinyinHelper.getPinyin(word, format: PinyinFormat.WITH_TONE_MARK),
+              style: TextStyle(
+                fontSize: 12,
+                color: colors.text.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
 
           if (meaning.isNotEmpty) ...[
             const SizedBox(height: 2),
