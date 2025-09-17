@@ -1745,6 +1745,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         isStreaming,
       );
     } else {
+      // 이제 이 형식 거의 사용 안 함
       return _buildL2ResultSection(
         query,
         parsedData,
@@ -1868,6 +1869,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   _fromLanguage,
                   _toLanguage,
                   colors,
+                  index,
                 ),
               ] else if (isStreaming) ...[
                 Skeletonizer(
@@ -1877,6 +1879,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     _fromLanguage,
                     _toLanguage,
                     colors,
+                    index,
                   ),
                 ),
               ],
@@ -1990,6 +1993,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   _fromLanguage,
                   _toLanguage,
                   colors,
+                  index,
                 ),
                 const SizedBox(height: 24),
               ] else if (isStreaming) ...[
@@ -2000,6 +2004,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     _fromLanguage,
                     _toLanguage,
                     colors,
+                    index,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -2111,6 +2116,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   _fromLanguage,
                   _toLanguage,
                   colors,
+                  index,
                 ),
                 const SizedBox(height: 24),
               ] else if (isStreaming) ...[
@@ -2121,6 +2127,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     _fromLanguage,
                     _toLanguage,
                     colors,
+                    index,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -2530,6 +2537,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       return const SizedBox.shrink();
     }
 
+    // tts 위한 함수
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -2568,35 +2577,36 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     color: colors.text,
                   ),
                 ),
-                const SizedBox(width: 4),
-                Container(
-                  height: 20,
-                  width: 20,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.volume_up_outlined,
-                      color: colors.text.withValues(alpha: 0.5),
+                if (_cardFromLanguages[cardIndex] !=
+                    _cardToLanguages[cardIndex]) ...[
+                  const SizedBox(width: 4),
+                  Container(
+                    height: 20,
+                    width: 20,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.volume_up_outlined,
+                        color: colors.text.withValues(alpha: 0.5),
+                      ),
+                      onPressed: () async {
+                        try {
+                          final languagesOfWord = await _identifyLanguage(word);
+                          final langName = languagesOfWord.first;
+                          final langNameToKorean =
+                              LanguageService.getLanguageNameInKorean(langName);
+                          final locale = TtsService.localeForLanguageName(
+                            langNameToKorean,
+                          );
+                          print('langNameToKorean: $langNameToKorean');
+                          print('locale: $locale');
+                          await TtsService.speak(word, languageCode: locale);
+                        } catch (_) {}
+                      },
+                      iconSize: 18,
+                      padding: EdgeInsets.zero,
                     ),
-                    onPressed: () async {
-                      try {
-                        final saved =
-                            (cardIndex < _cardToLanguages.length &&
-                                _cardToLanguages[cardIndex].isNotEmpty)
-                            ? _cardToLanguages[cardIndex]
-                            : _toLanguage;
-                        final isCode = RegExp(
-                          r'^[a-z]{2}(?:-[A-Z]{2})?$',
-                        ).hasMatch(saved);
-                        final locale = isCode
-                            ? saved
-                            : TtsService.localeForLanguageName(saved);
-                        await TtsService.speak(word, languageCode: locale);
-                      } catch (_) {}
-                    },
-                    iconSize: 18,
-                    padding: EdgeInsets.zero,
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -2633,6 +2643,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     String fromLanguage,
     String toLanguage,
     CustomColors colors,
+    int cardIndex,
   ) {
     // 스켈레톤용 더미 데이터 처리
     if (examples == null) {
@@ -2652,6 +2663,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             fromLanguage,
             toLanguage,
             colors,
+            cardIndex,
             0,
           ),
           _buildSingleConversationExample(
@@ -2668,6 +2680,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             fromLanguage,
             toLanguage,
             colors,
+            cardIndex,
             1,
           ),
         ],
@@ -2682,6 +2695,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         fromLanguage,
         toLanguage,
         colors,
+        cardIndex,
         0,
       );
     } else if (examples is List) {
@@ -2697,6 +2711,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               fromLanguage,
               toLanguage,
               colors,
+              cardIndex,
               index,
             );
           }
@@ -2713,6 +2728,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     String fromLanguage,
     String toLanguage,
     CustomColors colors,
+    int cardIndex,
     int index,
   ) {
     // 프롬프트에서 실제 언어명을 키로 사용하므로, 동적으로 찾기
@@ -2759,43 +2775,24 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       }
     }
 
+    // tts 위한 변수
+    final toLanguageHere = _cardToLanguages[cardIndex];
+    final fromLanguageHere = _cardFromLanguages[cardIndex];
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                '${AppLocalizations.of(context).conversation} ${index + 1}',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: colors.textLight,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Container(
-                alignment: Alignment.center,
-                height: 20,
-                width: 20,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.volume_up_outlined,
-                    color: colors.text.withValues(alpha: 0.5),
-                  ),
-                  onPressed: () {
-                    // TODO: implement TTS playback for `word`
-                    try {
-                      // 현재는 버튼만 추가 (동작은 추후 구현)
-                    } catch (_) {}
-                  },
-                  padding: EdgeInsets.zero,
-                  iconSize: 18,
-                ),
-              ),
-            ],
+          Text(
+            '${AppLocalizations.of(context).conversation} ${index + 1}',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: colors.textLight,
+            ),
           ),
+
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(12),
@@ -2805,9 +2802,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               border: Border.all(color: colors.text.withValues(alpha: 0.2)),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // L2 언어 대화 (예: 중국어)
                 if (l2Lines.isNotEmpty) ...[
+                  // L2 언어 대화
                   ...l2Lines.map<Widget>((line) {
                     // 안전한 타입 캐스팅
                     if (line is! Map<String, dynamic>) {
@@ -2852,6 +2851,36 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: colors.text,
+                                    ),
+                                  ),
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 6),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            final locale =
+                                                TtsService.localeForLanguageName(
+                                                  toLanguageHere,
+                                                );
+                                            print('locale: $locale');
+                                            await TtsService.speak(
+                                              text,
+                                              languageCode: locale,
+                                            );
+                                          } catch (e) {
+                                            print('error: $e');
+                                          }
+                                        },
+                                        child: Icon(
+                                          Icons.volume_up_outlined,
+                                          size: 16,
+                                          color: colors.text.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   if (RegExp(r'[\u3400-\u9FFF]').hasMatch(text))
@@ -2927,6 +2956,36 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: colors.text,
+                                    ),
+                                  ),
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 6),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            final locale =
+                                                TtsService.localeForLanguageName(
+                                                  fromLanguageHere,
+                                                );
+                                            print('locale: $locale');
+                                            await TtsService.speak(
+                                              text,
+                                              languageCode: locale,
+                                            );
+                                          } catch (e) {
+                                            print('error: $e');
+                                          }
+                                        },
+                                        child: Icon(
+                                          Icons.volume_up_outlined,
+                                          size: 16,
+                                          color: colors.text.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   if (RegExp(r'[\u3400-\u9FFF]').hasMatch(text))
@@ -3049,34 +3108,31 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 4),
-              Container(
-                height: 18,
-                width: 18,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.volume_up_outlined,
-                    color: colors.text.withValues(alpha: 0.5),
+              if (_cardFromLanguages[cardIndex] !=
+                  _cardToLanguages[cardIndex]) ...[
+                const SizedBox(width: 4),
+                Container(
+                  height: 18,
+                  width: 18,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.volume_up_outlined,
+                      color: colors.text.withValues(alpha: 0.5),
+                    ),
+                    onPressed: () async {
+                      try {
+                        final locale = TtsService.localeForLanguageName(
+                          _cardToLanguages[cardIndex],
+                        );
+                        print('locale: $locale');
+                        await TtsService.speak(word, languageCode: locale);
+                      } catch (_) {}
+                    },
+                    iconSize: 16,
+                    padding: EdgeInsets.zero,
                   ),
-                  onPressed: () async {
-                    try {
-                      final langName =
-                          (cardIndex < _cardToLanguages.length &&
-                              _cardToLanguages[cardIndex].isNotEmpty)
-                          ? _cardToLanguages[cardIndex]
-                          : _toLanguage;
-                      await TtsService.speak(
-                        word,
-                        languageCode: TtsService.localeForLanguageName(
-                          langName,
-                        ),
-                      );
-                    } catch (_) {}
-                  },
-                  iconSize: 16,
-                  padding: EdgeInsets.zero,
                 ),
-              ),
+              ],
             ],
           ),
 
