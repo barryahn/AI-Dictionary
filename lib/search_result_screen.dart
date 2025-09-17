@@ -21,6 +21,7 @@ import 'package:lpinyin/lpinyin.dart';
 import 'services/pro_service.dart';
 import 'services/quota_service.dart';
 import 'pro_upgrade_screen.dart';
+import 'services/tts_service.dart';
 
 // 검색 결과와 검색 입력을 모두 처리하는 화면
 class SearchResultScreen extends StatefulWidget {
@@ -2536,11 +2537,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Icons.volume_up_outlined,
                       color: colors.text.withValues(alpha: 0.5),
                     ),
-                    onPressed: () {
-                      // TODO: implement TTS playback for `word`
+                    onPressed: () async {
                       try {
-                        // 현재는 버튼만 추가 (동작은 추후 구현)
-                        print('재생 버튼 클릭: ' + word);
+                        await TtsService.speak(
+                          word,
+                          languageCode: TtsService.localeForLanguageName(
+                            _toLanguage,
+                          ),
+                        );
                       } catch (_) {}
                     },
                     iconSize: 18,
@@ -2996,11 +3000,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     Icons.volume_up_outlined,
                     color: colors.text.withValues(alpha: 0.5),
                   ),
-                  onPressed: () {
-                    // TODO: implement TTS playback for `word`
+                  onPressed: () async {
                     try {
-                      // 현재는 버튼만 추가 (동작은 추후 구현)
-                      print('비슷한 표현 재생 버튼 클릭: ' + word);
+                      await TtsService.speak(
+                        word,
+                        languageCode: TtsService.localeForLanguageName(
+                          _toLanguage,
+                        ),
+                      );
                     } catch (_) {}
                   },
                   iconSize: 16,
