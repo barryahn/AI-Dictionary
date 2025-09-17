@@ -11,7 +11,7 @@ class TtsService {
     if (_initialized) return;
     // 기본 음성 설정
     try {
-      await _tts.setVolume(1.0);
+      await _tts.setVolume(5.0);
     } catch (_) {}
     try {
       await _tts.setSpeechRate(0.45); // 자연스러운 기본 속도

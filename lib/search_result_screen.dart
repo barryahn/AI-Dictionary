@@ -59,6 +59,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   bool _showWarningIcon = false; // 경고 아이콘 표시 여부
   // 각 검색 카드별로 프로 모델 사용 여부 기록 (완료 시 차감용)
   final List<bool> _usingProModelFlags = [];
+  // 각 카드별 저장 당시 도착 언어(toLanguage) 스냅샷
+  final List<String> _cardToLanguages = [];
+  // 각 카드별 저장 당시 출발 언어(fromLanguage) 스냅샷
+  final List<String> _cardFromLanguages = [];
   int _savedCardCount = 0; // 저장 완료된 카드 수 (무료 한도 체크)
   // 무료 한도 도달 시 업그레이드 오버레이 표시 제어
   bool _isUpgradeOverlayDismissed = false;
@@ -139,6 +143,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
         _searchQueries.add(card.query);
         _isLoading.add(card.isLoading);
+        // 세션에서 불러온 카드의 toLanguage 스냅샷 보관
+        _cardToLanguages.add(card.toLanguage);
+        // 세션에서 불러온 카드의 fromLanguage 스냅샷 보관
+        _cardFromLanguages.add(card.fromLanguage);
         if (card.isLoading) {
           _searchResults.add(_buildLoadingSection(card.query, currentIndex));
         } else if (card.result.isEmpty && !card.isLoading) {
@@ -242,6 +250,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       _searchQueries.add(query);
       _isLoading.add(true);
       _searchResults.add(_buildLoadingSection(query, index));
+      // 현재 도착 언어 스냅샷 저장
+      _cardToLanguages.add(_toLanguage);
+      // 현재 출발 언어 스냅샷 저장
+      _cardFromLanguages.add(_fromLanguage);
       _isFetching = true; // 검색 시작
       print('검색 상태 설정: _isFetching = true, 로딩 인덱스 = $index');
     });
@@ -318,6 +330,20 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       if (idx < _isLoading.length) {
         _isLoading[idx] = true;
       }
+      // 편집/덮어쓰기 시점의 도착 언어 스냅샷 업데이트
+      if (_cardToLanguages.length <= idx) {
+        _cardToLanguages.addAll(
+          List<String>.filled(idx - _cardToLanguages.length + 1, ''),
+        );
+      }
+      _cardToLanguages[idx] = _toLanguage;
+      // 편집/덮어쓰기 시점의 출발 언어 스냅샷 업데이트
+      if (_cardFromLanguages.length <= idx) {
+        _cardFromLanguages.addAll(
+          List<String>.filled(idx - _cardFromLanguages.length + 1, ''),
+        );
+      }
+      _cardFromLanguages[idx] = _fromLanguage;
       if (idx < _searchResults.length) {
         _searchResults[idx] = _buildLoadingSection(newQuery, idx);
       }
@@ -1821,11 +1847,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
               const SizedBox(height: 12),
               if (parsedData['단어_뜻'] != null) ...[
-                _buildL1DictionaryMeanings(parsedData['단어_뜻'], colors),
+                _buildL1DictionaryMeanings(parsedData['단어_뜻'], colors, index),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
-                  child: _buildL1DictionaryMeanings(null, colors),
+                  child: _buildL1DictionaryMeanings(null, colors, index),
                 ),
               ],
               const SizedBox(height: 12),
@@ -1863,11 +1889,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
               const SizedBox(height: 12),
               if (parsedData['비슷한_표현'] != null) ...[
-                _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
+                _buildSimilarExpressions(parsedData['비슷한_표현'], colors, index),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
-                  child: _buildSimilarExpressions(null, colors),
+                  child: _buildSimilarExpressions(null, colors, index),
                 ),
               ],
               const SizedBox(height: 48),
@@ -1942,12 +1968,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
               const SizedBox(height: 12),
               if (parsedData['단어_뜻'] != null) ...[
-                _buildL1DictionaryMeanings(parsedData['단어_뜻'], colors),
+                _buildL1DictionaryMeanings(parsedData['단어_뜻'], colors, index),
                 const SizedBox(height: 24),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
-                  child: _buildL1DictionaryMeanings(null, colors),
+                  child: _buildL1DictionaryMeanings(null, colors, index),
                 ),
                 const SizedBox(height: 24),
               ],
@@ -1986,11 +2012,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
               const SizedBox(height: 12),
               if (parsedData['비슷한_표현'] != null) ...[
-                _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
+                _buildSimilarExpressions(parsedData['비슷한_표현'], colors, index),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
-                  child: _buildSimilarExpressions(null, colors),
+                  child: _buildSimilarExpressions(null, colors, index),
                 ),
               ],
               const SizedBox(height: 48),
@@ -2107,11 +2133,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               ),
               const SizedBox(height: 12),
               if (parsedData['비슷한_표현'] != null) ...[
-                _buildSimilarExpressions(parsedData['비슷한_표현'], colors),
+                _buildSimilarExpressions(parsedData['비슷한_표현'], colors, index),
               ] else if (isStreaming) ...[
                 Skeletonizer(
                   enabled: true,
-                  child: _buildSimilarExpressions(null, colors),
+                  child: _buildSimilarExpressions(null, colors, index),
                 ),
               ],
               const SizedBox(height: 48),
@@ -2368,7 +2394,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildL1DictionaryMeanings(dynamic meanings, CustomColors colors) {
+  Widget _buildL1DictionaryMeanings(
+    dynamic meanings,
+    CustomColors colors,
+    int cardIndex,
+  ) {
     // L1 형식에 맞게 처리
     if (meanings == null) {
       // 스켈레톤용 더미 데이터 생성
@@ -2393,6 +2423,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
             colors,
             0,
+            cardIndex,
           ),
           _buildSingleL1DictionaryMeaning(
             {
@@ -2400,6 +2431,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             },
             colors,
             1,
+            cardIndex,
           ),
         ],
       );
@@ -2407,7 +2439,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
     if (meanings is Map<String, dynamic>) {
       // 단일 사전적 뜻 객체 처리
-      return _buildSingleL1DictionaryMeaning(meanings, colors, 0);
+      return _buildSingleL1DictionaryMeaning(meanings, colors, 0, cardIndex);
     } else if (meanings is List) {
       // 여러 사전적 뜻 객체 처리 - 품사별로 그룹화
       final Map<String, List<Map<String, dynamic>>> groupedByPartOfSpeech = {};
@@ -2432,6 +2464,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             partOfSpeech,
             meaningsList,
             colors,
+            cardIndex,
           );
         }).toList(),
       );
@@ -2444,6 +2477,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     String partOfSpeech,
     List<Map<String, dynamic>> meanings,
     CustomColors colors,
+    int cardIndex,
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -2465,7 +2499,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
             final index = entry.key;
             final meaning = entry.value;
 
-            return _buildSingleL1DictionaryMeaning(meaning, colors, index);
+            return _buildSingleL1DictionaryMeaning(
+              meaning,
+              colors,
+              index,
+              cardIndex,
+            );
           }).toList(),
         ],
       ),
@@ -2476,6 +2515,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     Map<String, dynamic> meaning,
     CustomColors colors,
     int index,
+    int cardIndex,
   ) {
     final translationRaw = meaning['번역'];
 
@@ -2539,12 +2579,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                     ),
                     onPressed: () async {
                       try {
-                        await TtsService.speak(
-                          word,
-                          languageCode: TtsService.localeForLanguageName(
-                            _toLanguage,
-                          ),
-                        );
+                        final saved =
+                            (cardIndex < _cardToLanguages.length &&
+                                _cardToLanguages[cardIndex].isNotEmpty)
+                            ? _cardToLanguages[cardIndex]
+                            : _toLanguage;
+                        final isCode = RegExp(
+                          r'^[a-z]{2}(?:-[A-Z]{2})?$',
+                        ).hasMatch(saved);
+                        final locale = isCode
+                            ? saved
+                            : TtsService.localeForLanguageName(saved);
+                        await TtsService.speak(word, languageCode: locale);
                       } catch (_) {}
                     },
                     iconSize: 18,
@@ -2911,26 +2957,37 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget _buildSimilarExpressions(dynamic expressions, CustomColors colors) {
+  Widget _buildSimilarExpressions(
+    dynamic expressions,
+    CustomColors colors,
+    int cardIndex,
+  ) {
     // 스켈레톤용 더미 데이터 처리
     if (expressions == null) {
       return Wrap(
         spacing: 8,
         runSpacing: 8,
         children: [
-          _buildSingleSimilarExpression({
-            '단어': 'example',
-            '뜻': '예시, 표본',
-          }, colors),
-          _buildSingleSimilarExpression({
-            '단어': 'sample',
-            '뜻': '샘플, 견본',
-          }, colors),
-          _buildSingleSimilarExpression({
-            '단어': 'instance',
-            '뜻': '사례, 예',
-          }, colors),
-          _buildSingleSimilarExpression({'단어': 'case', '뜻': '경우, 사례'}, colors),
+          _buildSingleSimilarExpression(
+            {'단어': 'example', '뜻': '예시, 표본'},
+            colors,
+            cardIndex,
+          ),
+          _buildSingleSimilarExpression(
+            {'단어': 'sample', '뜻': '샘플, 견본'},
+            colors,
+            cardIndex,
+          ),
+          _buildSingleSimilarExpression(
+            {'단어': 'instance', '뜻': '사례, 예'},
+            colors,
+            cardIndex,
+          ),
+          _buildSingleSimilarExpression(
+            {'단어': 'case', '뜻': '경우, 사례'},
+            colors,
+            cardIndex,
+          ),
         ],
       );
     }
@@ -2938,7 +2995,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     // NDJSON 형식에 맞게 처리
     if (expressions is Map<String, dynamic>) {
       // 단일 비슷한 표현 객체 처리
-      return _buildSingleSimilarExpression(expressions, colors);
+      return _buildSingleSimilarExpression(expressions, colors, cardIndex);
     } else if (expressions is List) {
       // 여러 비슷한 표현 객체 처리
       return Wrap(
@@ -2946,7 +3003,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         runSpacing: 8,
         children: expressions.map<Widget>((expr) {
           if (expr is Map<String, dynamic>) {
-            return _buildSingleSimilarExpression(expr, colors);
+            return _buildSingleSimilarExpression(expr, colors, cardIndex);
           }
           return const SizedBox.shrink();
         }).toList(),
@@ -2959,6 +3016,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget _buildSingleSimilarExpression(
     Map<String, dynamic> expr,
     CustomColors colors,
+    int cardIndex,
   ) {
     final word = expr['단어']?.toString() ?? '';
     final meaning = expr['뜻']?.toString() ?? '';
@@ -3002,10 +3060,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                   onPressed: () async {
                     try {
+                      final langName =
+                          (cardIndex < _cardToLanguages.length &&
+                              _cardToLanguages[cardIndex].isNotEmpty)
+                          ? _cardToLanguages[cardIndex]
+                          : _toLanguage;
                       await TtsService.speak(
                         word,
                         languageCode: TtsService.localeForLanguageName(
-                          _toLanguage,
+                          langName,
                         ),
                       );
                     } catch (_) {}
