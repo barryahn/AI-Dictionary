@@ -19,12 +19,16 @@ class PurchaseService extends ChangeNotifier {
   bool _isAvailable = false;
   bool get isAvailable => _isAvailable;
 
-  /// 스토어에 등록된 상품 ID
-  /// 실제 앱의 상품 ID로 교체하세요.
-  static const String productIdMonthly = 'pro_monthly';
-  static const String productIdYearly = 'pro_yearly';
+  /// 구독 productId (단일). 실제 스토어의 단일 구독 ID로 교체하세요.
+  /// 하나의 productId 안에 base plan이 월/연으로 구성됩니다.
+  // TODO: 실제 단일 구독 productId로 교체 (예: 'com.baxbase.wordvibe.pro')
+  static const String subscriptionProductId = 'wordvibe_monthly';
 
-  final Set<String> _productIds = const {productIdMonthly, productIdYearly};
+  /// 기본 요금제(Base Plan) ID: 월/연간. Google Play 콘솔의 Base plan ID와 일치해야 합니다.
+  static const String basePlanIdMonthly = 'wordvibe-monthly';
+  static const String basePlanIdYearly = 'wordvibe-yearly';
+
+  final Set<String> _productIds = const {subscriptionProductId};
   List<ProductDetails> _products = [];
 
   Future<void> initialize() async {
@@ -75,7 +79,7 @@ class PurchaseService extends ChangeNotifier {
   }
 
   /// 구독 구매
-  /// [plan]에 따라 월간/연간 상품을 구매합니다.
+  /// [plan]에 따라 월간/연간 기본 요금제를 선택합니다.
   Future<bool> purchasePro(PurchasePlan plan) async {
     if (!_isAvailable) {
       await initialize();
@@ -83,10 +87,10 @@ class PurchaseService extends ChangeNotifier {
     }
 
     // 제품 상세 조회 (캐시 미존재 시 재조회)
-    ProductDetails? details = _findProduct(plan);
+    ProductDetails? details = _findProduct();
     if (details == null) {
       await _queryProducts();
-      details = _findProduct(plan);
+      details = _findProduct();
     }
     if (details == null) {
       if (kDebugMode) {
@@ -110,16 +114,16 @@ class PurchaseService extends ChangeNotifier {
     }
   }
 
-  ProductDetails? _findProduct(PurchasePlan plan) {
-    final targetId = plan == PurchasePlan.monthly
-        ? productIdMonthly
-        : productIdYearly;
+  ProductDetails? _findProduct() {
     try {
-      return _products.firstWhere((p) => p.id == targetId);
+      return _products.firstWhere((p) => p.id == subscriptionProductId);
     } catch (_) {
       return null;
     }
   }
+
+  // 현재 플러그인 버전에서는 오퍼 토큰을 직접 지정하지 않고
+  // 단일 productId에 대한 구매 플로우를 트리거합니다.
 
   Future<void> restorePurchases() async {
     try {
